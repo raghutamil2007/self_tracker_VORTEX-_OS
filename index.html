@@ -1,0 +1,1365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TITAN OS - Performance Operating System</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/pages.css">
+    <link rel="stylesheet" href="css/money-planner.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <i class="ph ph-hexagon-fill logo-icon"></i>
+                <span class="logo-text">TITAN OS</span>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <h3 class="section-title">CORE</h3>
+                    <a href="#" class="nav-item active" data-view="dashboard">
+                        <i class="ph ph-squares-four"></i> DASHBOARD
+                    </a>
+                    <a href="#" class="nav-item" data-view="command">
+                        <i class="ph ph-terminal-window"></i> COMMAND CENTER
+                    </a>
+                    <a href="#" class="nav-item" data-view="analytics">
+                        <i class="ph ph-chart-bar"></i> ANALYTICS
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <h3 class="section-title">ENGINES</h3>
+                    <a href="#" class="nav-item" data-view="body-engine">
+                        <i class="ph ph-heart"></i> BODY
+                    </a>
+                    <a href="#" class="nav-item" data-view="mind-engine">
+                        <i class="ph ph-lightning"></i> MIND
+                    </a>
+                    <a href="#" class="nav-item" data-view="money-engine">
+                        <i class="ph ph-currency-dollar"></i> MONEY
+                    </a>
+                    <a href="#" class="nav-item" data-view="general-engine">
+                        <i class="ph ph-stack"></i> GENERAL
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <h3 class="section-title">FINANCE</h3>
+                    <a href="#" class="nav-item" data-view="money-planner">
+                        <i class="ph ph-wallet"></i> MONEY PLANNER
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <h3 class="section-title">TRACK</h3>
+                    <a href="#" class="nav-item" data-view="habits">
+                        <i class="ph ph-arrows-clockwise"></i> HABITS
+                    </a>
+                    <a href="#" class="nav-item" data-view="journal">
+                        <i class="ph ph-book-open"></i> JOURNAL
+                    </a>
+                    <a href="#" class="nav-item" data-view="goals">
+                        <i class="ph ph-target"></i> GOALS
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <h3 class="section-title">TOOLS</h3>
+                    <a href="#" class="nav-item" data-view="focus-timer">
+                        <i class="ph ph-timer"></i> FOCUS TIMER
+                    </a>
+                    <a href="#" class="nav-item" data-view="workouts">
+                        <i class="ph ph-barbell"></i> WORKOUTS
+                    </a>
+                    <a href="#" class="nav-item" data-view="sleep">
+                        <i class="ph ph-moon"></i> SLEEP TRACKER
+                    </a>
+                    <a href="#" class="nav-item" data-view="weight">
+                        <i class="ph ph-scales"></i> WEIGHT TRACKER
+                    </a>
+                    <a href="#" class="nav-item" data-view="nutrition">
+                        <i class="ph ph-fork-knife"></i> NUTRITION
+                    </a>
+                </div>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <a href="#" class="nav-item" data-view="settings">
+                    <i class="ph ph-gear"></i> SETTINGS
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Views will be injected or toggled here -->
+            <div id="view-dashboard" class="view active">
+                <header class="view-header">
+                    <div class="subtitle">TITAN PROTOCOL</div>
+                    <h1 class="title">TITAN OS</h1>
+                    <p class="description">Your performance operating system — four engines, one view.</p>
+                </header>
+
+                <div class="dashboard-grid">
+                    <!-- Titan Score Overview -->
+                    <div class="card score-card">
+                        <div class="card-header">TITAN SCORE</div>
+                        <div class="score-main">
+                            <h2 id="overall-score-display">77.0%</h2>
+                            <p class="score-subtitle">4/4 engines active today</p>
+                        </div>
+                        <div class="score-bars">
+                            <div class="bar-group">
+                                <div class="bar-label"><span>BODY</span> <span id="val-body">71.0%</span></div>
+                                <div class="progress-bar"><div class="progress-fill" id="fill-body" style="width: 71%"></div></div>
+                            </div>
+                            <div class="bar-group">
+                                <div class="bar-label"><span>MIND</span> <span id="val-mind">100.0%</span></div>
+                                <div class="progress-bar"><div class="progress-fill" id="fill-mind" style="width: 100%"></div></div>
+                            </div>
+                            <div class="bar-group">
+                                <div class="bar-label"><span>MONEY</span> <span id="val-money">86.0%</span></div>
+                                <div class="progress-bar"><div class="progress-fill" id="fill-money" style="width: 86%"></div></div>
+                            </div>
+                            <div class="bar-group">
+                                <div class="bar-label"><span>GENERAL</span> <span id="val-general">50.0%</span></div>
+                                <div class="progress-bar"><div class="progress-fill" id="fill-general" style="width: 50%"></div></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Engine Overview Radar Chart -->
+                    <div class="card radar-card">
+                        <div class="card-header">ENGINE OVERVIEW</div>
+                        <div class="chart-container radar-container">
+                            <canvas id="engineRadarChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- VS Last Week -->
+                    <div class="card vs-card full-width">
+                        <div class="card-header">VS LAST WEEK</div>
+                        <div class="vs-grid">
+                            <div class="vs-item">
+                                <div class="vs-label">BODY</div>
+                                <div class="vs-value positive"><i class="ph ph-arrow-up"></i> 21%</div>
+                                <div class="vs-sub">82% vs 61%</div>
+                            </div>
+                            <div class="vs-item">
+                                <div class="vs-label">MIND</div>
+                                <div class="vs-value positive"><i class="ph ph-arrow-up"></i> 70%</div>
+                                <div class="vs-sub">86% vs 16%</div>
+                            </div>
+                            <div class="vs-item">
+                                <div class="vs-label">MONEY</div>
+                                <div class="vs-value positive"><i class="ph ph-arrow-up"></i> 41%</div>
+                                <div class="vs-sub">55% vs 14%</div>
+                            </div>
+                            <div class="vs-item">
+                                <div class="vs-label">GENERAL</div>
+                                <div class="vs-value positive"><i class="ph ph-arrow-up"></i> 36%</div>
+                                <div class="vs-sub">50% vs 14%</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Mini Charts -->
+                    <div class="mini-charts-grid full-width">
+                        <!-- Body -->
+                        <div class="card mini-card">
+                            <div class="mini-header">
+                                <span>BODY</span>
+                                <span class="mini-score">71%</span>
+                            </div>
+                            <div class="chart-container mini-chart">
+                                <canvas id="bodyMiniChart"></canvas>
+                            </div>
+                            <div class="mini-footer">
+                                <div>Today: 71%</div>
+                                <div class="pts">10/14 pts</div>
+                            </div>
+                            <button class="enter-btn">ENTER</button>
+                        </div>
+                        <!-- Mind -->
+                        <div class="card mini-card">
+                            <div class="mini-header">
+                                <span>MIND</span>
+                                <span class="mini-score">100%</span>
+                            </div>
+                            <div class="chart-container mini-chart">
+                                <canvas id="mindMiniChart"></canvas>
+                            </div>
+                            <div class="mini-footer">
+                                <div>Today: 100%</div>
+                                <div class="pts">9/9 pts</div>
+                            </div>
+                            <button class="enter-btn">ENTER</button>
+                        </div>
+                        <!-- Money -->
+                        <div class="card mini-card">
+                            <div class="mini-header">
+                                <span>MONEY</span>
+                                <span class="mini-score">86%</span>
+                            </div>
+                            <div class="chart-container mini-chart">
+                                <canvas id="moneyMiniChart"></canvas>
+                            </div>
+                            <div class="mini-footer">
+                                <div>Today: 86%</div>
+                                <div class="pts">12/14 pts</div>
+                            </div>
+                            <button class="enter-btn">ENTER</button>
+                        </div>
+                        <!-- General -->
+                        <div class="card mini-card">
+                            <div class="mini-header">
+                                <span>GENERAL</span>
+                                <span class="mini-score">50%</span>
+                            </div>
+                            <div class="chart-container mini-chart">
+                                <canvas id="generalMiniChart"></canvas>
+                            </div>
+                            <div class="mini-footer">
+                                <div>Today: 50%</div>
+                                <div class="pts">2/4 pts</div>
+                            </div>
+                            <button class="enter-btn">ENTER</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Other Views (Analytics, Engine Detail) will go here -->
+            <div id="view-analytics" class="view" style="display:none;">
+                <header class="view-header">
+                    <h1 class="title">ANALYTICS</h1>
+                    <p class="description">Precision insights derived from your personal data.</p>
+                </header>
+                <div class="dashboard-grid">
+                    <div class="card full-width">
+                        <div class="card-header">TITAN SCORE TREND</div>
+                        <div class="chart-container" style="height: 300px;">
+                             <canvas id="analyticsTrendChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header">ENGINE PERFORMANCE</div>
+                        <div class="chart-container" style="height: 200px;">
+                             <canvas id="analyticsEngineBarChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">WEEKLY DISCIPLINE</div>
+                        <div class="chart-container" style="height: 200px;">
+                             <canvas id="analyticsWeeklyBarChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="card full-width">
+                        <div class="card-header">CONSISTENCY HEATMAP</div>
+                        <div class="heatmap-container" id="consistencyHeatmap">
+                            <!-- Heatmap dots generated by JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Engine Detail View (Template for Body/Mind) -->
+            <div id="view-body-engine" class="view" style="display:none;">
+                <div class="engine-header-row">
+                    <header class="view-header">
+                        <div class="subtitle">BODY ENGINE</div>
+                        <h1 class="title">BODY CONTROL</h1>
+                        <p class="description">Daily performance log - <span id="current-date-body">2026-03-17</span></p>
+                    </header>
+                    <div class="engine-top-score card">
+                        <div class="card-header">DAY SCORE</div>
+                        <h2 class="score-main">71%</h2>
+                        <div class="score-sub">Main 4/5 • Secondary 2/4 • Points 10/14</div>
+                        <div class="progress-bar"><div class="progress-fill" style="width: 71%"></div></div>
+                    </div>
+                </div>
+
+                <div class="dashboard-grid">
+                    <div class="card calendar-card">
+                        <div class="card-header">CALENDAR (MAR 2026)</div>
+                        <div class="calendar-grid">
+                            <!-- 1-31 days generated by JS -->
+                            <div class="cal-day missed">1</div>
+                            <div class="cal-day missed">2</div>
+                            <div class="cal-day hit">3</div>
+                            <div class="cal-day hit">4</div>
+                            <div class="cal-day perfect">5</div>
+                            <div class="cal-day perfect">6</div>
+                            <!-- ... -->
+                        </div>
+                    </div>
+
+                    <div class="card consistency-card">
+                        <div class="card-header">CONSISTENCY</div>
+                        <h2 class="score-main" style="font-size: 36px; margin-bottom: 10px;">65%</h2>
+                        <p class="score-sub">CONSISTENT DAYS<br>11 / 17</p>
+                        <p class="score-sub" style="margin-top:10px;">CURRENT STREAK<br>3 days</p>
+                        <p class="score-sub" style="margin-top:10px;">BEST STREAK<br>6 days</p>
+                        
+                        <div class="tiny-bar-chart" id="consistencyTinyBars">
+                            <!-- Generated by JS -->
+                        </div>
+                    </div>
+
+                    <div class="card tasks-card">
+                        <div class="card-header">MAIN TASKS</div>
+                        <div class="task-list">
+                            <label class="task-item">
+                                <input type="checkbox" checked>
+                                <span class="task-text">Sleep 8 hours</span>
+                                <span class="task-tag">MAIN</span>
+                            </label>
+                            <label class="task-item">
+                                <input type="checkbox" checked>
+                                <span class="task-text">Gym</span>
+                                <span class="task-tag">MAIN</span>
+                            </label>
+                            <label class="task-item">
+                                <input type="checkbox" checked>
+                                <span class="task-text">4l Water</span>
+                                <span class="task-tag">MAIN</span>
+                            </label>
+                            <label class="task-item">
+                                <input type="checkbox" checked>
+                                <span class="task-text">Protein Goal</span>
+                                <span class="task-tag">MAIN</span>
+                            </label>
+                            <label class="task-item">
+                                <input type="checkbox">
+                                <span class="task-text">Cardio</span>
+                                <span class="task-tag">MAIN</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="card tasks-card">
+                        <div class="card-header">SECONDARY TASKS</div>
+                        <div class="task-list">
+                            <label class="task-item">
+                                <input type="checkbox">
+                                <span class="task-text">Mobility</span>
+                                <span class="task-tag">SECONDARY</span>
+                            </label>
+                            <label class="task-item">
+                                <input type="checkbox" checked>
+                                <span class="task-text">Creatine</span>
+                                <span class="task-tag">SECONDARY</span>
+                            </label>
+                            <label class="task-item">
+                                <input type="checkbox" checked>
+                                <span class="task-text">Omega 3 pills</span>
+                                <span class="task-tag">SECONDARY</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== MIND ENGINE VIEW ===== -->
+            <div id="view-mind-engine" class="view" style="display:none;">
+
+                <!-- Top section: header + day score card -->
+                <div class="engine-header-row">
+                    <header class="view-header">
+                        <div class="subtitle">MIND ENGINE</div>
+                        <h1 class="title">MIND ENGINE</h1>
+                        <p class="description">Forever tracker · <span id="mind-date-display">2026-03-17</span></p>
+                        <div class="selected-date-input">
+                            <span class="selected-date-label">SELECTED</span>
+                            <span id="mind-selected-date">17/03/2026</span>
+                        </div>
+                    </header>
+                    <div class="engine-top-score card">
+                        <div class="card-header">DAY SCORE</div>
+                        <h2 class="score-main" id="mind-day-score">100%</h2>
+                        <div class="score-sub" id="mind-score-sub">Main 4/4 · Secondary 1/1 · Points 9/9</div>
+                        <div class="progress-bar" style="margin-top: 12px;">
+                            <div class="progress-fill" id="mind-score-fill" style="width: 100%;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Engine Sub-tabs -->
+                <div class="engine-tabs">
+                    <button class="engine-tab active" data-tab="mind-tab-engine">MIND ENGINE</button>
+                    <button class="engine-tab" data-tab="mind-tab-focus">FOCUS TIMER</button>
+                </div>
+
+                <!-- MIND ENGINE TAB CONTENT -->
+                <div id="mind-tab-engine" class="engine-tab-content active">
+                    <div class="dashboard-grid">
+
+                        <!-- Calendar Card -->
+                        <div class="card calendar-card">
+                            <div class="calendar-card-header">
+                                <div class="card-header" style="margin-bottom:0;">CALENDAR (MAR 2026)</div>
+                                <div class="cal-nav">
+                                    <button class="cal-nav-btn" id="mind-cal-prev">PREV</button>
+                                    <button class="cal-nav-btn" id="mind-cal-next">NEXT</button>
+                                </div>
+                            </div>
+                            <div class="cal-weekdays">
+                                <span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span>
+                            </div>
+                            <div class="calendar-grid" id="mind-calendar-grid">
+                                <!-- Generated by JS -->
+                            </div>
+                        </div>
+
+                        <!-- Consistency Card -->
+                        <div class="card consistency-card">
+                            <div class="card-header">CONSISTENCY</div>
+                            <h2 class="consistency-score" id="mind-consistency-pct">54%</h2>
+                            <div class="consistency-stat">
+                                <span class="stat-label">CONSISTENT DAYS</span>
+                                <span class="stat-value" id="mind-consistent-days">7 / 13</span>
+                            </div>
+                            <div class="consistency-stat">
+                                <span class="stat-label">CURRENT STREAK</span>
+                                <span class="stat-value" id="mind-current-streak">2 days</span>
+                            </div>
+                            <div class="consistency-stat">
+                                <span class="stat-label">BEST STREAK</span>
+                                <span class="stat-value" id="mind-best-streak">5 days</span>
+                            </div>
+                            <div class="tiny-bar-chart" id="mind-consistency-bars">
+                                <!-- Generated by JS -->
+                            </div>
+                        </div>
+
+                        <!-- Secondary Tasks -->
+                        <div class="card tasks-card">
+                            <div class="task-card-header">
+                                <div class="card-header" style="margin-bottom:0;">SECONDARY TASKS</div>
+                                <span class="task-date" id="mind-sec-task-date">2026-03-17</span>
+                            </div>
+                            <div class="task-list" id="mind-secondary-tasks">
+                                <label class="task-item">
+                                    <input type="checkbox" checked id="mind-task-noreels">
+                                    <span class="task-text">No reels</span>
+                                    <span class="task-tag">SECONDARY</span>
+                                </label>
+                            </div>
+                            <button class="add-task-btn" id="mind-add-secondary-btn">+ ADD TASK</button>
+                        </div>
+
+                        <!-- Main Tasks -->
+                        <div class="card tasks-card">
+                            <div class="task-card-header">
+                                <div class="card-header" style="margin-bottom:0;">MAIN TASKS</div>
+                                <span class="task-date" id="mind-main-task-date">2026-03-17</span>
+                            </div>
+                            <div class="task-list" id="mind-main-tasks">
+                                <label class="task-item">
+                                    <input type="checkbox" checked>
+                                    <span class="task-text">Sleep at 11pm</span>
+                                    <span class="task-tag">MAIN</span>
+                                </label>
+                                <label class="task-item">
+                                    <input type="checkbox" checked>
+                                    <span class="task-text">Journal</span>
+                                    <span class="task-tag">MAIN</span>
+                                </label>
+                                <label class="task-item">
+                                    <input type="checkbox" checked>
+                                    <span class="task-text">Wake up 7am</span>
+                                    <span class="task-tag">MAIN</span>
+                                </label>
+                                <label class="task-item">
+                                    <input type="checkbox" checked>
+                                    <span class="task-text">Instagram screen time &lt; 1 hour</span>
+                                    <span class="task-tag">MAIN</span>
+                                </label>
+                            </div>
+                            <button class="add-task-btn" id="mind-add-main-btn">+ ADD TASK</button>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- FOCUS TIMER TAB CONTENT -->
+                <div id="mind-tab-focus" class="engine-tab-content" style="display:none;">
+                    <div class="focus-timer-view">
+                        <div class="card focus-timer-card">
+                            <div class="card-header">FOCUS SESSION</div>
+
+                            <!-- Timer Display -->
+                            <div class="timer-display" id="focus-timer-display">25:00</div>
+                            <div class="timer-mode-label" id="focus-timer-mode-label">FOCUS</div>
+
+                            <!-- Session Type Selector -->
+                            <div class="timer-mode-select">
+                                <button class="timer-mode-btn active" data-duration="1500" id="btn-focus">FOCUS — 25m</button>
+                                <button class="timer-mode-btn" data-duration="300" id="btn-short">SHORT BREAK — 5m</button>
+                                <button class="timer-mode-btn" data-duration="900" id="btn-long">LONG BREAK — 15m</button>
+                            </div>
+
+                            <!-- Controls -->
+                            <div class="timer-controls">
+                                <button class="timer-btn-secondary" id="focus-timer-reset" title="Reset">
+                                    <i class="ph ph-arrow-counter-clockwise"></i>
+                                </button>
+                                <button class="timer-btn-primary" id="focus-timer-start">
+                                    <i class="ph ph-play" id="focus-play-icon"></i>
+                                </button>
+                                <button class="timer-btn-secondary" id="focus-timer-skip" title="Skip">
+                                    <i class="ph ph-skip-forward"></i>
+                                </button>
+                            </div>
+
+                            <!-- Session Counter -->
+                            <div class="session-counter">
+                                <span class="session-counter-label">SESSION</span>
+                                <div class="session-dots" id="session-dots">
+                                    <div class="session-dot filled"></div>
+                                    <div class="session-dot filled"></div>
+                                    <div class="session-dot filled"></div>
+                                    <div class="session-dot"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Today's Sessions Log -->
+                        <div class="card focus-log-card">
+                            <div class="card-header">TODAY'S SESSIONS</div>
+                            <div class="focus-log" id="focus-log">
+                                <div class="focus-log-item">
+                                    <span class="log-time">09:00</span>
+                                    <span class="log-label">Focus — 25 min</span>
+                                    <span class="log-badge">DONE</span>
+                                </div>
+                                <div class="focus-log-item">
+                                    <span class="log-time">09:30</span>
+                                    <span class="log-label">Short Break — 5 min</span>
+                                    <span class="log-badge">DONE</span>
+                                </div>
+                                <div class="focus-log-item">
+                                    <span class="log-time">09:35</span>
+                                    <span class="log-label">Focus — 25 min</span>
+                                    <span class="log-badge">DONE</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <!-- ===== END MIND ENGINE VIEW ===== -->
+
+            <!-- =============================== MONEY ENGINE =============================== -->
+            <div id="view-money-engine" class="view" style="display:none;">
+                <div class="engine-header-row">
+                    <header class="view-header">
+                        <div class="subtitle">MONEY ENGINE</div>
+                        <h1 class="title">MONEY CONTROL</h1>
+                        <p class="description">Financial discipline log · <span id="money-date">2026-03-17</span></p>
+                        <div class="selected-date-input">
+                            <span class="selected-date-label">SELECTED</span>
+                            <span>17/03/2026</span>
+                        </div>
+                    </header>
+                    <div class="engine-top-score card">
+                        <div class="card-header">DAY SCORE</div>
+                        <h2 class="score-main" id="money-day-score">86%</h2>
+                        <div class="score-sub" id="money-score-sub">Main 5/6 · Secondary 1/2 · Points 12/14</div>
+                        <div class="progress-bar" style="margin-top: 12px;">
+                            <div class="progress-fill" id="money-score-fill" style="width: 86%;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="engine-tabs">
+                    <button class="engine-tab active" data-tab="money-tab-main">MONEY ENGINE</button>
+                    <button class="engine-tab" data-tab="money-tab-budget">BUDGET</button>
+                </div>
+                <div id="money-tab-main" class="engine-tab-content active">
+                    <div class="dashboard-grid">
+                        <div class="card calendar-card">
+                            <div class="calendar-card-header">
+                                <div class="card-header" style="margin-bottom:0;" id="money-cal-header">CALENDAR (MAR 2026)</div>
+                                <div class="cal-nav">
+                                    <button class="cal-nav-btn" id="money-cal-prev">PREV</button>
+                                    <button class="cal-nav-btn" id="money-cal-next">NEXT</button>
+                                </div>
+                            </div>
+                            <div class="cal-weekdays"><span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span></div>
+                            <div class="calendar-grid" id="money-calendar-grid"></div>
+                        </div>
+                        <div class="card consistency-card">
+                            <div class="card-header">CONSISTENCY</div>
+                            <h2 class="consistency-score">72%</h2>
+                            <div class="consistency-stat"><span class="stat-label">CONSISTENT DAYS</span><span class="stat-value">11 / 15</span></div>
+                            <div class="consistency-stat"><span class="stat-label">CURRENT STREAK</span><span class="stat-value">4 days</span></div>
+                            <div class="consistency-stat"><span class="stat-label">BEST STREAK</span><span class="stat-value">8 days</span></div>
+                            <div class="tiny-bar-chart" id="money-consistency-bars"></div>
+                        </div>
+                        <div class="card tasks-card">
+                            <div class="task-card-header">
+                                <div class="card-header" style="margin-bottom:0;">MAIN TASKS</div>
+                                <span class="task-date">2026-03-17</span>
+                            </div>
+                            <div class="task-list" id="money-main-tasks">
+                                <label class="task-item"><input type="checkbox" checked><span class="task-text">No impulse purchases</span><span class="task-tag">MAIN</span></label>
+                                <label class="task-item"><input type="checkbox" checked><span class="task-text">Log all expenses</span><span class="task-tag">MAIN</span></label>
+                                <label class="task-item"><input type="checkbox" checked><span class="task-text">Invest daily amount</span><span class="task-tag">MAIN</span></label>
+                                <label class="task-item"><input type="checkbox" checked><span class="task-text">Review budget</span><span class="task-tag">MAIN</span></label>
+                                <label class="task-item"><input type="checkbox" checked><span class="task-text">Read 10 pages finance</span><span class="task-tag">MAIN</span></label>
+                                <label class="task-item"><input type="checkbox"><span class="task-text">Side hustle 1hr</span><span class="task-tag">MAIN</span></label>
+                            </div>
+                            <button class="add-task-btn" id="money-add-main-btn">+ ADD TASK</button>
+                        </div>
+                        <div class="card tasks-card">
+                            <div class="task-card-header">
+                                <div class="card-header" style="margin-bottom:0;">SECONDARY TASKS</div>
+                                <span class="task-date">2026-03-17</span>
+                            </div>
+                            <div class="task-list" id="money-secondary-tasks">
+                                <label class="task-item"><input type="checkbox" checked><span class="task-text">Check investments</span><span class="task-tag">SECONDARY</span></label>
+                                <label class="task-item"><input type="checkbox"><span class="task-text">Net worth update</span><span class="task-tag">SECONDARY</span></label>
+                            </div>
+                            <button class="add-task-btn" id="money-add-secondary-btn">+ ADD TASK</button>
+                        </div>
+                    </div>
+                </div>
+                <div id="money-tab-budget" class="engine-tab-content" style="display:none;">
+                    <div class="dashboard-grid">
+                        <div class="card full-width">
+                            <div class="card-header">MONTHLY BUDGET — MARCH 2026</div>
+                            <div class="budget-list">
+                                <div class="budget-row"><span class="budget-label">Housing</span><div class="budget-bar-wrap"><div class="progress-bar" style="flex:1"><div class="progress-fill" style="width:100%"></div></div></div><span class="budget-spent">₹15,000</span><span class="budget-total">/ ₹15,000</span></div>
+                                <div class="budget-row"><span class="budget-label">Food</span><div class="budget-bar-wrap"><div class="progress-bar" style="flex:1"><div class="progress-fill" style="width:68%"></div></div></div><span class="budget-spent">₹3,400</span><span class="budget-total">/ ₹5,000</span></div>
+                                <div class="budget-row"><span class="budget-label">Transport</span><div class="budget-bar-wrap"><div class="progress-bar" style="flex:1"><div class="progress-fill" style="width:42%"></div></div></div><span class="budget-spent">₹840</span><span class="budget-total">/ ₹2,000</span></div>
+                                <div class="budget-row"><span class="budget-label">Entertainment</span><div class="budget-bar-wrap"><div class="progress-bar" style="flex:1"><div class="progress-fill" style="width:82%; background: var(--accent-green);"></div></div></div><span class="budget-spent">₹820</span><span class="budget-total">/ ₹1,000</span></div>
+                                <div class="budget-row"><span class="budget-label">Savings</span><div class="budget-bar-wrap"><div class="progress-bar" style="flex:1"><div class="progress-fill" style="width:60%"></div></div></div><span class="budget-spent">₹6,000</span><span class="budget-total">/ ₹10,000</span></div>
+                            </div>
+                        </div>
+                        <div class="card stat-card"><div class="card-header">INCOME</div><div class="stat-big">₹45,000</div><div class="stat-desc">This month</div></div>
+                        <div class="card stat-card"><div class="card-header">EXPENSES</div><div class="stat-big">₹26,060</div><div class="stat-desc">This month</div></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- =============================== GENERAL ENGINE =============================== -->
+            <div id="view-general-engine" class="view" style="display:none;">
+                <div class="engine-header-row">
+                    <header class="view-header">
+                        <div class="subtitle">GENERAL ENGINE</div>
+                        <h1 class="title">GENERAL</h1>
+                        <p class="description">Life & growth log · <span id="general-date">2026-03-17</span></p>
+                        <div class="selected-date-input">
+                            <span class="selected-date-label">SELECTED</span>
+                            <span>17/03/2026</span>
+                        </div>
+                    </header>
+                    <div class="engine-top-score card">
+                        <div class="card-header">DAY SCORE</div>
+                        <h2 class="score-main" id="general-day-score">50%</h2>
+                        <div class="score-sub" id="general-score-sub">Main 1/2 · Secondary 1/2 · Points 2/4</div>
+                        <div class="progress-bar" style="margin-top: 12px;">
+                            <div class="progress-fill" id="general-score-fill" style="width: 50%;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="dashboard-grid" style="margin-top: 24px;">
+                    <div class="card calendar-card">
+                        <div class="calendar-card-header">
+                            <div class="card-header" style="margin-bottom:0;" id="general-cal-header">CALENDAR (MAR 2026)</div>
+                            <div class="cal-nav">
+                                <button class="cal-nav-btn" id="general-cal-prev">PREV</button>
+                                <button class="cal-nav-btn" id="general-cal-next">NEXT</button>
+                            </div>
+                        </div>
+                        <div class="cal-weekdays"><span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span></div>
+                        <div class="calendar-grid" id="general-calendar-grid"></div>
+                    </div>
+                    <div class="card consistency-card">
+                        <div class="card-header">CONSISTENCY</div>
+                        <h2 class="consistency-score">46%</h2>
+                        <div class="consistency-stat"><span class="stat-label">CONSISTENT DAYS</span><span class="stat-value">6 / 13</span></div>
+                        <div class="consistency-stat"><span class="stat-label">CURRENT STREAK</span><span class="stat-value">1 day</span></div>
+                        <div class="consistency-stat"><span class="stat-label">BEST STREAK</span><span class="stat-value">4 days</span></div>
+                        <div class="tiny-bar-chart" id="general-consistency-bars"></div>
+                    </div>
+                    <div class="card tasks-card">
+                        <div class="task-card-header">
+                            <div class="card-header" style="margin-bottom:0;">MAIN TASKS</div>
+                            <span class="task-date">2026-03-17</span>
+                        </div>
+                        <div class="task-list" id="general-main-tasks">
+                            <label class="task-item"><input type="checkbox" checked><span class="task-text">Read 30 minutes</span><span class="task-tag">MAIN</span></label>
+                            <label class="task-item"><input type="checkbox"><span class="task-text">Meditate 10 minutes</span><span class="task-tag">MAIN</span></label>
+                        </div>
+                        <button class="add-task-btn" id="general-add-main-btn">+ ADD TASK</button>
+                    </div>
+                    <div class="card tasks-card">
+                        <div class="task-card-header">
+                            <div class="card-header" style="margin-bottom:0;">SECONDARY TASKS</div>
+                            <span class="task-date">2026-03-17</span>
+                        </div>
+                        <div class="task-list" id="general-secondary-tasks">
+                            <label class="task-item"><input type="checkbox" checked><span class="task-text">Cold shower</span><span class="task-tag">SECONDARY</span></label>
+                            <label class="task-item"><input type="checkbox"><span class="task-text">5 min gratitude</span><span class="task-tag">SECONDARY</span></label>
+                        </div>
+                        <button class="add-task-btn" id="general-add-secondary-btn">+ ADD TASK</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- =============================== COMMAND CENTER =============================== -->
+            <div id="view-command" class="view" style="display:none;">
+                <header class="view-header">
+                    <div class="subtitle">TITAN PROTOCOL</div>
+                    <h1 class="title">COMMAND CENTER</h1>
+                    <p class="description">Rapid-fire task logging across all engines.</p>
+                </header>
+                <div class="command-center-layout">
+                    <div class="command-input-section card">
+                        <div class="card-header">QUICK LOG</div>
+                        <div class="command-input-row">
+                            <select class="command-engine-select" id="cmd-engine-select">
+                                <option value="body">BODY</option>
+                                <option value="mind" selected>MIND</option>
+                                <option value="money">MONEY</option>
+                                <option value="general">GENERAL</option>
+                            </select>
+                            <input type="text" class="add-task-input" id="cmd-task-input" placeholder="Log a task or note...">
+                            <button class="add-task-submit" id="cmd-submit">LOG</button>
+                        </div>
+                    </div>
+                    <div class="command-grid">
+                        <div class="card">
+                            <div class="card-header">TODAY'S OVERVIEW</div>
+                            <div class="cmd-overview-row"><span class="cmd-engine-label">BODY</span><div class="progress-bar" style="flex:1"><div class="progress-fill" style="width:71%"></div></div><span class="cmd-pct">71%</span></div>
+                            <div class="cmd-overview-row"><span class="cmd-engine-label">MIND</span><div class="progress-bar" style="flex:1"><div class="progress-fill" style="width:100%"></div></div><span class="cmd-pct">100%</span></div>
+                            <div class="cmd-overview-row"><span class="cmd-engine-label">MONEY</span><div class="progress-bar" style="flex:1"><div class="progress-fill" style="width:86%"></div></div><span class="cmd-pct">86%</span></div>
+                            <div class="cmd-overview-row"><span class="cmd-engine-label">GENERAL</span><div class="progress-bar" style="flex:1"><div class="progress-fill" style="width:50%"></div></div><span class="cmd-pct">50%</span></div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header">COMMAND LOG</div>
+                            <div id="cmd-log" class="cmd-log">
+                                <div class="cmd-log-item"><span class="cmd-log-time">09:14</span><span class="cmd-log-engine mind-tag">MIND</span><span class="cmd-log-text">Journaled morning pages</span></div>
+                                <div class="cmd-log-item"><span class="cmd-log-time">08:52</span><span class="cmd-log-engine body-tag">BODY</span><span class="cmd-log-text">Completed gym session</span></div>
+                                <div class="cmd-log-item"><span class="cmd-log-time">08:30</span><span class="cmd-log-engine money-tag">MONEY</span><span class="cmd-log-text">Invested daily amount</span></div>
+                                <div class="cmd-log-item"><span class="cmd-log-time">07:45</span><span class="cmd-log-engine general-tag">GENERAL</span><span class="cmd-log-text">Read 30 minutes</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- =============================== HABITS =============================== -->
+            <div id="view-habits" class="view" style="display:none;">
+                <header class="view-header">
+                    <h1 class="title">HABITS</h1>
+                    <p class="description">Daily habits streaks and completion tracking.</p>
+                </header>
+                <div class="habits-grid">
+                    <div class="card habit-card habit-done"><div class="habit-left"><div class="habit-name">Gym</div><div class="habit-streak"><i class="ph ph-flame-fill"></i> 12 day streak</div></div><div class="habit-right"><div class="habit-mini-dots" id="hd1"></div><div class="habit-pct">86%</div></div></div>
+                    <div class="card habit-card habit-done"><div class="habit-left"><div class="habit-name">No reels</div><div class="habit-streak"><i class="ph ph-flame-fill"></i> 7 day streak</div></div><div class="habit-right"><div class="habit-mini-dots" id="hd2"></div><div class="habit-pct">100%</div></div></div>
+                    <div class="card habit-card habit-done"><div class="habit-left"><div class="habit-name">Read 30 min</div><div class="habit-streak"><i class="ph ph-flame-fill"></i> 4 day streak</div></div><div class="habit-right"><div class="habit-mini-dots" id="hd3"></div><div class="habit-pct">72%</div></div></div>
+                    <div class="card habit-card habit-miss"><div class="habit-left"><div class="habit-name">Meditate</div><div class="habit-streak"><i class="ph ph-x"></i> 0 day streak</div></div><div class="habit-right"><div class="habit-mini-dots" id="hd4"></div><div class="habit-pct">43%</div></div></div>
+                    <div class="card habit-card habit-done"><div class="habit-left"><div class="habit-name">Cold shower</div><div class="habit-streak"><i class="ph ph-flame-fill"></i> 3 day streak</div></div><div class="habit-right"><div class="habit-mini-dots" id="hd5"></div><div class="habit-pct">57%</div></div></div>
+                    <div class="card habit-card habit-done"><div class="habit-left"><div class="habit-name">Drink 4L water</div><div class="habit-streak"><i class="ph ph-flame-fill"></i> 14 day streak</div></div><div class="habit-right"><div class="habit-mini-dots" id="hd6"></div><div class="habit-pct">93%</div></div></div>
+                    <div class="card habit-card habit-miss"><div class="habit-left"><div class="habit-name">Wake up 7am</div><div class="habit-streak"><i class="ph ph-x"></i> 0 day streak</div></div><div class="habit-right"><div class="habit-mini-dots" id="hd7"></div><div class="habit-pct">50%</div></div></div>
+                    <div class="card habit-card habit-done"><div class="habit-left"><div class="habit-name">Journal</div><div class="habit-streak"><i class="ph ph-flame-fill"></i> 5 day streak</div></div><div class="habit-right"><div class="habit-mini-dots" id="hd8"></div><div class="habit-pct">71%</div></div></div>
+                </div>
+            </div>
+
+            <!-- =============================== JOURNAL =============================== -->
+            <div id="view-journal" class="view" style="display:none;">
+                <header class="view-header">
+                    <h1 class="title">JOURNAL</h1>
+                    <p class="description">Your personal log — stream of thought, captured.</p>
+                </header>
+                <div class="journal-layout">
+                    <div class="card journal-editor-card">
+                        <div class="journal-editor-header">
+                            <div class="journal-date-label" id="journal-today-date">Monday, 17 Mar 2026</div>
+                            <button class="add-task-submit" id="journal-save-btn">SAVE ENTRY</button>
+                        </div>
+                        <textarea class="journal-textarea" id="journal-textarea" placeholder="Start writing your thoughts for today...&#10;&#10;What did you accomplish? What are you grateful for? What challenged you?"></textarea>
+                    </div>
+                    <div class="journal-entries-panel">
+                        <div class="card-header" style="margin-bottom: 16px;">PAST ENTRIES</div>
+                        <div id="journal-entries-list">
+                            <div class="card journal-entry-card">
+                                <div class="journal-entry-date">16 Mar 2026</div>
+                                <p class="journal-entry-preview">Crushed the gym session today. Feeling strong. Need to work on consistency with meditation — skipped again. Tomorrow I start the streak over...</p>
+                            </div>
+                            <div class="card journal-entry-card">
+                                <div class="journal-entry-date">15 Mar 2026</div>
+                                <p class="journal-entry-preview">Rest day. Used the time to deep-read on stoicism. Marcus Aurelius — "You have power over your mind, not outside events..."</p>
+                            </div>
+                            <div class="card journal-entry-card">
+                                <div class="journal-entry-date">14 Mar 2026</div>
+                                <p class="journal-entry-preview">Bad day financially — impulse purchase. Logged it and accepted it. Tomorrow is a reset. The system holds even when I slip...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- =============================== GOALS =============================== -->
+            <div id="view-goals" class="view" style="display:none;">
+                <header class="view-header">
+                    <h1 class="title">GOALS</h1>
+                    <p class="description">Long-form targets aligned to your four engines.</p>
+                </header>
+                <div class="goals-categories">
+                    <div class="goal-category">
+                        <div class="goal-cat-label body-accent">BODY</div>
+                        <div class="goals-list">
+                            <div class="card goal-card"><div class="goal-header"><span class="goal-title">Reach 15% body fat</span><span class="goal-deadline">Jun 2026</span></div><div class="goal-progress-label"><span>Current: 19%</span><span>78%</span></div><div class="progress-bar"><div class="progress-fill" style="width:78%"></div></div></div>
+                            <div class="card goal-card"><div class="goal-header"><span class="goal-title">Deadlift 140kg</span><span class="goal-deadline">Aug 2026</span></div><div class="goal-progress-label"><span>Current: 110kg</span><span>55%</span></div><div class="progress-bar"><div class="progress-fill" style="width:55%"></div></div></div>
+                        </div>
+                    </div>
+                    <div class="goal-category">
+                        <div class="goal-cat-label mind-accent">MIND</div>
+                        <div class="goals-list">
+                            <div class="card goal-card"><div class="goal-header"><span class="goal-title">Read 24 books in 2026</span><span class="goal-deadline">Dec 2026</span></div><div class="goal-progress-label"><span>5 read</span><span>21%</span></div><div class="progress-bar"><div class="progress-fill" style="width:21%"></div></div></div>
+                            <div class="card goal-card"><div class="goal-header"><span class="goal-title">No social media — 90 days</span><span class="goal-deadline">May 2026</span></div><div class="goal-progress-label"><span>Day 17</span><span>18%</span></div><div class="progress-bar"><div class="progress-fill" style="width:18%"></div></div></div>
+                        </div>
+                    </div>
+                    <div class="goal-category">
+                        <div class="goal-cat-label money-accent">MONEY</div>
+                        <div class="goals-list">
+                            <div class="card goal-card"><div class="goal-header"><span class="goal-title">Save ₹1,00,000</span><span class="goal-deadline">Dec 2026</span></div><div class="goal-progress-label"><span>₹38,000 saved</span><span>38%</span></div><div class="progress-bar"><div class="progress-fill" style="width:38%"></div></div></div>
+                        </div>
+                    </div>
+                    <div class="goal-category">
+                        <div class="goal-cat-label general-accent">GENERAL</div>
+                        <div class="goals-list">
+                            <div class="card goal-card"><div class="goal-header"><span class="goal-title">30-day meditation challenge</span><span class="goal-deadline">Apr 2026</span></div><div class="goal-progress-label"><span>Day 4</span><span>13%</span></div><div class="progress-bar"><div class="progress-fill" style="width:13%"></div></div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- =============================== FOCUS TIMER (standalone) =============================== -->
+            <div id="view-focus-timer" class="view" style="display:none;">
+                <header class="view-header">
+                    <h1 class="title">FOCUS TIMER</h1>
+                    <p class="description">Deep work, measured and logged.</p>
+                </header>
+                <div class="focus-timer-view">
+                    <div class="card focus-timer-card">
+                        <div class="card-header">SESSION</div>
+                        <div class="timer-display" id="ft-display">25:00</div>
+                        <div class="timer-mode-label" id="ft-mode">FOCUS</div>
+                        <div class="timer-mode-select">
+                            <button class="timer-mode-btn active" data-duration="1500" id="ft-btn-focus">FOCUS — 25m</button>
+                            <button class="timer-mode-btn" data-duration="300" id="ft-btn-short">SHORT BREAK — 5m</button>
+                            <button class="timer-mode-btn" data-duration="900" id="ft-btn-long">LONG BREAK — 15m</button>
+                        </div>
+                        <div class="timer-controls">
+                            <button class="timer-btn-secondary" id="ft-reset"><i class="ph ph-arrow-counter-clockwise"></i></button>
+                            <button class="timer-btn-primary" id="ft-start"><i class="ph ph-play" id="ft-icon"></i></button>
+                            <button class="timer-btn-secondary" id="ft-skip"><i class="ph ph-skip-forward"></i></button>
+                        </div>
+                        <div class="session-counter">
+                            <span class="session-counter-label">SESSION</span>
+                            <div class="session-dots" id="ft-dots">
+                                <div class="session-dot"></div><div class="session-dot"></div>
+                                <div class="session-dot"></div><div class="session-dot"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card focus-log-card">
+                        <div class="card-header">TODAY'S SESSIONS</div>
+                        <div class="focus-log" id="ft-log">
+                            <div class="focus-log-item"><span class="log-time">09:00</span><span class="log-label">Focus — 25 min</span><span class="log-badge">DONE</span></div>
+                            <div class="focus-log-item"><span class="log-time">09:30</span><span class="log-label">Short Break — 5 min</span><span class="log-badge">DONE</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- =============================== WORKOUTS =============================== -->
+            <div id="view-workouts" class="view" style="display:none;">
+                <header class="view-header">
+                    <h1 class="title">WORKOUTS</h1>
+                    <p class="description">Strength and conditioning log.</p>
+                </header>
+                <div class="dashboard-grid">
+                    <div class="card full-width">
+                        <div class="workout-week-header">
+                            <div class="card-header" style="margin-bottom:0;">THIS WEEK</div>
+                            <button class="add-task-submit" id="log-workout-btn">+ LOG WORKOUT</button>
+                        </div>
+                        <div class="workout-week-days">
+                            <div class="workout-day done"><div class="wd-name">MON</div><div class="wd-type">PUSH</div></div>
+                            <div class="workout-day done"><div class="wd-name">TUE</div><div class="wd-type">PULL</div></div>
+                            <div class="workout-day done"><div class="wd-name">WED</div><div class="wd-type">LEGS</div></div>
+                            <div class="workout-day rest"><div class="wd-name">THU</div><div class="wd-type">REST</div></div>
+                            <div class="workout-day done"><div class="wd-name">FRI</div><div class="wd-type">PUSH</div></div>
+                            <div class="workout-day today"><div class="wd-name">SAT</div><div class="wd-type">ACTIVE</div></div>
+                            <div class="workout-day upcoming"><div class="wd-name">SUN</div><div class="wd-type">REST</div></div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">TODAY'S WORKOUT — PUSH DAY</div>
+                        <div class="exercise-list">
+                            <div class="exercise-row"><span class="exercise-name">Bench Press</span><span class="exercise-sets">4 × 8 @ 80kg</span><span class="exercise-done">✓</span></div>
+                            <div class="exercise-row"><span class="exercise-name">Incline DB Press</span><span class="exercise-sets">3 × 10 @ 28kg</span><span class="exercise-done">✓</span></div>
+                            <div class="exercise-row"><span class="exercise-name">Overhead Press</span><span class="exercise-sets">3 × 8 @ 50kg</span><span class="exercise-done">✓</span></div>
+                            <div class="exercise-row"><span class="exercise-name">Lateral Raises</span><span class="exercise-sets">3 × 15 @ 10kg</span><span class="exercise-done">✓</span></div>
+                            <div class="exercise-row"><span class="exercise-name">Tricep Pushdown</span><span class="exercise-sets">3 × 12 @ 35kg</span><span class="exercise-done">—</span></div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">PERSONAL RECORDS</div>
+                        <div class="exercise-list">
+                            <div class="exercise-row"><span class="exercise-name">Bench Press</span><span class="exercise-sets">100kg</span><span class="pr-date">12 Feb</span></div>
+                            <div class="exercise-row"><span class="exercise-name">Squat</span><span class="exercise-sets">130kg</span><span class="pr-date">28 Jan</span></div>
+                            <div class="exercise-row"><span class="exercise-name">Deadlift</span><span class="exercise-sets">110kg</span><span class="pr-date">05 Mar</span></div>
+                            <div class="exercise-row"><span class="exercise-name">OHP</span><span class="exercise-sets">65kg</span><span class="pr-date">14 Mar</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- =============================== SLEEP TRACKER =============================== -->
+            <div id="view-sleep" class="view" style="display:none;">
+                <header class="view-header">
+                    <h1 class="title">SLEEP TRACKER</h1>
+                    <p class="description">Recovery data and sleep quality analysis.</p>
+                </header>
+                <div class="dashboard-grid">
+                    <div class="card">
+                        <div class="card-header">LAST NIGHT</div>
+                        <div class="sleep-big">7h 42m</div>
+                        <div class="sleep-stats-row">
+                            <div class="sleep-stat-item"><div class="sleep-stat-label">BEDTIME</div><div class="sleep-stat-val">22:48</div></div>
+                            <div class="sleep-stat-item"><div class="sleep-stat-label">WAKE</div><div class="sleep-stat-val">06:30</div></div>
+                            <div class="sleep-stat-item"><div class="sleep-stat-label">QUALITY</div><div class="sleep-stat-val" style="color: var(--accent-green);">GOOD</div></div>
+                        </div>
+                        <div class="progress-bar" style="margin-top: 16px;"><div class="progress-fill" style="width: 96%; background: var(--accent-green);"></div></div>
+                        <div style="font-size:10px; color: var(--text-muted); margin-top:6px; letter-spacing:1px;">96% OF 8HR GOAL</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">WEEKLY AVERAGE</div>
+                        <div class="sleep-big">7h 18m</div>
+                        <div class="consistency-stat"><span class="stat-label">GOAL</span><span class="stat-value">8h 00m</span></div>
+                        <div class="consistency-stat"><span class="stat-label">BEST NIGHT</span><span class="stat-value">8h 30m</span></div>
+                        <div class="consistency-stat"><span class="stat-label">WORST NIGHT</span><span class="stat-value">5h 45m</span></div>
+                        <div class="consistency-stat"><span class="stat-label">GOAL MET (days)</span><span class="stat-value">4 / 7</span></div>
+                    </div>
+                    <div class="card full-width">
+                        <div class="card-header">7-DAY SLEEP LOG</div>
+                        <div class="sleep-log-grid" id="sleep-log-grid"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- =============================== WEIGHT TRACKER =============================== -->
+            <div id="view-weight" class="view" style="display:none;">
+                <header class="view-header">
+                    <h1 class="title">WEIGHT TRACKER</h1>
+                    <p class="description">Body composition over time.</p>
+                </header>
+                <div class="dashboard-grid">
+                    <div class="card">
+                        <div class="card-header">CURRENT WEIGHT</div>
+                        <div class="weight-big">74.2 <span class="weight-unit">kg</span></div>
+                        <div class="consistency-stat"><span class="stat-label">START WEIGHT</span><span class="stat-value">82.0 kg</span></div>
+                        <div class="consistency-stat"><span class="stat-label">GOAL WEIGHT</span><span class="stat-value">70.0 kg</span></div>
+                        <div class="consistency-stat"><span class="stat-label">LOST SO FAR</span><span class="stat-value" style="color:var(--accent-green);">−7.8 kg</span></div>
+                        <div class="consistency-stat"><span class="stat-label">TO GOAL</span><span class="stat-value">4.2 kg</span></div>
+                        <div class="progress-bar" style="margin-top:16px"><div class="progress-fill" style="width:65%; background: var(--accent-green);"></div></div>
+                        <div style="font-size:10px; color: var(--text-muted); margin-top:6px; letter-spacing:1px;">65% TO GOAL</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">LOG TODAY</div>
+                        <div class="weight-log-form">
+                            <div class="weight-input-group">
+                                <input type="number" class="add-task-input" id="weight-input" placeholder="74.0" step="0.1" style="font-size:28px; text-align:center; padding: 20px;">
+                                <span class="weight-unit-label">kg</span>
+                            </div>
+                            <button class="add-task-submit" id="weight-log-btn" style="margin-top:12px; padding: 14px;">LOG WEIGHT</button>
+                        </div>
+                    </div>
+                    <div class="card full-width">
+                        <div class="card-header">WEIGHT TREND</div>
+                        <div class="chart-container" style="height: 250px;">
+                            <canvas id="weightTrendChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- =============================== NUTRITION =============================== -->
+            <div id="view-nutrition" class="view" style="display:none;">
+                <header class="view-header">
+                    <h1 class="title">NUTRITION</h1>
+                    <p class="description">Macros, calories, and food quality tracking.</p>
+                </header>
+                <div class="dashboard-grid">
+                    <div class="card">
+                        <div class="card-header">CALORIES TODAY</div>
+                        <div class="nutrition-big">1,840 <span class="weight-unit">kcal</span></div>
+                        <div class="progress-bar" style="margin-top: 12px;"><div class="progress-fill" style="width: 82%;"></div></div>
+                        <div style="font-size:10px; color: var(--text-muted); margin-top:6px; letter-spacing:1px;">TARGET: 2,250 kcal · 82% REACHED</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">MACROS</div>
+                        <div class="macro-bars">
+                            <div class="macro-item"><span class="macro-label">PROTEIN</span><div class="progress-bar" style="flex:1"><div class="progress-fill" style="width:94%; background: var(--accent-green);"></div></div><span class="macro-val">188g / 200g</span></div>
+                            <div class="macro-item"><span class="macro-label">CARBS</span><div class="progress-bar" style="flex:1"><div class="progress-fill" style="width:70%"></div></div><span class="macro-val">175g / 250g</span></div>
+                            <div class="macro-item"><span class="macro-label">FAT</span><div class="progress-bar" style="flex:1"><div class="progress-fill" style="width:60%"></div></div><span class="macro-val">48g / 80g</span></div>
+                            <div class="macro-item"><span class="macro-label">FIBER</span><div class="progress-bar" style="flex:1"><div class="progress-fill" style="width:80%"></div></div><span class="macro-val">24g / 30g</span></div>
+                        </div>
+                    </div>
+                    <div class="card full-width">
+                        <div class="nutrition-meal-header"><div class="card-header" style="margin-bottom:0;">TODAY'S MEALS</div><button class="add-task-submit" id="add-meal-btn">+ ADD MEAL</button></div>
+                        <div class="meal-list" id="meal-list">
+                            <div class="meal-item"><span class="meal-time">07:30</span><span class="meal-name">Breakfast — Oats + Protein Shake</span><span class="meal-cals">480 kcal</span></div>
+                            <div class="meal-item"><span class="meal-time">12:00</span><span class="meal-name">Lunch — Rice + Chicken + Veggies</span><span class="meal-cals">650 kcal</span></div>
+                            <div class="meal-item"><span class="meal-time">16:00</span><span class="meal-name">Snack — Banana + Peanut Butter</span><span class="meal-cals">310 kcal</span></div>
+                            <div class="meal-item"><span class="meal-time">19:30</span><span class="meal-name">Dinner — Paneer + Dal + Roti</span><span class="meal-cals">400 kcal</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- =============================== SETTINGS =============================== -->
+            <div id="view-settings" class="view" style="display:none;">
+                <header class="view-header">
+                    <h1 class="title">SETTINGS</h1>
+                    <p class="description">Configure your TITAN OS experience.</p>
+                </header>
+                <div class="settings-grid">
+                    <div class="card settings-section">
+                        <div class="card-header">PROFILE</div>
+                        <div class="setting-row"><span class="setting-label">Name</span><input type="text" class="add-task-input" value="Raghu" style="max-width:200px"></div>
+                        <div class="setting-row"><span class="setting-label">Daily Reset Time</span><input type="time" class="add-task-input" value="00:00" style="max-width:130px"></div>
+                        <div class="setting-row"><span class="setting-label">Timezone</span><input type="text" class="add-task-input" value="Asia/Kolkata" style="max-width:200px"></div>
+                    </div>
+                    <div class="card settings-section">
+                        <div class="card-header">ENGINE GOALS</div>
+                        <div class="setting-row"><span class="setting-label">Body — Main Tasks</span><input type="number" class="add-task-input" value="5" style="max-width:80px"></div>
+                        <div class="setting-row"><span class="setting-label">Mind — Main Tasks</span><input type="number" class="add-task-input" value="4" style="max-width:80px"></div>
+                        <div class="setting-row"><span class="setting-label">Money — Main Tasks</span><input type="number" class="add-task-input" value="6" style="max-width:80px"></div>
+                        <div class="setting-row"><span class="setting-label">General — Main Tasks</span><input type="number" class="add-task-input" value="2" style="max-width:80px"></div>
+                    </div>
+                    <div class="card settings-section">
+                        <div class="card-header">APPEARANCE</div>
+                        <div class="setting-row"><span class="setting-label">Theme</span><span class="setting-value-tag">DARK</span></div>
+                        <div class="setting-row"><span class="setting-label">Accent Color</span><span class="setting-value-tag" style="color:var(--accent-green);">GREEN</span></div>
+                    </div>
+                    <div class="card settings-section">
+                        <div class="card-header">DATA</div>
+                        <div class="setting-row"><span class="setting-label">Export Data</span><button class="add-task-submit">EXPORT</button></div>
+                        <div class="setting-row"><span class="setting-label">Reset All Data</span><button class="add-task-submit" style="background: var(--accent-red); color: white;">RESET</button></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- =============================== MONEY PLANNER =============================== -->
+            <div id="view-money-planner" class="view" style="display:none;">
+                <header class="view-header">
+                    <div class="subtitle">FINANCE</div>
+                    <h1 class="title">MONEY PLANNER</h1>
+                    <p class="description">Set your income, plan your spending, and build towards your savings goals.</p>
+                </header>
+
+                <!-- OVERVIEW ROW -->
+                <div class="mp-overview-row">
+                    <div class="card mp-stat-card">
+                        <div class="mp-stat-icon"><i class="ph ph-arrow-down-circle"></i></div>
+                        <div>
+                            <div class="card-header" style="margin-bottom:4px;">MONTHLY INCOME</div>
+                            <div class="mp-stat-big" id="mp-income-display">₹0</div>
+                        </div>
+                        <button class="mp-edit-btn" id="mp-set-income-btn"><i class="ph ph-pencil-simple"></i></button>
+                    </div>
+                    <div class="card mp-stat-card">
+                        <div class="mp-stat-icon orange"><i class="ph ph-receipt"></i></div>
+                        <div>
+                            <div class="card-header" style="margin-bottom:4px;">TOTAL BUDGETED</div>
+                            <div class="mp-stat-big" id="mp-budgeted-display">₹0</div>
+                        </div>
+                    </div>
+                    <div class="card mp-stat-card">
+                        <div class="mp-stat-icon green"><i class="ph ph-piggy-bank"></i></div>
+                        <div>
+                            <div class="card-header" style="margin-bottom:4px;">SAVINGS GOAL</div>
+                            <div class="mp-stat-big" id="mp-savings-display">₹0</div>
+                        </div>
+                    </div>
+                    <div class="card mp-stat-card">
+                        <div class="mp-stat-icon blue"><i class="ph ph-money"></i></div>
+                        <div>
+                            <div class="card-header" style="margin-bottom:4px;">UNALLOCATED</div>
+                            <div class="mp-stat-big" id="mp-free-display">₹0</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ALLOCATION BAR -->
+                <div class="card mp-allocation-card">
+                    <div class="mp-allocation-header">
+                        <div class="card-header" style="margin-bottom:0;">INCOME ALLOCATION</div>
+                        <div class="mp-allocation-legend">
+                            <span class="mp-legend-dot spending"></span><span>Spending</span>
+                            <span class="mp-legend-dot savings"></span><span>Savings</span>
+                            <span class="mp-legend-dot free"></span><span>Unallocated</span>
+                        </div>
+                    </div>
+                    <div class="mp-alloc-bar" id="mp-alloc-bar">
+                        <div class="mp-alloc-seg spending" id="mp-alloc-spending" style="width:0%"></div>
+                        <div class="mp-alloc-seg savings" id="mp-alloc-savings" style="width:0%"></div>
+                        <div class="mp-alloc-seg free" id="mp-alloc-free" style="width:100%"></div>
+                    </div>
+                    <div class="mp-alloc-labels">
+                        <span id="mp-alloc-spending-pct">Spending 0%</span>
+                        <span id="mp-alloc-savings-pct">Savings 0%</span>
+                        <span id="mp-alloc-free-pct">Free 100%</span>
+                    </div>
+                </div>
+
+                <!-- ===== MONTHLY SPENDING TRACKER ===== -->
+                <div class="card mst-card" id="mst-card">
+                    <div class="mst-header">
+                        <div>
+                            <div class="card-header" style="margin-bottom:4px;">MONTHLY SPENDING TRACKER</div>
+                            <div class="mst-month-label" id="mst-month-label">APR 2026</div>
+                        </div>
+                        <div class="mst-header-actions">
+                            <button class="mp-edit-btn" id="mst-set-limit-btn" title="Set monthly limit" style="position:static; width:auto; border-radius:6px; padding:0 14px; height:34px; font-size:10px; letter-spacing:1px; gap:6px;">
+                                <i class="ph ph-sliders"></i> SET LIMIT
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="mst-body">
+                        <!-- Ring + Stats -->
+                        <div class="mst-left">
+                            <div class="mst-ring-wrap">
+                                <svg class="mst-ring-svg" viewBox="0 0 160 160">
+                                    <circle class="mst-ring-bg" cx="80" cy="80" r="66" />
+                                    <circle class="mst-ring-fill" id="mst-ring-fill" cx="80" cy="80" r="66"
+                                            stroke-dasharray="414.69"
+                                            stroke-dashoffset="414.69" />
+                                </svg>
+                                <div class="mst-ring-center">
+                                    <div class="mst-ring-pct" id="mst-ring-pct">0%</div>
+                                    <div class="mst-ring-label">USED</div>
+                                </div>
+                            </div>
+
+                            <div class="mst-stats-grid">
+                                <div class="mst-stat">
+                                    <div class="mst-stat-label">SPENT</div>
+                                    <div class="mst-stat-val orange" id="mst-spent-val">₹0</div>
+                                </div>
+                                <div class="mst-stat">
+                                    <div class="mst-stat-label">LIMIT</div>
+                                    <div class="mst-stat-val" id="mst-limit-val">₹—</div>
+                                </div>
+                                <div class="mst-stat">
+                                    <div class="mst-stat-label">REMAINING</div>
+                                    <div class="mst-stat-val green" id="mst-remaining-val">₹—</div>
+                                </div>
+                                <div class="mst-stat">
+                                    <div class="mst-stat-label">DAILY AVG</div>
+                                    <div class="mst-stat-val" id="mst-avg-val">₹—</div>
+                                </div>
+                                <div class="mst-stat">
+                                    <div class="mst-stat-label">DAYS LEFT</div>
+                                    <div class="mst-stat-val" id="mst-days-val">—</div>
+                                </div>
+                                <div class="mst-stat">
+                                    <div class="mst-stat-label">PROJECTED</div>
+                                    <div class="mst-stat-val" id="mst-projected-val">₹—</div>
+                                </div>
+                            </div>
+
+                            <!-- Thin daily bar -->
+                            <div style="margin-top:16px;">
+                                <div class="mst-bar-labels">
+                                    <span id="mst-bar-spent-label">Spent ₹0</span>
+                                    <span id="mst-bar-limit-label">Limit ₹—</span>
+                                </div>
+                                <div class="mst-daily-bar">
+                                    <div class="mst-daily-fill" id="mst-daily-fill" style="width:0%"></div>
+                                    <div class="mst-safe-line" id="mst-safe-line" style="left:70%"></div>
+                                </div>
+                                <div class="mst-bar-sublabel" id="mst-safe-label">Safe zone: spend ≤ ₹—/day to stay within limit</div>
+                            </div>
+                        </div>
+
+                        <!-- Daily Log -->
+                        <div class="mst-right">
+                            <!-- Add expense form -->
+                            <div class="mst-add-form card">
+                                <div class="mst-add-title">LOG TODAY'S EXPENSE</div>
+                                <div class="mst-add-row">
+                                    <input type="text" class="add-task-input mst-note-input" id="mst-note" placeholder="What did you spend on?" maxlength="50">
+                                    <div class="mst-add-amount-row">
+                                        <span class="mst-rupee">₹</span>
+                                        <input type="number" class="add-task-input mst-amount-input" id="mst-amount" placeholder="0" min="0">
+                                        <button class="add-task-submit mst-add-btn" id="mst-add-btn">ADD</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Entries list -->
+                            <div class="mst-log-header">
+                                <div class="card-header" style="margin-bottom:0; font-size:9px;">EXPENSE LOG — <span id="mst-log-month"></span></div>
+                                <button class="mp-action-btn" id="mst-clear-btn" title="Clear all this month's entries" style="font-size:11px; width:auto; padding:0 10px;">CLEAR MONTH</button>
+                            </div>
+                            <div class="mst-entries" id="mst-entries">
+                                <div class="mst-empty" id="mst-entries-empty">
+                                    <i class="ph ph-receipt" style="font-size:28px; opacity:0.3;"></i>
+                                    <p>No expenses logged yet this month.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mp-main-grid">
+                    <!-- BUDGET CATEGORIES -->
+                    <div class="mp-col">
+                        <div class="mp-section-header">
+                            <div class="card-header" style="margin-bottom:0;">SPENDING BUDGET</div>
+                            <button class="add-task-submit" id="mp-add-category-btn">+ ADD CATEGORY</button>
+                        </div>
+                        <div id="mp-categories-list">
+                            <!-- Populated by JS -->
+                        </div>
+                        <div class="card mp-empty-state" id="mp-cat-empty">
+                            <i class="ph ph-list-plus" style="font-size:32px; opacity:0.3;"></i>
+                            <p>No budget categories yet. Add your first category above.</p>
+                        </div>
+                    </div>
+
+                    <!-- SAVINGS PLANS -->
+                    <div class="mp-col">
+                        <div class="mp-section-header">
+                            <div class="card-header" style="margin-bottom:0;">SAVINGS PLANS</div>
+                            <button class="add-task-submit" id="mp-add-plan-btn">+ CREATE PLAN</button>
+                        </div>
+                        <div id="mp-plans-list">
+                            <!-- Populated by JS -->
+                        </div>
+                        <div class="card mp-empty-state" id="mp-plans-empty">
+                            <i class="ph ph-target" style="font-size:32px; opacity:0.3;"></i>
+                            <p>No savings plans yet. Create your first plan above.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===================== SET INCOME MODAL ===================== -->
+            <div class="mp-modal-overlay" id="mp-income-modal" style="display:none;">
+                <div class="mp-modal card">
+                    <div class="mp-modal-header">
+                        <div class="card-header" style="margin-bottom:0;">SET MONTHLY INCOME</div>
+                        <button class="mp-modal-close" id="mp-income-close"><i class="ph ph-x"></i></button>
+                    </div>
+                    <div class="mp-modal-body">
+                        <label class="mp-form-label">Monthly Take-Home Income (₹)</label>
+                        <input type="number" class="add-task-input" id="mp-income-input" placeholder="e.g. 45000" style="font-size:24px; text-align:center; padding:18px; margin-bottom:16px;" min="0">
+                        <button class="add-task-submit mp-modal-save" id="mp-income-save">SAVE INCOME</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===================== ADD CATEGORY MODAL ===================== -->
+            <div class="mp-modal-overlay" id="mp-category-modal" style="display:none;">
+                <div class="mp-modal card">
+                    <div class="mp-modal-header">
+                        <div class="card-header" style="margin-bottom:0;" id="mp-cat-modal-title">ADD BUDGET CATEGORY</div>
+                        <button class="mp-modal-close" id="mp-cat-close"><i class="ph ph-x"></i></button>
+                    </div>
+                    <div class="mp-modal-body">
+                        <label class="mp-form-label">Category Name</label>
+                        <input type="text" class="add-task-input" id="mp-cat-name" placeholder="e.g. Food, Rent, Transport..." maxlength="30" style="margin-bottom:14px;">
+
+                        <label class="mp-form-label">Monthly Budget (₹)</label>
+                        <input type="number" class="add-task-input" id="mp-cat-amount" placeholder="e.g. 5000" min="0" style="margin-bottom:14px;">
+
+                        <label class="mp-form-label">Amount Spent So Far This Month (₹)</label>
+                        <input type="number" class="add-task-input" id="mp-cat-spent" placeholder="e.g. 2000" min="0" style="margin-bottom:20px;">
+
+                        <input type="hidden" id="mp-cat-edit-index" value="-1">
+                        <button class="add-task-submit mp-modal-save" id="mp-cat-save">ADD CATEGORY</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===================== CREATE PLAN MODAL ===================== -->
+            <div class="mp-modal-overlay" id="mp-plan-modal" style="display:none;">
+                <div class="mp-modal card">
+                    <div class="mp-modal-header">
+                        <div class="card-header" style="margin-bottom:0;" id="mp-plan-modal-title">CREATE SAVINGS PLAN</div>
+                        <button class="mp-modal-close" id="mp-plan-close"><i class="ph ph-x"></i></button>
+                    </div>
+                    <div class="mp-modal-body">
+                        <label class="mp-form-label">Plan Name</label>
+                        <input type="text" class="add-task-input" id="mp-plan-name" placeholder="e.g. Europe Trip, Emergency Fund..." maxlength="40" style="margin-bottom:14px;">
+
+                        <label class="mp-form-label">Target Amount (₹)</label>
+                        <input type="number" class="add-task-input" id="mp-plan-target" placeholder="e.g. 50000" min="0" style="margin-bottom:14px;">
+
+                        <label class="mp-form-label">Already Saved (₹)</label>
+                        <input type="number" class="add-task-input" id="mp-plan-saved" placeholder="e.g. 12000" min="0" style="margin-bottom:14px;">
+
+                        <label class="mp-form-label">Monthly Contribution (₹)</label>
+                        <input type="number" class="add-task-input" id="mp-plan-monthly" placeholder="e.g. 5000" min="0" style="margin-bottom:14px;">
+
+                        <label class="mp-form-label">Target Date</label>
+                        <input type="month" class="add-task-input" id="mp-plan-date" style="margin-bottom:20px;">
+
+                        <input type="hidden" id="mp-plan-edit-index" value="-1">
+                        <button class="add-task-submit mp-modal-save" id="mp-plan-save">CREATE PLAN</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===================== SET LIMIT MODAL ===================== -->
+            <div class="mp-modal-overlay" id="mst-limit-modal" style="display:none;">
+                <div class="mp-modal card">
+                    <div class="mp-modal-header">
+                        <div class="card-header" style="margin-bottom:0;">SET MONTHLY SPENDING LIMIT</div>
+                        <button class="mp-modal-close" id="mst-limit-close"><i class="ph ph-x"></i></button>
+                    </div>
+                    <div class="mp-modal-body">
+                        <label class="mp-form-label">Total Allowed Monthly Spend (₹)</label>
+                        <input type="number" class="add-task-input" id="mst-limit-input" placeholder="e.g. 30000" style="font-size:24px; text-align:center; padding:18px; margin-bottom:16px;" min="0">
+                        <button class="add-task-submit mp-modal-save" id="mst-limit-save">SAVE LIMIT</button>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/data.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/pages.js"></script>
+    <script src="js/money-planner.js"></script>
+</body>
+</html>

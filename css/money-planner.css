@@ -1,0 +1,624 @@
+/* ====================================================
+   MONEY PLANNER — money-planner.css
+   ==================================================== */
+
+/* Overview stat row */
+.mp-overview-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.mp-stat-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 20px 22px;
+    position: relative;
+}
+
+.mp-stat-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.06);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    color: #8a8a8a;
+    flex-shrink: 0;
+}
+.mp-stat-icon.orange { background: rgba(242,167,95,0.12); color: #f2a75f; }
+.mp-stat-icon.green  { background: rgba(89,209,149,0.12); color: #59d195; }
+.mp-stat-icon.blue   { background: rgba(120,160,255,0.12); color: #78a0ff; }
+
+.mp-stat-big {
+    font-size: 26px;
+    font-weight: 300;
+    letter-spacing: -0.5px;
+}
+
+.mp-edit-btn {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.08);
+    color: #6b6b6b;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.mp-edit-btn:hover {
+    background: rgba(255,255,255,0.1);
+    color: #fff;
+}
+
+/* Allocation bar */
+.mp-allocation-card {
+    margin-bottom: 24px;
+    padding: 20px 24px;
+}
+.mp-allocation-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+.mp-allocation-legend {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 11px;
+    color: #6b6b6b;
+    letter-spacing: 0.5px;
+}
+.mp-legend-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+}
+.mp-legend-dot.spending { background: #f2a75f; }
+.mp-legend-dot.savings  { background: #59d195; }
+.mp-legend-dot.free     { background: rgba(255,255,255,0.15); }
+
+.mp-alloc-bar {
+    height: 10px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 5px;
+    overflow: hidden;
+    display: flex;
+    margin-bottom: 10px;
+}
+.mp-alloc-seg {
+    height: 100%;
+    transition: width 0.5s cubic-bezier(0.4,0,0.2,1);
+}
+.mp-alloc-seg.spending { background: #f2a75f; }
+.mp-alloc-seg.savings  { background: #59d195; }
+.mp-alloc-seg.free     { background: rgba(255,255,255,0.1); }
+
+.mp-alloc-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 10px;
+    color: #6b6b6b;
+    letter-spacing: 0.5px;
+}
+
+/* Main two-column grid */
+.mp-main-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    align-items: start;
+}
+.mp-col { }
+
+.mp-section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+}
+
+/* Category cards */
+.mp-cat-card {
+    padding: 16px 20px;
+    margin-bottom: 12px;
+    position: relative;
+    overflow: hidden;
+}
+.mp-cat-card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: #f2a75f;
+    border-radius: 3px 0 0 3px;
+}
+.mp-cat-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+.mp-cat-name {
+    font-size: 14px;
+    font-weight: 500;
+}
+.mp-cat-actions {
+    display: flex;
+    gap: 6px;
+}
+.mp-action-btn {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    color: #6b6b6b;
+    width: 26px;
+    height: 26px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.mp-action-btn:hover { background: rgba(255,255,255,0.1); color: #fff; }
+.mp-action-btn.delete:hover { background: rgba(242,95,95,0.15); color: #f25f5c; border-color: rgba(242,95,95,0.25); }
+
+.mp-cat-amounts {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: #6b6b6b;
+    margin-bottom: 8px;
+    letter-spacing: 0.3px;
+}
+.mp-cat-spent-val { color: #f2a75f; }
+.mp-cat-budget-val { }
+
+.mp-cat-pct {
+    font-size: 10px;
+    letter-spacing: 0.5px;
+    color: #6b6b6b;
+    text-align: right;
+    margin-bottom: 4px;
+}
+.mp-cat-pct.over { color: #f25f5c; }
+.mp-cat-bar .progress-fill { background: #f2a75f; }
+.mp-cat-bar .progress-fill.over { background: #f25f5c; }
+
+/* Savings Plan cards */
+.mp-plan-card {
+    padding: 20px 22px;
+    margin-bottom: 12px;
+    position: relative;
+}
+.mp-plan-card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: #59d195;
+    border-radius: 3px 0 0 3px;
+}
+.mp-plan-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 14px;
+}
+.mp-plan-name {
+    font-size: 15px;
+    font-weight: 500;
+    margin-bottom: 4px;
+}
+.mp-plan-deadline {
+    font-size: 10px;
+    letter-spacing: 1px;
+    color: #6b6b6b;
+}
+.mp-plan-actions { display: flex; gap: 6px; }
+.mp-plan-amounts {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: #6b6b6b;
+    margin-bottom: 8px;
+}
+.mp-plan-saved-val { color: #59d195; font-weight: 600; }
+.mp-plan-target-val { }
+.mp-plan-bar .progress-fill { background: #59d195; }
+.mp-plan-eta {
+    font-size: 10px;
+    color: #6b6b6b;
+    letter-spacing: 0.5px;
+    margin-top: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.mp-plan-eta i { color: #78a0ff; }
+
+/* Empty states */
+.mp-empty-state {
+    text-align: center;
+    padding: 40px 24px;
+    color: #6b6b6b;
+    font-size: 13px;
+    line-height: 1.6;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+}
+.mp-empty-state p { margin: 0; }
+
+/* Modals */
+.mp-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    animation: mpFadeIn 0.15s ease;
+}
+@keyframes mpFadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+.mp-modal {
+    width: 420px;
+    max-width: 92vw;
+    padding: 28px 32px;
+    border-radius: 12px;
+    animation: mpSlideUp 0.2s cubic-bezier(0.34,1.56,0.64,1);
+}
+@keyframes mpSlideUp {
+    from { opacity: 0; transform: translateY(20px) scale(0.97); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+.mp-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+.mp-modal-close {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: #6b6b6b;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.mp-modal-close:hover { background: rgba(255,255,255,0.1); color: #fff; }
+.mp-modal-body { display: flex; flex-direction: column; }
+.mp-form-label {
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    color: #6b6b6b;
+    font-weight: 600;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+}
+.mp-modal-save {
+    width: 100%;
+    padding: 14px;
+    font-size: 12px;
+    letter-spacing: 1.5px;
+}
+
+/* =========================================
+   MONTHLY SPENDING TRACKER
+   ========================================= */
+
+.mst-card {
+    padding: 24px;
+    margin-bottom: 24px;
+}
+
+.mst-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 24px;
+}
+
+.mst-month-label {
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: #6b6b6b;
+    font-weight: 600;
+}
+
+.mst-body {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+}
+
+.mst-left {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Ring Chart */
+.mst-ring-wrap {
+    position: relative;
+    width: 160px;
+    height: 160px;
+    margin: 0 auto 24px;
+}
+
+.mst-ring-svg {
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+}
+
+.mst-ring-bg {
+    fill: none;
+    stroke: rgba(255,255,255,0.05);
+    stroke-width: 12;
+}
+
+.mst-ring-fill {
+    fill: none;
+    stroke: #f2a75f;
+    stroke-width: 12;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.mst-ring-fill.over {
+    stroke: #f25f5c;
+}
+
+.mst-ring-center {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.mst-ring-pct {
+    font-size: 28px;
+    font-weight: 300;
+    line-height: 1;
+    margin-bottom: 4px;
+}
+
+.mst-ring-label {
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: #6b6b6b;
+}
+
+/* Stats Grid */
+.mst-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.mst-stat {
+    text-align: center;
+}
+
+.mst-stat-label {
+    font-size: 9px;
+    letter-spacing: 1px;
+    color: #6b6b6b;
+    margin-bottom: 4px;
+}
+
+.mst-stat-val {
+    font-size: 16px;
+    font-weight: 400;
+}
+.mst-stat-val.orange { color: #f2a75f; }
+.mst-stat-val.green { color: #59d195; }
+.mst-stat-val.red { color: #f25f5c; }
+
+/* Thin daily bar */
+.mst-bar-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 10px;
+    color: #6b6b6b;
+    margin-bottom: 6px;
+}
+
+.mst-daily-bar {
+    height: 4px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 2px;
+    position: relative;
+    overflow: hidden;
+}
+
+.mst-daily-fill {
+    height: 100%;
+    background: #f2a75f;
+    border-radius: 2px;
+    transition: width 0.5s;
+}
+.mst-daily-fill.over {
+    background: #f25f5c;
+}
+
+.mst-safe-line {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: #78a0ff;
+    z-index: 10;
+}
+
+.mst-bar-sublabel {
+    font-size: 9px;
+    color: #8a8a8a;
+    margin-top: 6px;
+    text-align: right;
+}
+
+/* Right side - Daily Log */
+.mst-right {
+    display: flex;
+    flex-direction: column;
+}
+
+.mst-add-form {
+    padding: 16px 20px;
+    background: rgba(255,255,255,0.02);
+    margin-bottom: 24px;
+}
+
+.mst-add-title {
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    color: #8a8a8a;
+    font-weight: 600;
+    margin-bottom: 12px;
+}
+
+.mst-add-row {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.mst-add-amount-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.mst-rupee {
+    font-size: 18px;
+    color: #6b6b6b;
+}
+
+.mst-note-input {
+    width: 100%;
+}
+
+.mst-amount-input {
+    flex: 1;
+    font-size: 16px;
+}
+
+.mst-add-btn {
+    min-width: 80px;
+}
+
+.mst-log-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.mst-entries {
+    flex: 1;
+    overflow-y: auto;
+    max-height: 250px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+.mst-entries::-webkit-scrollbar {
+    width: 4px;
+}
+.mst-entries::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.1);
+    border-radius: 2px;
+}
+
+.mst-entry {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 12px;
+    background: rgba(255,255,255,0.02);
+    border-radius: 4px;
+}
+
+.mst-entry-left {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.mst-entry-note {
+    font-size: 13px;
+    color: #fff;
+}
+
+.mst-entry-date {
+    font-size: 10px;
+    color: #6b6b6b;
+}
+
+.mst-entry-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.mst-entry-amount {
+    font-size: 14px;
+    color: #f2a75f;
+    font-weight: 500;
+}
+
+.mst-del-btn {
+    background: none;
+    border: none;
+    color: #6b6b6b;
+    cursor: pointer;
+    font-size: 14px;
+    transition: color 0.2s;
+}
+.mst-del-btn:hover {
+    color: #f25f5c;
+}
+
+.mst-empty {
+    text-align: center;
+    padding: 30px 20px;
+    color: #6b6b6b;
+    font-size: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+.mst-empty p { margin: 0; }

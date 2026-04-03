@@ -1,0 +1,132 @@
+/* ==============================
+   ALL NEW PAGES - pages.css
+   ============================== */
+
+/* Engine tab panels */
+.engine-tab-content.active { display: block; }
+
+/* --- Command Center --- */
+.command-center-layout { display: flex; flex-direction: column; gap: 20px; }
+.command-input-row { display: flex; gap: 12px; align-items: center; margin-top: 8px; }
+.command-engine-select { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); color: #fff; font-family: 'Inter', inherit; font-size: 11px; letter-spacing: 1px; padding: 12px 14px; border-radius: 4px; outline: none; cursor: pointer; min-width: 110px; }
+.command-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.cmd-overview-row { display: flex; align-items: center; gap: 14px; margin-bottom: 12px; }
+.cmd-engine-label { font-size: 10px; letter-spacing: 1.5px; color: #6b6b6b; min-width: 60px; font-weight: 600; }
+.cmd-pct { font-size: 12px; color: #8a8a8a; min-width: 38px; text-align: right; }
+.cmd-log { display: flex; flex-direction: column; gap: 4px; }
+.cmd-log-item { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.06); }
+.cmd-log-item:last-child { border-bottom: none; }
+.cmd-log-time { font-size: 11px; color: #6b6b6b; min-width: 38px; font-variant-numeric: tabular-nums; }
+.cmd-log-engine { font-size: 8px; letter-spacing: 1.5px; font-weight: 700; padding: 4px 8px; border-radius: 3px; }
+.body-tag   { background: rgba(89,209,149,0.12); color: #59d195; }
+.mind-tag   { background: rgba(255,255,255,0.08); color: #8a8a8a; }
+.money-tag  { background: rgba(242,167,95,0.12); color: #f2a75f; }
+.general-tag{ background: rgba(120,160,255,0.12); color: #78a0ff; }
+.cmd-log-text { font-size: 13px; color: #8a8a8a; flex: 1; }
+
+/* --- Habits --- */
+.habits-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.habit-card { display: flex; align-items: center; justify-content: space-between; padding: 18px 20px; }
+.habit-card.habit-done { border-left: 2px solid #59d195; }
+.habit-card.habit-miss { border-left: 2px solid #f25f5c; opacity: 0.7; }
+.habit-name { font-size: 15px; font-weight: 500; margin-bottom: 6px; }
+.habit-streak { font-size: 10px; letter-spacing: 1px; color: #6b6b6b; display: flex; align-items: center; gap: 6px; }
+.habit-right { display: flex; align-items: center; gap: 16px; }
+.habit-mini-dots { display: flex; gap: 3px; align-items: flex-end; height: 28px; }
+.habit-dot { width: 5px; border-radius: 2px; min-height: 4px; }
+.habit-pct { font-size: 18px; font-weight: 300; min-width: 44px; text-align: right; }
+
+/* --- Journal --- */
+.journal-layout { display: grid; grid-template-columns: 1.5fr 1fr; gap: 20px; align-items: start; }
+.journal-editor-card { padding: 24px; }
+.journal-editor-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+.journal-date-label { font-size: 12px; color: #8a8a8a; }
+.journal-textarea { width: 100%; min-height: 380px; background: transparent; border: 1px solid rgba(255,255,255,0.08); color: #fff; font-family: 'Inter', inherit; font-size: 14px; line-height: 1.8; padding: 16px; border-radius: 4px; resize: vertical; outline: none; box-sizing: border-box; transition: border 0.2s; }
+.journal-textarea:focus { border-color: rgba(255,255,255,0.25); }
+.journal-entry-card { margin-bottom: 12px; padding: 18px 20px; cursor: pointer; transition: background 0.2s; }
+.journal-entry-card:hover { background: rgba(255,255,255,0.04); }
+.journal-entry-date { font-size: 9px; letter-spacing: 1.5px; color: #6b6b6b; font-weight: 600; margin-bottom: 8px; text-transform: uppercase; }
+.journal-entry-preview { font-size: 13px; color: #8a8a8a; line-height: 1.6; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; margin: 0; }
+
+/* --- Goals --- */
+.goals-categories { display: flex; flex-direction: column; gap: 28px; }
+.goal-cat-label { font-size: 9px; letter-spacing: 2px; font-weight: 700; text-transform: uppercase; margin-bottom: 12px; padding-left: 4px; }
+.body-accent    { color: #59d195; }
+.mind-accent    { color: #c8c6c5; }
+.money-accent   { color: #f2a75f; }
+.general-accent { color: #78a0ff; }
+.goals-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 14px; }
+.goal-card { padding: 18px 20px; }
+.goal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.goal-title { font-size: 14px; font-weight: 500; }
+.goal-deadline { font-size: 9px; letter-spacing: 1px; color: #6b6b6b; font-weight: 600; }
+.goal-progress-label { display: flex; justify-content: space-between; font-size: 10px; color: #6b6b6b; margin-bottom: 6px; }
+
+/* --- Budget / Money --- */
+.budget-list { display: flex; flex-direction: column; gap: 16px; }
+.budget-row { display: flex; align-items: center; gap: 14px; }
+.budget-label { font-size: 12px; color: #8a8a8a; min-width: 110px; }
+.budget-bar-wrap { flex: 1; }
+.budget-spent { font-size: 12px; color: #fff; min-width: 72px; text-align: right; }
+.budget-total { font-size: 11px; color: #6b6b6b; min-width: 82px; }
+.stat-card { text-align: center; }
+.stat-big { font-size: 36px; font-weight: 300; margin: 12px 0 4px; }
+.stat-desc { font-size: 10px; letter-spacing: 1px; color: #6b6b6b; }
+
+/* --- Workouts --- */
+.workout-week-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+.workout-week-days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; }
+.workout-day { text-align: center; padding: 14px 8px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.08); }
+.workout-day.done     { background: rgba(89,209,149,0.06); border-color: rgba(89,209,149,0.2); }
+.workout-day.rest     { opacity: 0.4; }
+.workout-day.today    { border-color: rgba(255,255,255,0.45); background: rgba(255,255,255,0.05); }
+.workout-day.upcoming { opacity: 0.2; }
+.wd-name { font-size: 9px; letter-spacing: 1px; color: #6b6b6b; font-weight: 600; margin-bottom: 6px; }
+.wd-type { font-size: 12px; color: #fff; font-weight: 500; }
+.exercise-list { display: flex; flex-direction: column; gap: 4px; }
+.exercise-row { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.06); }
+.exercise-row:last-child { border-bottom: none; }
+.exercise-name { flex: 1; font-size: 13px; color: #fff; }
+.exercise-sets { font-size: 12px; color: #6b6b6b; min-width: 110px; }
+.exercise-done { font-size: 14px; color: #59d195; min-width: 20px; text-align: right; }
+.pr-date { font-size: 10px; color: #6b6b6b; }
+
+/* --- Sleep Tracker --- */
+.sleep-big { font-size: 48px; font-weight: 300; margin: 12px 0; letter-spacing: -1px; }
+.sleep-stats-row { display: flex; gap: 24px; }
+.sleep-stat-label { font-size: 9px; letter-spacing: 1.5px; color: #6b6b6b; font-weight: 600; margin-bottom: 4px; }
+.sleep-stat-val { font-size: 18px; }
+.sleep-log-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; }
+.sleep-log-item { text-align: center; padding: 14px 8px; border-radius: 4px; background: rgba(255,255,255,0.03); }
+.sleep-log-day { font-size: 9px; letter-spacing: 1px; color: #6b6b6b; margin-bottom: 6px; font-weight: 600; }
+.sleep-log-val { font-size: 14px; color: #fff; }
+.sleep-log-bar { height: 4px; background: rgba(89,209,149,0.2); border-radius: 2px; margin-top: 8px; }
+.sleep-log-bar-fill { height: 100%; background: #59d195; border-radius: 2px; }
+
+/* --- Weight Tracker --- */
+.weight-big { font-size: 52px; font-weight: 300; margin: 12px 0; }
+.weight-unit { font-size: 20px; color: #6b6b6b; }
+.weight-log-form { display: flex; flex-direction: column; gap: 8px; }
+.weight-input-group { display: flex; align-items: center; gap: 10px; }
+.weight-unit-label { font-size: 18px; color: #6b6b6b; }
+
+/* --- Nutrition --- */
+.nutrition-big { font-size: 48px; font-weight: 300; margin: 12px 0; }
+.macro-bars { display: flex; flex-direction: column; gap: 16px; margin-top: 8px; }
+.macro-item { display: flex; align-items: center; gap: 14px; }
+.macro-label { font-size: 10px; letter-spacing: 1px; color: #6b6b6b; font-weight: 600; min-width: 60px; }
+.macro-val { font-size: 11px; color: #8a8a8a; min-width: 90px; text-align: right; }
+.nutrition-meal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+.meal-list { display: flex; flex-direction: column; gap: 10px; }
+.meal-item { display: flex; align-items: center; gap: 14px; padding: 12px 14px; background: rgba(255,255,255,0.02); border-radius: 4px; transition: background 0.2s; }
+.meal-item:hover { background: rgba(255,255,255,0.04); }
+.meal-time { font-size: 11px; color: #6b6b6b; font-variant-numeric: tabular-nums; min-width: 38px; }
+.meal-name { flex: 1; font-size: 13px; color: #8a8a8a; }
+.meal-cals { font-size: 12px; color: #fff; font-weight: 500; }
+
+/* --- Settings --- */
+.settings-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.setting-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.06); gap: 16px; }
+.setting-row:last-child { border-bottom: none; }
+.setting-label { font-size: 12px; color: #8a8a8a; }
+.setting-value-tag { font-size: 10px; letter-spacing: 1px; color: #6b6b6b; font-weight: 600; border: 1px solid rgba(255,255,255,0.08); padding: 4px 10px; border-radius: 4px; }
