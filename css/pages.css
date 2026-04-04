@@ -465,11 +465,16 @@
 .wt-save-btn { background: #51df85; border: none; color: #000; padding: 14px; border-radius: 8px; font-weight: 600; font-size: 13px; cursor: pointer; transition: all 0.2s; margin-top: 6px; }
 .wt-save-btn:hover { background: #5ff597; }
 
-.wt-log-card { background: #131415; border-radius: 12px; padding: 24px; border: 1px solid rgba(255,255,255,0.04); display: flex; flex-direction: column; gap: 20px; flex: 1; }
-.wt-keypad-display { font-size: 28px; font-weight: 300; color: #fff; text-align: center; min-height: 40px; padding-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.05); letter-spacing: 1px; }
-.wt-keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; flex: 1; min-height: 240px; }
-.wt-key { background: #1a1b1d; border: 1px solid rgba(255,255,255,0.02); color: #fff; border-radius: 12px; font-size: 24px; font-weight: 400; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.1s; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
-.wt-key:active { background: #25272a; transform: scale(0.96); box-shadow: none; }
-.wt-key.wt-key-action { color: #8a8a8a; font-size: 18px; }
-.wt-update-btn { background: #fff; color: #000; padding: 16px; border: none; border-radius: 8px; font-size: 13px; font-weight: 700; width: 100%; cursor: pointer; transition: opacity 0.2s; letter-spacing: 0.5px; }
+.wt-log-card { background: #1c1c1c; border-radius: 4px; padding: 24px; border: none; display: flex; flex-direction: column; gap: 24px; flex: 1; margin-top: 0; }
+.wt-log-header-row { display: flex; justify-content: space-between; align-items: flex-end; }
+.wt-log-label { font-size: 11px; font-weight: 600; letter-spacing: 2px; color: #a0a0a0; text-transform: uppercase; margin-bottom: 4px; }
+.wt-log-val-display { font-size: 36px; font-weight: 600; color: #fff; line-height: 1; }
+.wt-log-unit { font-size: 12px; font-weight: 600; color: #8a8a8a; letter-spacing: 1px; margin-left: 2px; text-transform: uppercase; }
+
+.wt-keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; flex: 1; min-height: 260px; }
+.wt-key { background: #2a2a2a; border: none; color: #fff; border-radius: 2px; font-size: 16px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.1s; }
+.wt-key:active { background: #3a3a3a; }
+.wt-key.wt-key-action { color: #a0a0a0; font-size: 20px; }
+
+.wt-update-btn { background: #fff; color: #000; padding: 18px; border: none; border-radius: 2px; font-size: 13px; font-weight: 700; width: 100%; cursor: pointer; transition: opacity 0.2s; letter-spacing: 1.5px; text-transform: uppercase; }
 .wt-update-btn:hover { opacity: 0.9; }

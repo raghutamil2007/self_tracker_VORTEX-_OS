@@ -332,15 +332,19 @@ function initWeightChart() {
 
     document.querySelectorAll('.wt-key').forEach(key => {
         key.addEventListener('click', (e) => {
-            const val = e.target.textContent;
-            if (val === 'C') {
-                currentInput = "";
-            } else if (val === '.') {
-                if (!currentInput.includes('.')) currentInput += val;
+            const btn = e.currentTarget;
+            if (btn.id === 'wt-key-clear') {
+                if (currentInput === "74.0") currentInput = ""; // if it's the initial string, clear all
+                else currentInput = currentInput.slice(0, -1);
             } else {
-                if (currentInput === "0" && val !== "0") currentInput = val;
-                else if (currentInput === "74.0") currentInput = val; // clear initial dummy val
-                else if (currentInput.length < 5) currentInput += val;
+                const val = btn.textContent.trim();
+                if (val === '.') {
+                    if (!currentInput.includes('.')) currentInput += val;
+                } else if (val) {
+                    if (currentInput === "0" && val !== "0") currentInput = val;
+                    else if (currentInput === "74.0") currentInput = val; // clear initial dummy val
+                    else if (currentInput.length < 5) currentInput += val;
+                }
             }
             if (keypadDisplay) keypadDisplay.textContent = currentInput || "0";
         });
