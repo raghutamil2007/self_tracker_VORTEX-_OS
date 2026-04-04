@@ -223,6 +223,19 @@ function initHabits() {
             container.appendChild(wrap);
         }
     });
+
+    // Add click listeners for Habit log buttons
+    const habitLogBtns = document.querySelectorAll('.habit-log-btn');
+    habitLogBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            if (this.disabled) return;
+            this.textContent = 'Logged ✓';
+            this.style.background = 'rgba(89, 209, 149, 0.1)';
+            this.style.color = '#59d195';
+            this.style.borderColor = 'rgba(89, 209, 149, 0.3)';
+            this.disabled = true;
+        });
+    });
 }
 
 /* ======== Journal ======== */
@@ -508,6 +521,19 @@ function initGoalsAdvanced() {
             }
         });
     }
+
+    // 4. Short Term Log Buttons
+    const stLogBtns = document.querySelectorAll('.st-log-btn');
+    stLogBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            if (this.disabled) return;
+            this.textContent = 'Logged ✓';
+            this.style.background = 'rgba(89, 209, 149, 0.1)';
+            this.style.color = '#59d195';
+            this.style.borderColor = 'rgba(89, 209, 149, 0.3)';
+            this.disabled = true;
+        });
+    });
 }
 
 // Call on load
