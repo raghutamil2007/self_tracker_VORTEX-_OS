@@ -310,10 +310,31 @@ document.addEventListener('DOMContentLoaded', () => {
     initMindEngine();
 });
 
+/* ======== Global Helpers ======== */
+function getScoreClass(pct) {
+    if (pct < 50) return 'missed';
+    if (pct <= 90) return 'hit';
+    return 'perfect';
+}
+
 /* ======================================================
    MIND ENGINE MODULE
    ====================================================== */
 function initMindEngine() {
+
+    // Reset tasks logic for a new day
+    const lastLogged = localStorage.getItem('mind-last-date');
+    const todayStr = new Date().toDateString();
+    if (lastLogged && lastLogged !== todayStr) {
+        localStorage.removeItem('mind-tasks-list');
+        setTimeout(() => {
+            document.querySelectorAll('#mind-main-tasks input, #mind-secondary-tasks input').forEach(cb => {
+                cb.checked = false;
+            });
+            recalcMindScore();
+        }, 100);
+    }
+    localStorage.setItem('mind-last-date', todayStr);
 
     // ------- Calendar Data -------
     // 0=none, 1=missed, 2=hit, 3=perfect
@@ -356,6 +377,7 @@ function initMindEngine() {
             }
 
             if(d === TODAY_DAY) {
+                cell.id = `mind-cal-day-today`;
                 cell.style.outline = '1.5px solid rgba(255,255,255,0.7)';
                 cell.style.outlineOffset = '2px';
             }
@@ -399,6 +421,49 @@ function initMindEngine() {
     buildConsistencyBars();
 
     // ------- Live Task Scoring -------
+    const saveMindTasks = () => {
+        const tasks = [];
+        document.querySelectorAll('#mind-main-tasks .task-item, #mind-secondary-tasks .task-item').forEach(item => {
+            const textEl = item.querySelector('.task-text');
+            const tagEl = item.querySelector('.task-tag');
+            const inputEl = item.querySelector('input');
+            if (textEl && tagEl && inputEl) {
+                tasks.push({
+                    text: textEl.innerText,
+                    tag: tagEl.innerText,
+                    checked: inputEl.checked,
+                    isMain: item.closest('#mind-main-tasks') !== null
+                });
+            }
+        });
+        localStorage.setItem('mind-tasks-list', JSON.stringify(tasks));
+    };
+
+    const loadMindTasks = () => {
+        const saved = localStorage.getItem('mind-tasks-list');
+        if (!saved) return;
+        const tasks = JSON.parse(saved);
+        const mainList = document.getElementById('mind-main-tasks');
+        const secList = document.getElementById('mind-secondary-tasks');
+        if (!mainList || !secList) return;
+
+        mainList.innerHTML = '';
+        secList.innerHTML = '';
+
+        tasks.forEach(t => {
+            const label = document.createElement('label');
+            label.className = 'task-item';
+            label.innerHTML = `
+                <input type="checkbox" ${t.checked ? 'checked' : ''}>
+                <span class="task-text">${t.text}</span>
+                <span class="task-tag">${t.tag}</span>
+            `;
+            label.querySelector('input').addEventListener('change', recalcMindScore);
+            if (t.isMain) mainList.appendChild(label);
+            else secList.appendChild(label);
+        });
+    };
+
     function recalcMindScore() {
         const mainCheckboxes = document.querySelectorAll('#mind-main-tasks input[type="checkbox"]');
         const secCheckboxes = document.querySelectorAll('#mind-secondary-tasks input[type="checkbox"]');
@@ -410,10 +475,24 @@ function initMindEngine() {
         const earnedPoints = mainDone + secDone;
         const pct = totalPoints > 0 ? Math.round((earnedPoints / totalPoints) * 100) : 0;
 
-        document.getElementById('mind-day-score').innerText = pct + '%';
-        document.getElementById('mind-score-fill').style.width = pct + '%';
-        document.getElementById('mind-score-sub').innerText =
-            `Main ${mainDone}/${mainTotal} · Secondary ${secDone}/${secTotal} · Points ${earnedPoints}/${totalPoints}`;
+        const scoreEl = document.getElementById('mind-day-score');
+        const fillEl = document.getElementById('mind-score-fill');
+        if (scoreEl) scoreEl.innerText = pct + '%';
+        if (fillEl) fillEl.style.width = pct + '%';
+        
+        const subEl = document.getElementById('mind-score-sub');
+        if (subEl) {
+            subEl.innerText = `Main ${mainDone}/${mainTotal} · Secondary ${secDone}/${secTotal} · Points ${earnedPoints}/${totalPoints}`;
+        }
+
+        // Live update calendar color
+        const todayCell = document.getElementById(`mind-cal-day-today`);
+        if (todayCell) {
+            todayCell.classList.remove('missed', 'hit', 'perfect');
+            todayCell.classList.add(getScoreClass(pct));
+        }
+
+        saveMindTasks();
     }
 
     // Attach to all existing checkboxes
@@ -469,6 +548,9 @@ function initMindEngine() {
 
     makeAddTaskHandler('mind-main-tasks', 'MAIN', 'mind-add-main-btn');
     makeAddTaskHandler('mind-secondary-tasks', 'SECONDARY', 'mind-add-secondary-btn');
+
+    // Load saved tasks
+    loadMindTasks();
 
     // ------- Engine Sub-Tab Switching -------
     document.querySelectorAll('#view-mind-engine .engine-tab').forEach(tab => {
@@ -609,5 +691,8 @@ function initMindEngine() {
     }
 
     renderTimer();
+
+    // Set initial state
+    recalcMindScore();
 }
 

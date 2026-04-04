@@ -6,12 +6,46 @@
    ====================================================== */
 
 document.addEventListener('DOMContentLoaded', () => {
+    // ---- GLOBAL DAILY AUTO-UPDATER ---- //
+    // If the date rolls over while the dashboard is open, it automatically forces a silent reload to rebuild calendars and scores!
+    const initDate = new Date().toDateString();
+    setInterval(() => {
+        if (new Date().toDateString() !== initDate) {
+            window.location.reload();
+        }
+    }, 60000); // Check every 60 seconds
+
+    // ---- GLOBAL DASHBOARD DATE SETTER ---- //
+    // Updates sidebar and global dashboard clocks not caught by engine modules
+    const dGlobal = new Date();
+    const navDate = document.getElementById('nav-date-display');
+    if (navDate) {
+        const mn = dGlobal.toLocaleString('default', { month: 'short' });
+        navDate.innerText = `${String(dGlobal.getDate()).padStart(2, '0')} ${mn} ${dGlobal.getFullYear()}`;
+    }
+    
+    // Some widgets use .day-num / .day-month within class "date-widget"
+    document.querySelectorAll('.date-widget, .calendar-widget').forEach(widget => {
+        const dNum = widget.querySelector('.day-num');
+        const dMonth = widget.querySelector('.day-month');
+        const dYear = widget.querySelector('.day-year');
+        if (dNum) dNum.innerText = String(dGlobal.getDate()).padStart(2, '0');
+        if (dMonth) dMonth.innerText = dGlobal.toLocaleString('default', { month: 'short' }).toUpperCase();
+        if (dYear) dYear.innerText = dGlobal.getFullYear();
+    });
+
+    initEngineModule('mind',    [3,3,3,2,1,2,3,3,3,2,2,3,2,1,2,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]);
+    initEngineModule('body',    [1,1,2,2,3,3,2,1,3,2,1,3,1,2,1,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]);
     initEngineModule('money',   [1,2,2,0,0,3,2,3,3,2,1,3,2,3,1,2,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0]);
     initEngineModule('general', [0,1,0,0,0,2,2,1,3,2,0,1,2,1,0,1,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0]);
     initCommandCenter();
     initHabits();
     initJournal();
+    initEngineSubTabs('view-mind-engine');
+    initEngineSubTabs('view-body-engine');
     initEngineSubTabs('view-money-engine');
+    initEngineTasks('mind');
+    initEngineTasks('body');
     initEngineTasks('money');
     initEngineTasks('general');
     initSleepTracker();
@@ -20,10 +54,33 @@ document.addEventListener('DOMContentLoaded', () => {
     initHydration();
 });
 
+/* ======== Global Helpers ======== */
+function getScoreClass(pct) {
+    if (pct < 50) return 'missed';
+    if (pct <= 90) return 'hit';
+    return 'perfect';
+}
+
 /* ======== Generic Calendar+Consistency for Money / General ======== */
 function initEngineModule(engine, calData) {
-    let year = 2026, month = 3;
-    const TODAY = 17;
+    let d = new Date();
+    let year = d.getFullYear(), month = d.getMonth() + 1;
+    const TODAY = d.getDate();
+
+    // Reset tasks logic for a new day
+    const lastLogged = localStorage.getItem(`${engine}-last-date`);
+    const todayStr = d.toDateString();
+    if (lastLogged && lastLogged !== todayStr) {
+        localStorage.removeItem(`${engine}-tasks-list`); // Clear saved tasks for new day
+        setTimeout(() => { // Ensure DOM has processed default HTML values
+            document.querySelectorAll(`#${engine}-main-tasks input, #${engine}-secondary-tasks input`).forEach(cb => {
+                cb.checked = false;
+            });
+            const firstTask = document.querySelector(`#${engine}-main-tasks input`);
+            if (firstTask) firstTask.dispatchEvent(new Event('change'));
+        }, 100);
+    }
+    localStorage.setItem(`${engine}-last-date`, todayStr);
 
     const buildCal = () => {
         const grid = document.getElementById(`${engine}-calendar-grid`);
@@ -49,6 +106,7 @@ function initEngineModule(engine, calData) {
                 else if (lvl === 3) cell.classList.add('perfect');
             }
             if (d === TODAY) {
+                cell.id = `${engine}-cal-day-today`;
                 cell.style.outline = '1.5px solid rgba(255,255,255,0.7)';
                 cell.style.outlineOffset = '2px';
             }
@@ -62,6 +120,18 @@ function initEngineModule(engine, calData) {
     };
 
     buildCal();
+
+    // Dynamic Header Dates
+    const dtStr = `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth()+1).padStart(2, '0')}/${d.getFullYear()}`;
+    const isoDate = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    const dateDisplay = document.getElementById(`${engine}-date-display`);
+    if (dateDisplay) dateDisplay.innerText = isoDate;
+    const selectedDate = document.getElementById(`${engine}-selected-date`);
+    if (selectedDate) selectedDate.innerText = dtStr;
+    const mainTaskDate = document.getElementById(`${engine}-main-task-date`);
+    if (mainTaskDate) mainTaskDate.innerText = isoDate;
+    const secTaskDate = document.getElementById(`${engine}-sec-task-date`);
+    if (secTaskDate) secTaskDate.innerText = isoDate;
 
     const prev = document.getElementById(`${engine}-cal-prev`);
     const next = document.getElementById(`${engine}-cal-next`);
@@ -99,7 +169,60 @@ function initEngineTasks(engine) {
         if (scoreEl) scoreEl.innerText = pct + '%';
         if (fillEl)  fillEl.style.width = pct + '%';
         if (subEl)   subEl.innerText = `Main ${md}/${mt} · Secondary ${sd}/${st} · Points ${earned}/${total}`;
+
+        // Live update calendar color
+        const todayCell = document.getElementById(`${engine}-cal-day-today`);
+        if (todayCell) {
+            todayCell.classList.remove('missed', 'hit', 'perfect');
+            todayCell.classList.add(getScoreClass(pct));
+        }
+
+        // Save progress to localStorage
+        saveTasks(engine);
     };
+
+    const saveTasks = (engine) => {
+        const tasks = [];
+        document.querySelectorAll(`#${engine}-main-tasks .task-item, #${engine}-secondary-tasks .task-item`).forEach(item => {
+            tasks.push({
+                text: item.querySelector('.task-text').innerText,
+                tag: item.querySelector('.task-tag').innerText,
+                checked: item.querySelector('input').checked,
+                isMain: item.closest(`#${engine}-main-tasks`) !== null
+            });
+        });
+        localStorage.setItem(`${engine}-tasks-list`, JSON.stringify(tasks));
+    };
+
+    const loadTasks = (engine) => {
+        const saved = localStorage.getItem(`${engine}-tasks-list`);
+        if (!saved) return;
+        const tasks = JSON.parse(saved);
+        const mainList = document.getElementById(`${engine}-main-tasks`);
+        const secList = document.getElementById(`${engine}-secondary-tasks`);
+        if (!mainList || !secList) return;
+
+        mainList.innerHTML = '';
+        secList.innerHTML = '';
+
+        tasks.forEach(t => {
+            const label = document.createElement('label');
+            label.className = 'task-item';
+            label.innerHTML = `<input type="checkbox" ${t.checked ? 'checked' : ''}><span class="task-text">${t.text}</span><span class="task-tag">${t.tag}</span><div class="task-indiv-complete-btn">COMPLETE</div>`;
+            label.querySelector('input').addEventListener('change', recalc);
+            if (t.isMain) mainList.appendChild(label);
+            else secList.appendChild(label);
+        });
+    };
+
+    document.querySelectorAll(`#${engine}-main-tasks .task-item, #${engine}-secondary-tasks .task-item`).forEach(item => {
+        if (!item.querySelector('.task-indiv-complete-btn')) {
+            const btn = document.createElement('div');
+            btn.className = 'task-indiv-complete-btn';
+            btn.innerText = 'COMPLETE';
+            item.appendChild(btn);
+        }
+    });
 
     document.querySelectorAll(`#${engine}-main-tasks input, #${engine}-secondary-tasks input`).forEach(cb => {
         cb.addEventListener('change', recalc);
@@ -126,7 +249,7 @@ function initEngineTasks(engine) {
                 const list = document.getElementById(listId);
                 const label = document.createElement('label');
                 label.className = 'task-item';
-                label.innerHTML = `<input type="checkbox"><span class="task-text">${name}</span><span class="task-tag">${tag}</span>`;
+                label.innerHTML = `<input type="checkbox"><span class="task-text">${name}</span><span class="task-tag">${tag}</span><div class="task-indiv-complete-btn">COMPLETE</div>`;
                 label.querySelector('input').addEventListener('change', recalc);
                 list.appendChild(label);
                 form.remove();
@@ -139,6 +262,12 @@ function initEngineTasks(engine) {
 
     makeAddBtn(`${engine}-main-tasks`,      'MAIN',      `${engine}-add-main-btn`);
     makeAddBtn(`${engine}-secondary-tasks`, 'SECONDARY', `${engine}-add-secondary-btn`);
+
+    // Load saved tasks before initial recalc
+    loadTasks(engine);
+
+    // Set initial state
+    recalc();
 }
 
 /* ======== Engine Sub-Tab Switcher ======== */
@@ -265,7 +394,34 @@ function initJournal() {
                           <p class="journal-entry-preview">${text.substring(0, 180)}${text.length > 180 ? '...' : ''}</p>`;
         list.insertBefore(card, list.firstChild);
         textarea.value = '';
+        saveJournal();
     });
+
+    const saveJournal = () => {
+        const entries = [];
+        document.querySelectorAll('.journal-entry-card').forEach(card => {
+            entries.push({
+                date: card.querySelector('.journal-entry-date').innerText,
+                text: card.querySelector('.journal-entry-preview').innerText
+            });
+        });
+        localStorage.setItem('journal-entries', JSON.stringify(entries));
+    };
+
+    const loadJournal = () => {
+        const saved = localStorage.getItem('journal-entries');
+        if (!saved) return;
+        const entries = JSON.parse(saved);
+        entries.forEach(e => {
+            const card = document.createElement('div');
+            card.className = 'card journal-entry-card';
+            card.innerHTML = `<div class="journal-entry-date">${e.date}</div>
+                              <p class="journal-entry-preview">${e.text}</p>`;
+            list.appendChild(card); // oldest first or just rebuild list
+        });
+    };
+
+    loadJournal();
 }
 
 /* ======== Sleep Log ======== */
@@ -289,61 +445,64 @@ function initSleepLog() {
 /* ======== Weight Chart ======== */
 function initWeightChart() {
     const canvas = document.getElementById('weightTrendChart');
-    if (canvas) {
-        const ctx = canvas.getContext('2d');
-        const gradient = ctx.createLinearGradient(0, 0, 0, 180);
-        gradient.addColorStop(0, 'rgba(89, 209, 149, 0.4)');
-        gradient.addColorStop(1, 'rgba(89, 209, 149, 0.0)');
+    if (!canvas) return;
+    
+    let weightHistory = [82.0, 80.1, 77.5, 75.8, 74.0];
+    const saved = localStorage.getItem('weight-history');
+    if (saved) weightHistory = JSON.parse(saved);
 
-        new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: ['Jan','Feb','Mar W1','Mar W2','Mar W3'],
-                datasets: [{
-                    label: 'Weight',
-                    data: [82.0, 80.1, 77.5, 75.8, 74.0],
-                    borderColor: '#59d195',
-                    backgroundColor: gradient,
-                    borderWidth: 2,
-                    pointRadius: 4,
-                    pointBackgroundColor: '#fff',
-                    pointBorderColor: '#59d195',
-                    pointBorderWidth: 2,
-                    fill: true,
-                    tension: 0.4
-                }]
+    const ctx = canvas.getContext('2d');
+    const gradient = ctx.createLinearGradient(0, 0, 0, 180);
+    gradient.addColorStop(0, 'rgba(89, 209, 149, 0.4)');
+    gradient.addColorStop(1, 'rgba(89, 209, 149, 0.0)');
+
+    let chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: ['Jan','Feb','Mar W1','Mar W2','Mar W3', 'Today'].slice(-weightHistory.length),
+            datasets: [{
+                label: 'Weight',
+                data: weightHistory,
+                borderColor: '#59d195',
+                backgroundColor: gradient,
+                borderWidth: 2,
+                pointRadius: 4,
+                pointBackgroundColor: '#fff',
+                pointBorderColor: '#59d195',
+                pointBorderWidth: 2,
+                fill: true,
+                tension: 0.4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+                x: { display: false },
+                y: { display: false, min: Math.min(...weightHistory) - 5, max: Math.max(...weightHistory) + 5 }
             },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: { legend: { display: false } },
-                scales: {
-                    x: { display: false },
-                    y: { display: false, min: 68, max: 85 }
-                },
-                layout: { padding: { left: 10, right: 10, top: 10, bottom: 10 } }
-            }
-        });
-    }
+            layout: { padding: { left: 10, right: 10, top: 10, bottom: 10 } }
+        }
+    });
 
     // Keypad Logic
-    let currentInput = "74.0";
+    let currentInput = weightHistory[weightHistory.length - 1].toFixed(1);
     const keypadDisplay = document.getElementById('wt-keypad-display');
     const displayVal = document.getElementById('wt-display-val');
+    if (displayVal) displayVal.textContent = currentInput;
 
     document.querySelectorAll('.wt-key').forEach(key => {
         key.addEventListener('click', (e) => {
             const btn = e.currentTarget;
             if (btn.id === 'wt-key-clear') {
-                if (currentInput === "74.0") currentInput = ""; // if it's the initial string, clear all
-                else currentInput = currentInput.slice(0, -1);
+                currentInput = currentInput.slice(0, -1);
             } else {
                 const val = btn.textContent.trim();
                 if (val === '.') {
                     if (!currentInput.includes('.')) currentInput += val;
                 } else if (val) {
                     if (currentInput === "0" && val !== "0") currentInput = val;
-                    else if (currentInput === "74.0") currentInput = val; // clear initial dummy val
                     else if (currentInput.length < 5) currentInput += val;
                 }
             }
@@ -354,10 +513,17 @@ function initWeightChart() {
     const updateBtn = document.getElementById('wt-update-btn');
     if (updateBtn) {
         updateBtn.addEventListener('click', () => {
-            if (currentInput && displayVal) {
-                displayVal.textContent = currentInput;
-                // mock adding to chart/etc
-                currentInput = "";
+            const newVal = parseFloat(currentInput);
+            if (!isNaN(newVal) && displayVal) {
+                displayVal.textContent = newVal.toFixed(1);
+                weightHistory.push(newVal);
+                if (weightHistory.length > 10) weightHistory.shift();
+                localStorage.setItem('weight-history', JSON.stringify(weightHistory));
+                
+                chart.data.datasets[0].data = weightHistory;
+                chart.data.labels = weightHistory.map((_, i) => i);
+                chart.update();
+
                 if (keypadDisplay) keypadDisplay.textContent = "Logged!";
                 setTimeout(() => {
                     if (keypadDisplay) keypadDisplay.textContent = displayVal.textContent;
@@ -586,7 +752,40 @@ function initGoalsAdvanced() {
         });
     }
 
-    // 4. Short Term Log Buttons
+    // 4. Persistence & Daily Reset
+    const lastDate = localStorage.getItem('goals-last-date');
+    const today = new Date().toDateString();
+    if (lastDate && lastDate !== today) {
+        localStorage.removeItem('goals-logged-list');
+    }
+    localStorage.setItem('goals-last-date', today);
+
+    const saveGoalLogs = () => {
+        const logged = [];
+        document.querySelectorAll('.st-log-btn').forEach((btn, idx) => {
+            if (btn.disabled) logged.push(idx);
+        });
+        localStorage.setItem('goals-logged-list', JSON.stringify(logged));
+    };
+
+    const loadGoalLogs = () => {
+        const saved = localStorage.getItem('goals-logged-list');
+        if (!saved) return;
+        const logged = JSON.parse(saved);
+        const btns = document.querySelectorAll('.st-log-btn');
+        logged.forEach(idx => {
+            if (btns[idx]) {
+                const btn = btns[idx];
+                btn.textContent = 'Logged ✓';
+                btn.style.background = 'rgba(89, 209, 149, 0.1)';
+                btn.style.color = '#59d195';
+                btn.style.borderColor = 'rgba(89, 209, 149, 0.3)';
+                btn.disabled = true;
+            }
+        });
+    };
+
+    // 5. Short Term Log Buttons
     const stLogBtns = document.querySelectorAll('.st-log-btn');
     stLogBtns.forEach(btn => {
         btn.addEventListener('click', function() {
@@ -596,16 +795,16 @@ function initGoalsAdvanced() {
             this.style.color = '#59d195';
             this.style.borderColor = 'rgba(89, 209, 149, 0.3)';
             this.disabled = true;
+            saveGoalLogs();
         });
     });
-}
 
-// Call on load
-initGoalsAdvanced();
+    loadGoalLogs();
+}
 
 /* ======== Hydration Index ======== */
 function initHydration() {
-    let currentLiters = 2.0;
+    let currentLiters = 0.0;
     let maxLiters = 3.5;
     const step = 0.5;
     
@@ -647,13 +846,28 @@ function initHydration() {
             addBtn.style.color = '#fff';
         }
     };
-    
+
+    const saveHydro = () => {
+        localStorage.setItem('hydration-data', JSON.stringify({ currentLiters, maxLiters }));
+    };
+
+    const loadHydro = () => {
+        const saved = localStorage.getItem('hydration-data');
+        if (saved) {
+            const data = JSON.parse(saved);
+            currentLiters = data.currentLiters || 0;
+            maxLiters = data.maxLiters || 3.5;
+        }
+    };
+
+    loadHydro();
     updateUI();
     
     addBtn.addEventListener('click', () => {
         if (currentLiters + step <= maxLiters) {
             currentLiters += step;
             updateUI();
+            saveHydro();
         }
     });
 
@@ -673,6 +887,7 @@ function initHydration() {
             resetBtn.addEventListener('click', () => {
                 currentLiters = 0.0;
                 updateUI();
+                saveHydro();
                 popover.style.display = 'none';
             });
         }
@@ -684,6 +899,7 @@ function initHydration() {
                     maxLiters = newMax;
                     if (currentLiters > maxLiters) currentLiters = maxLiters;
                     updateUI();
+                    saveHydro();
                 }
                 popover.style.display = 'none';
             });
