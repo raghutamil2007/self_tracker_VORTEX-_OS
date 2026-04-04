@@ -16,6 +16,7 @@
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/pages.css">
     <link rel="stylesheet" href="css/money-planner.css">
+    <link rel="stylesheet" href="css/weight-tracker.css">
 </head>
 <body>
     <div class="app-container">
@@ -1363,72 +1364,184 @@
 
             <!-- =============================== WEIGHT TRACKER =============================== -->
             <div id="view-weight" class="view" style="display:none;">
-                <header class="view-header">
-                    <h1 class="title">PREMIUM WEIGHT TRACKER</h1>
-                    <p class="description">Your body composition journey.</p>
+                <header class="view-header" style="display:flex; justify-content:space-between; align-items:flex-start;">
+                    <div>
+                        <h1 class="title">WEIGHT TRACKER</h1>
+                        <p class="description">Body Composition Protocol</p>
+                    </div>
+                    <div class="wt-header-actions">
+                        <button class="add-task-submit" id="wt-log-btn" style="border-radius:24px; padding:8px 16px;">
+                            <i class="ph ph-plus"></i> LOG WEIGHT
+                        </button>
+                        <button class="wt-action-btn" id="wt-settings-btn" title="Settings" style="background:var(--surface); border:1px solid var(--border); border-radius:50%; width:40px; height:40px; display:flex; align-items:center; justify-content:center;">
+                            <i class="ph ph-gear" style="font-size:20px;"></i>
+                        </button>
+                    </div>
                 </header>
-                <div class="wt-dashboard-grid">
-                    <!-- LEFT COLUMN -->
-                    <div class="wt-col-left">
-                        <div class="card wt-overview-card">
-                            <div class="card-header" style="color: rgba(255,255,255,0.4);">WEIGHT OVERVIEW</div>
-                            <div class="wt-overview-big"><span id="wt-display-val">74.0</span> <span class="weight-unit">kg</span></div>
-                            <div class="wt-overview-diff" style="color:var(--accent-green);"><i class="ph ph-arrow-down"></i> -0.5 kg this week</div>
+
+                <div class="wt-grid">
+                    <!-- Current Weight Card -->
+                    <div class="wt-card">
+                        <div class="card-header" style="margin-bottom:0; color:rgba(255,255,255,0.4);">CURRENT</div>
+                        <div class="wt-huge-number" id="wt-current-val">—</div>
+                        <div class="wt-row" style="gap:8px;">
+                            <span class="wt-unit" id="wt-current-unit">kg</span>
+                            <span class="wt-sub-text" id="wt-current-sub"></span>
                         </div>
-                        <div class="card wt-trend-card">
-                            <div class="card-header" style="color: rgba(255,255,255,0.4);">WEIGHT TREND</div>
-                            <div class="chart-container wt-trend-chart-container">
-                                <canvas id="weightTrendChart"></canvas>
+                        <div id="wt-current-delta" style="margin-top:12px; font-weight:600; padding:6px 12px; border-radius:12px; display:none;"></div>
+                    </div>
+
+                    <!-- Goal Card -->
+                    <div class="wt-card" style="position:relative;">
+                        <div class="card-header" style="margin-bottom:0; color:rgba(255,255,255,0.4);">GOAL</div>
+                        
+                        <div id="wt-no-goal-msg" class="wt-empty-state" style="padding:10px;">
+                            <p>No goal set.<br>Use settings (⚙) to set a goal.</p>
+                        </div>
+                        
+                        <div id="wt-goal-ring" class="wt-col" style="display:none; align-items:center; flex:1;">
+                            <div class="wt-ring-container" id="wt-ring-wrap">
+                                <svg class="wt-ring-svg" viewBox="0 0 100 100" width="100" height="100">
+                                    <circle class="wt-ring-bg" cx="50" cy="50" r="47"></circle>
+                                    <circle class="wt-ring-fill" id="wt-ring-fill" cx="50" cy="50" r="47"></circle>
+                                </svg>
+                                <div class="wt-ring-text" id="wt-ring-pct">0%</div>
                             </div>
+                            <div class="wt-sub-text" id="wt-goal-to-go" style="margin-top:8px; font-weight:600; color:var(--text-primary);"></div>
+                            <div class="wt-sub-text" id="wt-goal-deadline" style="margin-top:4px;"></div>
+                            <div class="wt-sub-text" id="wt-projected-date" style="margin-top:4px; font-style:italic;"></div>
                         </div>
                     </div>
 
-                    <!-- MIDDLE COLUMN -->
-                    <div class="wt-col-mid">
-                        <div class="card wt-progress-card">
-                            <div class="wt-progress-header">
-                                <div class="card-header" style="margin-bottom:0; color: rgba(255,255,255,0.4);">PROGRESS TO GOAL</div>
-                                <button class="wt-options-btn" id="wt-options-btn"><i class="ph ph-dots-three-vertical"></i></button>
-                            </div>
-                            <!-- Circular Progress Ring inside the base card -->
-                            <div class="wt-progress-ring-container">
-                                <div class="wt-ring" style="--pct: 70%"><span>70%</span><div class="wt-ring-sub">To Goal</div></div>
-                            </div>
-                            
-                            <!-- Overlay Popover / Settings form -->
-                            <div class="wt-popover" id="wt-popover" style="display:none;">
-                                <div class="wt-input-row">
-                                    <label>Starting Weight</label>
-                                    <div class="wt-input-wrap"><input type="number" id="wt-settings-start" value="82.0"><span>kg</span></div>
-                                </div>
-                                <div class="wt-input-row">
-                                    <label>Target Weight</label>
-                                    <div class="wt-input-wrap"><input type="number" id="wt-settings-target" value="70.0"><span>kg</span></div>
-                                </div>
-                                <div class="wt-input-row">
-                                    <label>Target Date</label>
-                                    <input type="date" id="wt-settings-date" value="2023-12-31">
-                                </div>
-                                <button class="wt-save-btn" id="wt-save-btn">Save Changes</button>
-                            </div>
+                    <!-- BMI Gauge Card -->
+                    <div class="wt-card">
+                        <div class="card-header" style="margin-bottom:0; color:rgba(255,255,255,0.4);">BMI</div>
+                        <div class="wt-bmi-text"><span id="wt-bmi-number">—</span> <span id="wt-bmi-label" style="font-size:14px; font-weight:500;"></span></div>
+                        <div class="wt-gauge-container">
+                            <svg id="wt-gauge-svg" viewBox="0 0 140 80" width="100%" height="100%"></svg>
                         </div>
                     </div>
+                </div>
 
-                    <!-- RIGHT COLUMN -->
-                    <div class="wt-col-right">
-                        <div class="card wt-log-card">
-                            <div class="wt-log-header-row">
-                                <span class="wt-log-label">LOG TODAY</span>
-                                <span class="wt-log-val-display"><span id="wt-keypad-display">74.0</span> <span class="wt-log-unit">KG</span></span>
-                            </div>
-                            <div class="wt-keypad" id="wt-keypad">
-                                <button class="wt-key">1</button><button class="wt-key">2</button><button class="wt-key">3</button>
-                                <button class="wt-key">4</button><button class="wt-key">5</button><button class="wt-key">6</button>
-                                <button class="wt-key">7</button><button class="wt-key">8</button><button class="wt-key">9</button>
-                                <button class="wt-key">.</button><button class="wt-key">0</button><button class="wt-key wt-key-action" id="wt-key-clear"><i class="ph-fill ph-backspace"></i></button>
-                            </div>
-                            <button class="wt-update-btn" id="wt-update-btn">LOG WEIGHT</button>
+                <!-- Weight Trend Chart -->
+                <div class="wt-card" style="margin-bottom:24px;">
+                    <div class="wt-row" style="justify-content:space-between; margin-bottom:16px;">
+                        <span class="card-header" style="margin-bottom:0; color:rgba(255,255,255,0.4);">WEIGHT TREND</span>
+                        <div class="wt-chart-toggles">
+                            <button class="wt-time-tab active" data-tab="7D" style="background:var(--surface-light); border:1px solid var(--border); color:var(--text-secondary); padding:4px 10px; border-radius:12px; cursor:pointer;">7D</button>
+                            <button class="wt-time-tab" data-tab="30D" style="background:var(--surface-light); border:1px solid var(--border); color:var(--text-secondary); padding:4px 10px; border-radius:12px; cursor:pointer;">30D</button>
+                            <button class="wt-time-tab" data-tab="ALL" style="background:var(--surface-light); border:1px solid var(--border); color:var(--text-secondary); padding:4px 10px; border-radius:12px; cursor:pointer;">ALL</button>
                         </div>
+                    </div>
+                    <div class="chart-container" style="height:250px;">
+                        <canvas id="wt-trend-chart"></canvas>
+                        <div id="wt-chart-empty" class="wt-empty-state" style="display:none; height:100%; align-items:center; justify-content:center;">
+                            <p>Not enough data to display trend.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Insights Grid -->
+                <div class="wt-stats-grid" style="grid-template-columns: repeat(5, 1fr);">
+                    <div class="wt-stat-card">
+                        <div class="wt-stat-label">AVG WEEKLY</div>
+                        <div class="wt-stat-val" id="wt-insight-avg">—</div>
+                        <div class="wt-sub-text" id="wt-insight-avg-sub">Log more entries</div>
+                    </div>
+                    <div class="wt-stat-card">
+                        <div class="wt-stat-label">STREAK</div>
+                        <div class="wt-stat-val" id="wt-insight-streak">0</div>
+                        <div class="wt-sub-text" id="wt-insight-streak-sub">days in a row</div>
+                    </div>
+                    <div class="wt-stat-card">
+                        <div class="wt-stat-label">TOTAL DELTA</div>
+                        <div class="wt-stat-val" id="wt-total-val">—</div>
+                        <div class="wt-sub-text" id="wt-total-sub">Set start weight</div>
+                    </div>
+                    <div class="wt-stat-card">
+                        <div class="wt-stat-label">LOWEST</div>
+                        <div class="wt-stat-val" id="wt-insight-low">—</div>
+                        <div class="wt-sub-text" id="wt-insight-low-sub">No entries</div>
+                    </div>
+                    <div class="wt-stat-card">
+                        <div class="wt-stat-label">HIGHEST</div>
+                        <div class="wt-stat-val" id="wt-insight-hi">—</div>
+                        <div class="wt-sub-text" id="wt-insight-hi-sub">No entries</div>
+                    </div>
+                </div>
+
+                <!-- History Log -->
+                <div class="wt-card">
+                    <div class="wt-row" style="justify-content:space-between; margin-bottom:16px;">
+                        <span class="card-header" style="margin-bottom:0; color:rgba(255,255,255,0.4);">HISTORY LOG</span>
+                        <span class="wt-sub-text" id="wt-history-count">0 entries</span>
+                    </div>
+                    <div id="wt-history-list" class="wt-history-list"></div>
+                </div>
+            </div>
+
+            <!-- Modal Overlays -->
+            <!-- Log Modal -->
+            <div class="mp-modal-overlay" id="wt-modal-overlay" style="display:none; z-index:1000; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); align-items:center; justify-content:center;">
+                <div class="mp-modal card" style="width:100%; max-width:400px; background:var(--surface);">
+                    <div class="mp-modal-header">
+                        <div class="card-header" style="margin-bottom:0;" id="wt-modal-title">LOG WEIGHT</div>
+                        <button class="mp-modal-close" id="wt-modal-close" style="background:none; border:none; color:var(--text-secondary); cursor:pointer;"><i class="ph ph-x"></i></button>
+                    </div>
+                    <div class="mp-modal-body" style="display:flex; flex-direction:column; gap:16px; padding-top:16px;">
+                        <div>
+                            <label style="font-size:12px; color:var(--text-secondary); margin-bottom:8px; display:block;">Date</label>
+                            <input type="date" id="wt-entry-date" class="add-task-input" style="width:100%; box-sizing:border-box;">
+                        </div>
+                        <div>
+                            <label style="font-size:12px; color:var(--text-secondary); margin-bottom:8px; display:block;">Weight</label>
+                            <input type="number" id="wt-entry-weight" class="add-task-input" placeholder="e.g. 75.5" step="0.1" style="width:100%; box-sizing:border-box; font-size:20px; text-align:center; padding:12px;">
+                        </div>
+                        <div>
+                            <label style="font-size:12px; color:var(--text-secondary); margin-bottom:8px; display:block;">Notes (Optional)</label>
+                            <input type="text" id="wt-entry-note" class="add-task-input" placeholder="e.g. Morning, fasted" style="width:100%; box-sizing:border-box;">
+                        </div>
+                        <button class="add-task-submit" id="wt-save-entry" style="width:100%; margin-top:8px; border-radius:24px; padding:12px;">LOG WEIGHT</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings Modal -->
+            <div class="mp-modal-overlay" id="wt-settings-overlay" style="display:none; z-index:1000; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); align-items:center; justify-content:center;">
+                <div class="mp-modal card" style="width:100%; max-width:400px; background:var(--surface);">
+                    <div class="mp-modal-header">
+                        <div class="card-header" style="margin-bottom:0;">WEIGHT SETTINGS</div>
+                        <button class="mp-modal-close" id="wt-settings-close" style="background:none; border:none; color:var(--text-secondary); cursor:pointer;"><i class="ph ph-x"></i></button>
+                    </div>
+                    <div class="mp-modal-body" style="display:flex; flex-direction:column; gap:16px; padding-top:16px;">
+                        <div>
+                            <label style="font-size:12px; color:var(--text-secondary); margin-bottom:8px; display:block;">Unit</label>
+                            <select id="wt-set-unit" class="add-task-input" style="width:100%; box-sizing:border-box; background:var(--bg); border:1px solid var(--border); color:var(--text-primary); padding:10px; border-radius:8px;">
+                                <option value="kg">Kilograms (kg)</option>
+                                <option value="lbs">Pounds (lbs)</option>
+                            </select>
+                        </div>
+                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+                            <div>
+                                <label style="font-size:12px; color:var(--text-secondary); margin-bottom:8px; display:block;">Height (cm)</label>
+                                <input type="number" id="wt-set-height" class="add-task-input" placeholder="170" style="width:100%; box-sizing:border-box;">
+                            </div>
+                            <div>
+                                <label style="font-size:12px; color:var(--text-secondary); margin-bottom:8px; display:block;">Start Weight</label>
+                                <input type="number" id="wt-set-start" class="add-task-input" placeholder="80.0" step="0.1" style="width:100%; box-sizing:border-box;">
+                            </div>
+                        </div>
+                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+                            <div>
+                                <label style="font-size:12px; color:var(--text-secondary); margin-bottom:8px; display:block;">Goal Weight</label>
+                                <input type="number" id="wt-set-goal" class="add-task-input" placeholder="70.0" step="0.1" style="width:100%; box-sizing:border-box;">
+                            </div>
+                            <div>
+                                <label style="font-size:12px; color:var(--text-secondary); margin-bottom:8px; display:block;">Target Date</label>
+                                <input type="date" id="wt-set-goal-date" class="add-task-input" style="width:100%; box-sizing:border-box;">
+                            </div>
+                        </div>
+                        <button class="add-task-submit" id="wt-save-settings" style="width:100%; margin-top:8px; border-radius:24px; padding:12px;">SAVE SETTINGS</button>
                     </div>
                 </div>
             </div>
@@ -1816,5 +1929,6 @@
     <script src="js/sleep-tracker.js"></script>
     <script src="js/pages.js"></script>
     <script src="js/money-planner.js"></script>
+    <script src="js/weight-tracker.js"></script>
 </body>
 </html>

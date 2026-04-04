@@ -1,0 +1,294 @@
+/* WEIGHT TRACKER STYLES */
+
+.wt-header-actions {
+    display: flex;
+    gap: 12px;
+}
+
+.wt-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-bottom: 24px;
+}
+
+@media (max-width: 1024px) {
+    .wt-grid {
+        grid-template-columns: repeat(1, 1fr);
+    }
+}
+
+.wt-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+}
+
+.wt-row, .wt-col {
+    display: flex;
+}
+.wt-row {
+    flex-direction: row;
+    align-items: center;
+}
+.wt-col {
+    flex-direction: column;
+}
+
+.wt-huge-number {
+    font-size: 48px;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1;
+    margin-bottom: 8px;
+    margin-top: 10px;
+}
+.wt-unit {
+    font-size: 20px;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.wt-sub-text {
+    font-size: 14px;
+    color: var(--text-secondary);
+}
+.wt-trend-down { color: var(--accent-green); }
+.wt-trend-up { color: var(--accent-red); }
+.wt-trend-neutral { color: var(--text-secondary); }
+
+/* Progress Ring */
+.wt-ring-container {
+    align-self: center;
+    position: relative;
+    width: 120px;
+    height: 120px;
+    margin: 10px 0;
+}
+.wt-ring-svg {
+    transform: rotate(-90deg);
+}
+.wt-ring-bg {
+    fill: none;
+    stroke: var(--surface-light);
+    stroke-width: 8;
+}
+.wt-ring-fill {
+    fill: none;
+    stroke: var(--accent);
+    stroke-width: 8;
+    stroke-dasharray: 0 400; /* Will be updated in JS */
+    stroke-linecap: round;
+    transition: stroke-dasharray 1s ease-out;
+}
+.wt-ring-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+/* Gauge */
+.wt-gauge-container {
+    position: relative;
+    width: 100%;
+    height: 80px;
+    overflow: hidden;
+    margin-top: 20px;
+}
+.wt-gauge-arc {
+    width: 100%;
+    height: 160px;
+    border-radius: 50%;
+    background: conic-gradient(
+        from -90deg at 50% 50%,
+        var(--accent-blue) 0deg,
+        var(--accent-blue) 60deg,
+        var(--accent-green) 60deg,
+        var(--accent-green) 90deg,
+        #f59e0b 90deg,
+        #f59e0b 120deg,
+        var(--accent-red) 120deg,
+        var(--accent-red) 180deg
+    );
+    clip-path: polygon(0 0, 100% 0, 100% 50%, 0 50%);
+}
+.wt-gauge-hole {
+    position: absolute;
+    top: 20px;
+    left: 10%;
+    width: 80%;
+    height: 140px;
+    background: var(--surface);
+    border-radius: 50%;
+}
+.wt-gauge-needle {
+    position: absolute;
+    bottom: 0px;
+    left: 50%;
+    width: 6px;
+    height: 60px;
+    background: var(--text-primary);
+    transform-origin: bottom center;
+    border-radius: 3px;
+    transform: rotate(-90deg); /* Updated by JS */
+    transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.wt-gauge-needle::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: -4px;
+    width: 14px;
+    height: 14px;
+    background: var(--text-primary);
+    border-radius: 50%;
+}
+.wt-gauge-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-top: 8px;
+}
+.wt-bmi-text {
+    text-align: center;
+    font-size: 20px;
+    font-weight: 700;
+    margin-top: 10px;
+}
+
+/* History */
+.wt-history-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 400px;
+    overflow-y: auto;
+}
+.wt-history-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+    background: var(--surface-light);
+    border-radius: 12px;
+}
+.wt-history-left {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+.wt-hist-date {
+    font-size: 14px;
+    color: var(--text-secondary);
+}
+.wt-hist-val {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+.wt-hist-notes {
+    font-size: 13px;
+    color: var(--text-secondary);
+    font-style: italic;
+}
+.wt-history-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+.wt-hist-delta {
+    font-size: 14px;
+    font-weight: 500;
+    padding: 4px 8px;
+    border-radius: 20px;
+    background: rgba(255,255,255,0.05);
+}
+.wt-hist-delta.down { color: var(--accent-green); }
+.wt-hist-delta.up { color: var(--accent-red); }
+
+.wt-record-badge {
+    background: rgba(255, 215, 0, 0.1);
+    color: #ffd700;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 215, 0, 0.3);
+    margin-left: 8px;
+}
+
+.wt-action-btn {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 18px;
+    transition: 0.2s;
+    padding: 4px;
+}
+.wt-action-btn:hover { color: var(--text-primary); }
+.wt-action-btn.del:hover { color: var(--accent-red); }
+
+/* Chart Area */
+.wt-chart-toggles {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+.wt-toggle-btn {
+    background: var(--surface-light);
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: 0.2s;
+}
+.wt-toggle-btn.active {
+    background: var(--text-primary);
+    color: var(--bg);
+}
+
+.wt-empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--text-secondary);
+    font-size: 15px;
+}
+
+/* Quick Stats */
+.wt-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-bottom: 24px;
+}
+.wt-stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px;
+    text-align: center;
+}
+.wt-stat-val {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 8px 0 4px;
+}
+.wt-stat-label {
+    font-size: 12px;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
