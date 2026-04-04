@@ -1324,19 +1324,32 @@
                         </div>
                     </div>
                     <!-- HYDRATION INDEX CARD -->
-                    <div class="card hydration-card">
+                    <div class="card hydration-card" style="position: relative;">
                         <div class="hydration-header">
                             <span class="hydro-label">HYDRATION_INDEX</span>
-                            <i class="ph ph-drop" style="color: #6b6b6b; font-size: 20px;"></i>
+                            <div style="display: flex; gap: 8px; align-items: center;">
+                                <i class="ph ph-drop" style="color: #6b6b6b; font-size: 20px;"></i>
+                                <button class="wt-options-btn" id="hydro-options-btn" style="padding: 0; font-size: 20px;"><i class="ph ph-dots-three-vertical"></i></button>
+                            </div>
                         </div>
                         <div class="hydro-big" id="hydro-val">2.0<span class="hydro-unit">L</span></div>
-                        <div class="hydro-target">TARGET: 3.5 LITERS</div>
+                        <div class="hydro-target" id="hydro-target-label">TARGET: 3.5 LITERS</div>
                         <div class="hydro-slots" id="hydro-slots">
                             <!-- Populated via JS -->
                         </div>
                         <button class="hydro-add-btn" id="hydro-add-btn">
                             + ADD 500ML FLUID
                         </button>
+
+                        <!-- Settings Popover -->
+                        <div class="wt-popover" id="hydro-popover" style="display:none; top: 40px; z-index: 10;">
+                            <div class="wt-input-row">
+                                <label>Target Volume</label>
+                                <div class="wt-input-wrap"><input type="number" id="hydro-target-input" value="3.5" step="0.5" min="0.5"><span>L</span></div>
+                            </div>
+                            <button class="wt-save-btn" style="background:#e74c3c; color:#fff;" id="hydro-reset-btn">Reset to 0L</button>
+                            <button class="wt-save-btn" id="hydro-save-btn">Save Changes</button>
+                        </div>
                     </div>
                     <div class="card full-width">
                         <div class="nutrition-meal-header"><div class="card-header" style="margin-bottom:0;">TODAY'S MEALS</div><button class="add-task-submit" id="add-meal-btn">+ ADD MEAL</button></div>

@@ -606,19 +606,29 @@ initGoalsAdvanced();
 /* ======== Hydration Index ======== */
 function initHydration() {
     let currentLiters = 2.0;
-    const maxLiters = 3.5;
+    let maxLiters = 3.5;
     const step = 0.5;
-    const maxSlots = Math.ceil(maxLiters / step);
     
     const valDisplay = document.getElementById('hydro-val');
     const slotsContainer = document.getElementById('hydro-slots');
     const addBtn = document.getElementById('hydro-add-btn');
+    const targetLabel = document.getElementById('hydro-target-label');
+    
+    // Popover Elements
+    const optionsBtn = document.getElementById('hydro-options-btn');
+    const popover = document.getElementById('hydro-popover');
+    const targetInput = document.getElementById('hydro-target-input');
+    const resetBtn = document.getElementById('hydro-reset-btn');
+    const saveBtn = document.getElementById('hydro-save-btn');
     
     if(!valDisplay || !slotsContainer || !addBtn) return;
     
     const updateUI = () => {
         valDisplay.innerHTML = `${currentLiters.toFixed(1)}<span class="hydro-unit">L</span>`;
+        if (targetLabel) targetLabel.textContent = `TARGET: ${maxLiters.toFixed(1)} LITERS`;
+        
         let slotsHtml = '';
+        const maxSlots = Math.ceil(maxLiters / step);
         const filledSlots = Math.floor(currentLiters / step);
         for (let i = 0; i < maxSlots; i++) {
             if (i < filledSlots) {
@@ -646,4 +656,37 @@ function initHydration() {
             updateUI();
         }
     });
+
+    if (optionsBtn && popover) {
+        optionsBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            popover.style.display = popover.style.display === 'flex' ? 'none' : 'flex';
+        });
+
+        document.addEventListener('click', (e) => {
+            if (popover.style.display === 'flex' && !popover.contains(e.target) && !optionsBtn.contains(e.target)) {
+                popover.style.display = 'none';
+            }
+        });
+        
+        if (resetBtn) {
+            resetBtn.addEventListener('click', () => {
+                currentLiters = 0.0;
+                updateUI();
+                popover.style.display = 'none';
+            });
+        }
+
+        if (saveBtn) {
+            saveBtn.addEventListener('click', () => {
+                const newMax = parseFloat(targetInput.value);
+                if (!isNaN(newMax) && newMax >= 0.5) {
+                    maxLiters = newMax;
+                    if (currentLiters > maxLiters) currentLiters = maxLiters;
+                    updateUI();
+                }
+                popover.style.display = 'none';
+            });
+        }
+    }
 }
