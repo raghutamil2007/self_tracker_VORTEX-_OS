@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initEngineSubTabs('view-money-engine');
     initEngineTasks('money');
     initEngineTasks('general');
-    initSleepLog();
+    initSleepTracker();
     initWeightChart();
     initStandaloneFocusTimer();
     initHydration();

@@ -1200,32 +1200,164 @@
             <div id="view-sleep" class="view" style="display:none;">
                 <header class="view-header">
                     <h1 class="title">SLEEP TRACKER</h1>
-                    <p class="description">Recovery data and sleep quality analysis.</p>
+                    <p class="description">Recovery data, sleep quality analysis and patterns.</p>
                 </header>
-                <div class="dashboard-grid">
-                    <div class="card">
-                        <div class="card-header">LAST NIGHT</div>
-                        <div class="sleep-big">7h 42m</div>
-                        <div class="sleep-stats-row">
-                            <div class="sleep-stat-item"><div class="sleep-stat-label">BEDTIME</div><div class="sleep-stat-val">22:48</div></div>
-                            <div class="sleep-stat-item"><div class="sleep-stat-label">WAKE</div><div class="sleep-stat-val">06:30</div></div>
-                            <div class="sleep-stat-item"><div class="sleep-stat-label">QUALITY</div><div class="sleep-stat-val" style="color: var(--accent-green);">GOOD</div></div>
+
+                <!-- ROW 1: Stats -->
+                <div class="sl-grid-top">
+                    <!-- Last Night -->
+                    <div class="card sl-card">
+                        <div class="sl-card-header-row">
+                            <span class="card-header" style="margin-bottom:0;">LAST NIGHT</span>
+                            <button class="wt-options-btn" id="sl-log-toggle-btn" title="Log Sleep"><i class="ph ph-plus"></i></button>
                         </div>
-                        <div class="progress-bar" style="margin-top: 16px;"><div class="progress-fill" style="width: 96%; background: var(--accent-green);"></div></div>
-                        <div style="font-size:10px; color: var(--text-muted); margin-top:6px; letter-spacing:1px;">96% OF 8HR GOAL</div>
+                        <div class="sl-big" id="sl-last-duration">7h 42m</div>
+                        <div class="sl-stats-row">
+                            <div><div class="sl-stat-label">BEDTIME</div><div class="sl-stat-val" id="sl-last-bed">22:48</div></div>
+                            <div><div class="sl-stat-label">WAKE</div><div class="sl-stat-val" id="sl-last-wake">06:30</div></div>
+                            <div><div class="sl-stat-label">QUALITY</div><div class="sl-stat-val sl-quality-good" id="sl-last-quality">GOOD</div></div>
+                        </div>
+                        <div class="progress-bar" style="margin-top:16px;"><div class="progress-fill sl-goal-fill" id="sl-last-bar" style="width:96%;"></div></div>
+                        <div class="sl-goal-label" id="sl-last-goal-label">96% of 8h goal</div>
+
+                        <!-- Log Form (hidden by default) -->
+                        <div class="sl-log-form" id="sl-log-form" style="display:none;">
+                            <div class="sl-log-divider"></div>
+                            <div class="sl-form-row">
+                                <div class="wt-input-row">
+                                    <label>Bedtime</label>
+                                    <input type="time" id="sl-input-bed" value="22:30" class="sl-time-input">
+                                </div>
+                                <div class="wt-input-row">
+                                    <label>Wake Time</label>
+                                    <input type="time" id="sl-input-wake" value="06:30" class="sl-time-input">
+                                </div>
+                            </div>
+                            <div class="wt-input-row">
+                                <label>Sleep Quality</label>
+                                <div class="sl-quality-picker" id="sl-quality-picker">
+                                    <button class="sl-q-btn" data-q="1">😴 Poor</button>
+                                    <button class="sl-q-btn" data--q="2">😐 Fair</button>
+                                    <button class="sl-q-btn sl-q-active" data-q="3">😊 Good</button>
+                                    <button class="sl-q-btn" data-q="4">🌟 Great</button>
+                                </div>
+                            </div>
+                            <div class="wt-input-row">
+                                <label>Notes (optional)</label>
+                                <input type="text" id="sl-input-notes" class="sl-time-input" placeholder="e.g. stressed, caffeine late...">
+                            </div>
+                            <div class="sl-form-btns">
+                                <button class="wt-save-btn" id="sl-save-btn" style="flex:1;">Save Entry</button>
+                                <button class="wt-save-btn" id="sl-cancel-btn" style="flex:0.4; background:rgba(255,255,255,0.08); color:#fff;">Cancel</button>
+                            </div>
+                        </div>
                     </div>
-                    <div class="card">
-                        <div class="card-header">WEEKLY AVERAGE</div>
-                        <div class="sleep-big">7h 18m</div>
-                        <div class="consistency-stat"><span class="stat-label">GOAL</span><span class="stat-value">8h 00m</span></div>
-                        <div class="consistency-stat"><span class="stat-label">BEST NIGHT</span><span class="stat-value">8h 30m</span></div>
-                        <div class="consistency-stat"><span class="stat-label">WORST NIGHT</span><span class="stat-value">5h 45m</span></div>
-                        <div class="consistency-stat"><span class="stat-label">GOAL MET (days)</span><span class="stat-value">4 / 7</span></div>
+
+                    <!-- Insights -->
+                    <div class="card sl-card">
+                        <div class="sl-card-header-row">
+                            <span class="card-header" style="margin-bottom:0;">INSIGHTS</span>
+                            <button class="wt-options-btn" id="sl-settings-btn"><i class="ph ph-dots-three-vertical"></i></button>
+                        </div>
+                        <!-- Settings Popover -->
+                        <div class="wt-popover" id="sl-settings-popover" style="display:none; top:44px;">
+                            <div class="wt-input-row">
+                                <label>Sleep Goal (hours)</label>
+                                <div class="wt-input-wrap"><input type="number" id="sl-goal-input" value="8" min="4" max="12" step="0.5"><span>h</span></div>
+                            </div>
+                            <button class="wt-save-btn" id="sl-goal-save-btn">Save Goal</button>
+                            <button class="wt-save-btn" style="background:#e74c3c;color:#fff;" id="sl-reset-btn">Reset All Data</button>
+                        </div>
+
+                        <div class="sl-insights-grid">
+                            <div class="sl-insight-tile">
+                                <div class="sl-insight-label">7-DAY AVG</div>
+                                <div class="sl-insight-val" id="sl-avg-val">7h 18m</div>
+                            </div>
+                            <div class="sl-insight-tile">
+                                <div class="sl-insight-label">SLEEP DEBT</div>
+                                <div class="sl-insight-val sl-debt-val" id="sl-debt-val">−42m</div>
+                            </div>
+                            <div class="sl-insight-tile">
+                                <div class="sl-insight-label">BEST NIGHT</div>
+                                <div class="sl-insight-val" id="sl-best-val">8h 30m</div>
+                            </div>
+                            <div class="sl-insight-tile">
+                                <div class="sl-insight-label">WORST NIGHT</div>
+                                <div class="sl-insight-val" id="sl-worst-val">5h 45m</div>
+                            </div>
+                            <div class="sl-insight-tile">
+                                <div class="sl-insight-label">GOAL MET</div>
+                                <div class="sl-insight-val" id="sl-goal-met">4 / 7 days</div>
+                            </div>
+                            <div class="sl-insight-tile">
+                                <div class="sl-insight-label">CONSISTENCY</div>
+                                <div class="sl-insight-val sl-quality-good" id="sl-consistency">72%</div>
+                            </div>
+                        </div>
+
+                        <!-- Optimal Bedtime -->
+                        <div class="sl-bedtime-rec" id="sl-bedtime-rec">
+                            <i class="ph ph-moon"></i>
+                            <span>Optimal bedtime for <strong>06:30</strong> wake: <strong id="sl-rec-time">22:00</strong></span>
+                        </div>
                     </div>
-                    <div class="card full-width">
-                        <div class="card-header">7-DAY SLEEP LOG</div>
-                        <div class="sleep-log-grid" id="sleep-log-grid"></div>
+
+                    <!-- Progress Ring -->
+                    <div class="card sl-card sl-ring-card">
+                        <div class="card-header" style="color:rgba(255,255,255,0.4);">TONIGHT'S GOAL</div>
+                        <div class="sl-ring-container">
+                            <div class="wt-ring" id="sl-ring" style="--pct: 96%;">
+                                <span id="sl-ring-pct">96%</span>
+                                <div class="wt-ring-sub">of 8h goal</div>
+                            </div>
+                        </div>
+                        <!-- Sleep Phase Breakdown -->
+                        <div class="sl-phase-section">
+                            <div class="sl-phase-label-row"><span class="sl-stat-label">SLEEP PHASES (estimated)</span></div>
+                            <div class="sl-phases">
+                                <div class="sl-phase-item">
+                                    <div class="sl-phase-bar" style="background:#4a90e2; width:25%;"></div>
+                                    <span>Deep 25%</span>
+                                </div>
+                                <div class="sl-phase-item">
+                                    <div class="sl-phase-bar" style="background:#59d195; width:45%;"></div>
+                                    <span>Light 45%</span>
+                                </div>
+                                <div class="sl-phase-item">
+                                    <div class="sl-phase-bar" style="background:#f2a75f; width:30%;"></div>
+                                    <span>REM 30%</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
+                </div>
+
+                <!-- ROW 2: Chart + Heatmap -->
+                <div class="sl-grid-bottom">
+                    <!-- 7-Day Trend Chart -->
+                    <div class="card sl-chart-card">
+                        <div class="card-header">7-DAY SLEEP TREND</div>
+                        <div class="sl-chart-container">
+                            <canvas id="sleepTrendChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Sleep Log List -->
+                    <div class="card sl-log-card">
+                        <div class="sl-card-header-row">
+                            <span class="card-header" style="margin-bottom:0;">SLEEP LOG</span>
+                        </div>
+                        <div class="sl-entry-list" id="sl-entry-list">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ROW 3: Heatmap -->
+                <div class="card" style="margin-top: 20px;">
+                    <div class="card-header">MONTHLY QUALITY HEATMAP</div>
+                    <div class="sl-heatmap" id="sl-heatmap"></div>
                 </div>
             </div>
 
@@ -1681,6 +1813,7 @@
     <!-- Scripts -->
     <script src="js/data.js"></script>
     <script src="js/app.js"></script>
+    <script src="js/sleep-tracker.js"></script>
     <script src="js/pages.js"></script>
     <script src="js/money-planner.js"></script>
 </body>
