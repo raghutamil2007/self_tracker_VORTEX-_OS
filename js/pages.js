@@ -317,55 +317,275 @@ function initCommandCenter() {
 
 /* ======== Habits — Build Mini Dot History ======== */
 function initHabits() {
-    // Overall weekly bars
-    const overallContainer = document.getElementById('overall-weekly-bars');
-    if (overallContainer) {
-        const overallLevels = [100, 70, 50, 90, 80, 0, 0];
-        const overallLabels = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
-        overallLevels.forEach((lvl, i) => {
+    const STORAGE_KEY = 'titan-habits-v2';
+    const grid = document.getElementById('habits-grid');
+    const overallBars = document.getElementById('overall-weekly-bars');
+    const overallPctVal = document.getElementById('overall-habit-pct');
+    const overallCircle = document.getElementById('overall-habit-circles-progress');
+    const overallFraction = document.getElementById('overall-habit-fraction');
+
+    // Modal elements
+    const modal = document.getElementById('habit-modal-overlay');
+    const modalTitle = document.getElementById('habit-modal-title');
+    const modalClose = document.getElementById('habit-modal-close');
+    const modalIdInput = document.getElementById('habit-edit-id');
+    const modalNameInput = document.getElementById('habit-name-input');
+    const modalIconInput = document.getElementById('habit-icon-input');
+    const modalSaveBtn = document.getElementById('habit-save-btn');
+    const modalDeleteBtn = document.getElementById('habit-delete-btn');
+    const addHabitBtn = document.getElementById('add-habit-btn');
+
+    if (!grid) return;
+
+    // --- Data Management ---
+    const getHabits = () => {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) return JSON.parse(saved);
+        
+        // Initial defaults if empty
+        const defaults = [
+            { id: 'h1', name: 'Gym', icon: 'ph-barbell', logs: {} },
+            { id: 'h2', name: 'No reels', icon: 'ph-phone-slash', logs: {} },
+            { id: 'h3', name: 'Daily Journal', icon: 'ph-notebook', logs: {} },
+            { id: 'h4', name: 'Read 30 min', icon: 'ph-book-open', logs: {} },
+            { id: 'h5', name: 'Meditation', icon: '🧘', logs: {} }
+        ];
+        saveHabits(defaults);
+        return defaults;
+    };
+
+    const saveHabits = (habits) => {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(habits));
+    };
+
+    // --- Helpers ---
+    const getTodayStr = () => new Date().toDateString();
+    
+    const calculateStreak = (habit) => {
+        let streak = 0;
+        let d = new Date();
+        // Today check
+        if (habit.logs[d.toDateString()]) {
+            streak++;
+        } else {
+            // Check yesterday to keep streak alive if not logged today yet
+            d.setDate(d.getDate() - 1);
+            if (!habit.logs[d.toDateString()]) return 0;
+            streak++;
+        }
+        
+        // Count backwards
+        while (true) {
+            d.setDate(d.getDate() - 1);
+            if (habit.logs[d.toDateString()]) streak++;
+            else break;
+            if (streak > 365) break; // sanity cap
+        }
+        return streak;
+    };
+
+    const calculateMonthlyPct = (habit) => {
+        const today = new Date();
+        let completions = 0;
+        for (let i = 0; i < 30; i++) {
+            const d = new Date();
+            d.setDate(today.getDate() - i);
+            if (habit.logs[d.toDateString()]) completions++;
+        }
+        return Math.round((completions / 30) * 100);
+    };
+
+    // --- Rendering ---
+    const renderHabits = () => {
+        const habits = getHabits();
+        grid.innerHTML = '';
+        const todayStr = getTodayStr();
+
+        habits.forEach(habit => {
+            const streak = calculateStreak(habit);
+            const monthlyPct = calculateMonthlyPct(habit);
+            const isDoneToday = habit.logs[todayStr];
+            
+            const card = document.createElement('div');
+            card.className = `habit-card ${isDoneToday ? 'habit-done' : ''}`;
+            card.style.setProperty('--pct', `${monthlyPct}%`);
+            
+            // Icon rendering (Emoji vs ph-icon)
+            const iconHtml = habit.icon.startsWith('ph-') 
+                ? `<i class="ph ${habit.icon} habit-icon"></i>` 
+                : `<span class="habit-icon" style="font-size: 18px; line-height: 1;">${habit.icon}</span>`;
+
+            card.innerHTML = `
+                <div class="habit-header">
+                    <div class="habit-title-col">
+                        <h3 class="habit-name">${habit.name}</h3>
+                        <span class="habit-streak ${streak === 0 ? 'missed' : ''}">${streak === 0 ? '× 0' : streak} Day Streak</span>
+                    </div>
+                    <div style="display: flex; align-items: center;">
+                        ${iconHtml}
+                        <button class="habit-edit-btn" data-id="${habit.id}"><i class="ph ph-pencil-simple"></i></button>
+                    </div>
+                </div>
+                <div class="habit-body">
+                    <div class="habit-chart" id="chart-${habit.id}"></div>
+                    <div class="habit-monthly">
+                        <div class="habit-circular-progress">
+                            <div class="habit-pct-text">
+                                <span class="habit-pct-val">${monthlyPct}%</span>
+                                <span class="habit-pct-lbl">Monthly</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button class="habit-log-btn" ${isDoneToday ? 'disabled' : ''}>
+                    ${isDoneToday ? 'Logged ✓' : 'Log Today'}
+                </button>
+            `;
+
+            // mini daily bars (last 7 days)
+            const chartCont = card.querySelector(`#chart-${habit.id}`);
+            const daysShort = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+            for (let i = 6; i >= 0; i--) {
+                const d = new Date();
+                const dayLabelIndex = d.getDay();
+                d.setDate(d.getDate() - i);
+                const dayLabel = daysShort[d.getDay()];
+                const done = habit.logs[d.toDateString()];
+                const wrap = document.createElement('div');
+                wrap.className = 'habit-bar-wrap';
+                wrap.innerHTML = `<div class="habit-bar"><div class="habit-bar-fill ${done ? '' : 'empty'}" style="height:${done ? '100%' : '10%'}"></div></div><span>${dayLabel}</span>`;
+                chartCont.appendChild(wrap);
+            }
+
+            // Log button listener
+            card.querySelector('.habit-log-btn').addEventListener('click', () => logHabit(habit.id));
+            
+            // Edit button listener
+            card.querySelector('.habit-edit-btn').addEventListener('click', () => openHabitModal(habit));
+
+            grid.appendChild(card);
+        });
+        
+        renderWeeklyProgress();
+    };
+
+    const renderWeeklyProgress = () => {
+        const habits = getHabits();
+        if (habits.length === 0) {
+            overallBars.innerHTML = '';
+            overallPctVal.innerText = '0%';
+            overallCircle.style.setProperty('--pct', '0%');
+            overallFraction.innerText = '0/0';
+            return;
+        }
+
+        const today = new Date();
+        const currentDayIndex = today.getDay(); // 0-6
+        const labels = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
+        
+        overallBars.innerHTML = '';
+        let totalWeekCompletions = 0;
+        let todayCompletions = 0;
+
+        // Calculate and build bars for each day of the week
+        labels.forEach((label, i) => {
+            const d = new Date();
+            const diff = i - currentDayIndex;
+            d.setDate(today.getDate() + diff);
+            const dateStr = d.toDateString();
+
+            const completed = habits.filter(h => h.logs[dateStr]).length;
+            const pct = Math.round((completed / habits.length) * 100);
+            
+            if (i === currentDayIndex) todayCompletions = completed;
+            totalWeekCompletions += completed;
+
             const wrap = document.createElement('div');
             wrap.className = 'overall-bar-wrapper';
-            wrap.innerHTML = `<div class="overall-bar"><div class="overall-bar-fill" style="height:${lvl}%"></div></div><span>${overallLabels[i]}</span>`;
-            overallContainer.appendChild(wrap);
+            wrap.innerHTML = `<div class="overall-bar"><div class="overall-bar-fill" style="height:${pct}%"></div></div><span>${label}</span>`;
+            overallBars.appendChild(wrap);
         });
-    }
 
-    // Individual Habit charts
-    const habits = [
-        { id: 'hc1', pct: 86, daily: [40,60,86,100,50,0,86] },
-        { id: 'hc2', pct: 100, daily: [100,100,100,100,100,100,100] },
-        { id: 'hc3', pct: 72, daily: [80,60,50,60,80,72,20] },
-        { id: 'hc4', pct: 43, daily: [50,10,30,40,20,0,43] },
-        { id: 'hc5', pct: 57, daily: [100,100,100,0,0,0,57] },
-        { id: 'hc6', pct: 93, daily: [90,95,100,80,90,100,93] },
-        { id: 'hc7', pct: 50, daily: [100,10,0,0,0,100,50] },
-        { id: 'hc8', pct: 71, daily: [50,60,70,80,60,70,71] }
-    ];
-    const habitLabels = ['1', 'T', '4', '5', '6', '7', '7'];
-    habits.forEach(({ id, pct, daily }) => {
-        const container = document.getElementById(id);
-        if (!container) return;
-        for (let i = 0; i < 7; i++) {
-            const wrap = document.createElement('div');
-            wrap.className = 'habit-bar-wrap';
-            const h = daily[i] || (Math.random() * 80 + 20);
-            wrap.innerHTML = `<div class="habit-bar"><div class="habit-bar-fill" style="height:${h}%"></div></div><span>${habitLabels[i] || ''}</span>`;
-            container.appendChild(wrap);
+        const todayPct = Math.round((todayCompletions / habits.length) * 100);
+        overallPctVal.innerText = `${todayPct}%`;
+        overallCircle.style.setProperty('--pct', `${todayPct}%`);
+        overallFraction.innerText = `${todayCompletions}/${habits.length}`;
+    };
+
+    const logHabit = (id) => {
+        const habits = getHabits();
+        const habit = habits.find(h => h.id === id);
+        if (habit) {
+            habit.logs[getTodayStr()] = true;
+            saveHabits(habits);
+            renderHabits();
         }
+    };
+
+    // --- Modal Logic ---
+    const openHabitModal = (habit = null) => {
+        if (habit) {
+            modalTitle.innerText = 'EDIT HABIT';
+            modalIdInput.value = habit.id;
+            modalNameInput.value = habit.name;
+            modalIconInput.value = habit.icon;
+            modalDeleteBtn.style.display = 'block';
+        } else {
+            modalTitle.innerText = 'CREATE HABIT';
+            modalIdInput.value = '';
+            modalNameInput.value = '';
+            modalIconInput.value = 'ph-barbell';
+            modalDeleteBtn.style.display = 'none';
+        }
+        modal.style.display = 'flex';
+        modalNameInput.focus();
+    };
+
+    const closeHabitModal = () => {
+        modal.style.display = 'none';
+    };
+
+    modalSaveBtn.addEventListener('click', () => {
+        const name = modalNameInput.value.trim();
+        const icon = modalIconInput.value.trim() || 'ph-star';
+        const id = modalIdInput.value;
+        if (!name) return;
+
+        const habits = getHabits();
+        if (id) {
+            const index = habits.findIndex(h => h.id === id);
+            if (index !== -1) {
+                habits[index].name = name;
+                habits[index].icon = icon;
+            }
+        } else {
+            habits.push({
+                id: 'h' + Date.now(),
+                name,
+                icon,
+                logs: {}
+            });
+        }
+        saveHabits(habits);
+        renderHabits();
+        closeHabitModal();
     });
 
-    // Add click listeners for Habit log buttons
-    const habitLogBtns = document.querySelectorAll('.habit-log-btn');
-    habitLogBtns.forEach(btn => {
-        btn.addEventListener('click', function() {
-            if (this.disabled) return;
-            this.textContent = 'Logged ✓';
-            this.style.background = 'rgba(89, 209, 149, 0.1)';
-            this.style.color = '#59d195';
-            this.style.borderColor = 'rgba(89, 209, 149, 0.3)';
-            this.disabled = true;
-        });
+    modalDeleteBtn.addEventListener('click', () => {
+        if (!confirm('Are you sure you want to delete this habit? All history will be lost.')) return;
+        const id = modalIdInput.value;
+        const habits = getHabits().filter(h => h.id !== id);
+        saveHabits(habits);
+        renderHabits();
+        closeHabitModal();
     });
+
+    if (addHabitBtn) addHabitBtn.addEventListener('click', () => openHabitModal());
+    if (modalClose) modalClose.addEventListener('click', closeHabitModal);
+    window.addEventListener('click', (e) => { if (e.target === modal) closeHabitModal(); });
+
+    // Initial Render
+    renderHabits();
 }
 
 /* ======== Journal ======== */

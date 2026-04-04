@@ -308,6 +308,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initDynamicUI();
     window.renderTitanUI();
     initMindEngine();
+    initHabits();
 });
 
 /* ======== Global Helpers ======== */

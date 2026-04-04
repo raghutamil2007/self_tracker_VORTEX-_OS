@@ -802,63 +802,63 @@
             <!-- =============================== HABITS =============================== -->
             <div id="view-habits" class="view" style="display:none;">
                 <header class="view-header">
-                    <h1 class="title">HABITS</h1>
-                    <p class="description">Daily habits streaks and completion tracking.</p>
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; width: 100%;">
+                        <div>
+                            <h1 class="title">HABITS</h1>
+                            <p class="description">Daily habits streaks and completion tracking.</p>
+                        </div>
+                        <button class="add-task-submit" id="add-habit-btn" style="border-radius: 24px; padding: 8px 16px;">
+                            <i class="ph ph-plus"></i> ADD HABIT
+                        </button>
+                    </div>
                 </header>
+
                 <div class="habits-view-container">
+                    <!-- Overall Weekly Progress -->
                     <div class="habits-overall-card">
-                        <div class="overall-circular-progress">
-                            <span>85%</span>
+                        <div class="overall-circular-progress" id="overall-habit-circles-progress">
+                            <span id="overall-habit-pct">0%</span>
                         </div>
                         <div class="overall-bars">
-                            <span class="overall-label">OVERALL WEEKLY PROGRESS</span>
-                            <div class="overall-bars-container" id="overall-weekly-bars"></div>
+                            <div class="overall-label">WEEKLY CONSISTENCY</div>
+                            <div class="overall-bars-container" id="overall-weekly-bars">
+                                <!-- Populated by JS -->
+                            </div>
                         </div>
                         <div class="overall-text">
-                            <div class="days-fraction">5/7 Days</div>
-                            <div class="days-label">Completed this week</div>
+                            <div class="days-fraction" id="overall-habit-fraction">0/0</div>
+                            <div class="days-label">HABITS TODAY</div>
                         </div>
                     </div>
-                    <div class="habits-grid">
-                        <div class="habit-card habit-done" style="--pct: 86%;">
-                            <div class="habit-header"><div class="habit-title-col"><h3 class="habit-name">Gym</h3><span class="habit-streak">12 Day Streak</span></div><i class="ph ph-flame-fill habit-icon"></i></div>
-                            <div class="habit-body"><div class="habit-chart" id="hc1"></div><div class="habit-monthly"><div class="habit-circular-progress"><div class="habit-pct-text"><span class="habit-pct-val">86%</span><span class="habit-pct-lbl">Monthly Goal</span></div></div></div></div>
-                            <button class="habit-log-btn">Log Today</button>
+
+                    <!-- Habits Grid -->
+                    <div class="habits-grid" id="habits-grid">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+
+                <!-- Habit Management Modal -->
+                <div class="mp-modal-overlay" id="habit-modal-overlay" style="display:none; z-index:1000; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); align-items:center; justify-content:center;">
+                    <div class="mp-modal card" style="width:100%; max-width:400px; background:var(--surface);">
+                        <div class="mp-modal-header">
+                            <div class="card-header" style="margin-bottom:0;" id="habit-modal-title">CREATE HABIT</div>
+                            <button class="mp-modal-close" id="habit-modal-close" style="background:none; border:none; color:var(--text-secondary); cursor:pointer;"><i class="ph ph-x"></i></button>
                         </div>
-                        <div class="habit-card habit-done" style="--pct: 86%;">
-                            <div class="habit-header"><div class="habit-title-col"><h3 class="habit-name">No reels</h3><span class="habit-streak">7 Day Streak</span></div><i class="ph ph-flame-fill habit-icon"></i></div>
-                            <div class="habit-body"><div class="habit-chart" id="hc2"></div><div class="habit-monthly"><div class="habit-circular-progress"><div class="habit-pct-text"><span class="habit-pct-val">86%</span><span class="habit-pct-lbl">Monthly Goal</span></div></div></div></div>
-                            <button class="habit-log-btn">Log Today</button>
-                        </div>
-                        <div class="habit-card habit-done" style="--pct: 72%;">
-                            <div class="habit-header"><div class="habit-title-col"><h3 class="habit-name">Read 30 min</h3><span class="habit-streak">4 Day Streak</span></div><i class="ph ph-flame-fill habit-icon"></i></div>
-                            <div class="habit-body"><div class="habit-chart" id="hc3"></div><div class="habit-monthly"><div class="habit-circular-progress"><div class="habit-pct-text"><span class="habit-pct-val">72%</span><span class="habit-pct-lbl">Monthly Goal</span></div></div></div></div>
-                            <button class="habit-log-btn">Log Today</button>
-                        </div>
-                        <div class="habit-card habit-miss" style="--pct: 43%;">
-                            <div class="habit-header"><div class="habit-title-col"><h3 class="habit-name">Meditate</h3><span class="habit-streak">× 0 Day Streak</span></div><i class="ph ph-flame-fill habit-icon" style="color: #f25f5c;"></i></div>
-                            <div class="habit-body"><div class="habit-chart" id="hc4"></div><div class="habit-monthly"><div class="habit-circular-progress"><div class="habit-pct-text"><span class="habit-pct-val">43%</span><span class="habit-pct-lbl">Monthly Goal</span></div></div></div></div>
-                            <button class="habit-log-btn">Log Today</button>
-                        </div>
-                        <div class="habit-card habit-done" style="--pct: 57%;">
-                            <div class="habit-header"><div class="habit-title-col"><h3 class="habit-name">Cold shower</h3><span class="habit-streak">3 Day Streak</span></div><i class="ph ph-flame-fill habit-icon"></i></div>
-                            <div class="habit-body"><div class="habit-chart" id="hc5"></div><div class="habit-monthly"><div class="habit-circular-progress"><div class="habit-pct-text"><span class="habit-pct-val">57%</span><span class="habit-pct-lbl">Monthly Goal</span></div></div></div></div>
-                            <button class="habit-log-btn">Log Today</button>
-                        </div>
-                        <div class="habit-card habit-done" style="--pct: 93%;">
-                            <div class="habit-header"><div class="habit-title-col"><h3 class="habit-name">Drink 4L water</h3><span class="habit-streak">14 Day Streak</span></div><i class="ph ph-flame-fill habit-icon"></i></div>
-                            <div class="habit-body"><div class="habit-chart" id="hc6"></div><div class="habit-monthly"><div class="habit-circular-progress"><div class="habit-pct-text"><span class="habit-pct-val">93%</span><span class="habit-pct-lbl">Monthly Goal</span></div></div></div></div>
-                            <button class="habit-log-btn">Log Today</button>
-                        </div>
-                        <div class="habit-card habit-miss" style="--pct: 50%;">
-                            <div class="habit-header"><div class="habit-title-col"><h3 class="habit-name">Wake up 7am</h3><span class="habit-streak">× 0 Day Streak</span></div><i class="ph ph-flame-fill habit-icon" style="color: #f25f5c;"></i></div>
-                            <div class="habit-body"><div class="habit-chart" id="hc7"></div><div class="habit-monthly"><div class="habit-circular-progress"><div class="habit-pct-text"><span class="habit-pct-val">50%</span><span class="habit-pct-lbl">Monthly Goal</span></div></div></div></div>
-                            <button class="habit-log-btn">Log Today</button>
-                        </div>
-                        <div class="habit-card habit-done" style="--pct: 71%;">
-                            <div class="habit-header"><div class="habit-title-col"><h3 class="habit-name">Journal</h3><span class="habit-streak">5 Day Streak</span></div><i class="ph ph-flame-fill habit-icon"></i></div>
-                            <div class="habit-body"><div class="habit-chart" id="hc8"></div><div class="habit-monthly"><div class="habit-circular-progress"><div class="habit-pct-text"><span class="habit-pct-val">71%</span><span class="habit-pct-lbl">Monthly Goal</span></div></div></div></div>
-                            <button class="habit-log-btn">Log Today</button>
+                        <div class="mp-modal-body" style="display:flex; flex-direction:column; gap:16px; padding-top:16px;">
+                            <input type="hidden" id="habit-edit-id">
+                            <div>
+                                <label style="font-size:12px; color:var(--text-secondary); margin-bottom:8px; display:block;">Habit Name</label>
+                                <input type="text" id="habit-name-input" class="add-task-input" placeholder="e.g. Morning Meditation" style="width:100%; box-sizing:border-box;">
+                            </div>
+                            <div>
+                                <label style="font-size:12px; color:var(--text-secondary); margin-bottom:8px; display:block;">Icon / Emoji</label>
+                                <input type="text" id="habit-icon-input" class="add-task-input" placeholder="e.g. 🧘 or ph-moon" style="width:100%; box-sizing:border-box;">
+                                <p style="font-size: 10px; color: var(--text-muted); margin-top: 4px;">Use an emoji or Phosphor icon name (e.g. ph-barbell)</p>
+                            </div>
+                            <div class="sl-form-btns" style="margin-top: 8px;">
+                                <button class="add-task-submit" id="habit-save-btn" style="flex:1; border-radius:24px; padding:12px;">SAVE HABIT</button>
+                                <button class="add-task-submit" id="habit-delete-btn" style="flex:0.5; border-radius:24px; padding:12px; background:rgba(242, 95, 92, 0.1); color: #f25f5c; display: none;">DELETE</button>
+                            </div>
                         </div>
                     </div>
                 </div>
