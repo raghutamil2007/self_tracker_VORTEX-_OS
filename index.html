@@ -1232,34 +1232,67 @@
             <!-- =============================== WEIGHT TRACKER =============================== -->
             <div id="view-weight" class="view" style="display:none;">
                 <header class="view-header">
-                    <h1 class="title">WEIGHT TRACKER</h1>
-                    <p class="description">Body composition over time.</p>
+                    <h1 class="title">PREMIUM WEIGHT TRACKER</h1>
+                    <p class="description">Your body composition journey.</p>
                 </header>
-                <div class="dashboard-grid">
-                    <div class="card">
-                        <div class="card-header">CURRENT WEIGHT</div>
-                        <div class="weight-big">74.2 <span class="weight-unit">kg</span></div>
-                        <div class="consistency-stat"><span class="stat-label">START WEIGHT</span><span class="stat-value">82.0 kg</span></div>
-                        <div class="consistency-stat"><span class="stat-label">GOAL WEIGHT</span><span class="stat-value">70.0 kg</span></div>
-                        <div class="consistency-stat"><span class="stat-label">LOST SO FAR</span><span class="stat-value" style="color:var(--accent-green);">−7.8 kg</span></div>
-                        <div class="consistency-stat"><span class="stat-label">TO GOAL</span><span class="stat-value">4.2 kg</span></div>
-                        <div class="progress-bar" style="margin-top:16px"><div class="progress-fill" style="width:65%; background: var(--accent-green);"></div></div>
-                        <div style="font-size:10px; color: var(--text-muted); margin-top:6px; letter-spacing:1px;">65% TO GOAL</div>
-                    </div>
-                    <div class="card">
-                        <div class="card-header">LOG TODAY</div>
-                        <div class="weight-log-form">
-                            <div class="weight-input-group">
-                                <input type="number" class="add-task-input" id="weight-input" placeholder="74.0" step="0.1" style="font-size:28px; text-align:center; padding: 20px;">
-                                <span class="weight-unit-label">kg</span>
+                <div class="wt-dashboard-grid">
+                    <!-- LEFT COLUMN -->
+                    <div class="wt-col-left">
+                        <div class="card wt-overview-card">
+                            <div class="card-header" style="color: rgba(255,255,255,0.4);">WEIGHT OVERVIEW</div>
+                            <div class="wt-overview-big"><span id="wt-display-val">74.0</span> <span class="weight-unit">kg</span></div>
+                            <div class="wt-overview-diff" style="color:var(--accent-green);"><i class="ph ph-arrow-down"></i> -0.5 kg this week</div>
+                        </div>
+                        <div class="card wt-trend-card">
+                            <div class="card-header" style="color: rgba(255,255,255,0.4);">WEIGHT TREND</div>
+                            <div class="chart-container wt-trend-chart-container">
+                                <canvas id="weightTrendChart"></canvas>
                             </div>
-                            <button class="add-task-submit" id="weight-log-btn" style="margin-top:12px; padding: 14px;">LOG WEIGHT</button>
                         </div>
                     </div>
-                    <div class="card full-width">
-                        <div class="card-header">WEIGHT TREND</div>
-                        <div class="chart-container" style="height: 250px;">
-                            <canvas id="weightTrendChart"></canvas>
+
+                    <!-- MIDDLE COLUMN -->
+                    <div class="wt-col-mid">
+                        <div class="card wt-progress-card">
+                            <div class="wt-progress-header">
+                                <div class="card-header" style="margin-bottom:0; color: rgba(255,255,255,0.4);">PROGRESS TO GOAL</div>
+                                <button class="wt-options-btn" id="wt-options-btn"><i class="ph ph-dots-three-vertical"></i></button>
+                            </div>
+                            <!-- Circular Progress Ring inside the base card -->
+                            <div class="wt-progress-ring-container">
+                                <div class="wt-ring" style="--pct: 70%"><span>70%</span><div class="wt-ring-sub">To Goal</div></div>
+                            </div>
+                            
+                            <!-- Overlay Popover / Settings form -->
+                            <div class="wt-popover" id="wt-popover" style="display:none;">
+                                <div class="wt-input-row">
+                                    <label>Starting Weight</label>
+                                    <div class="wt-input-wrap"><input type="number" id="wt-settings-start" value="82.0"><span>kg</span></div>
+                                </div>
+                                <div class="wt-input-row">
+                                    <label>Target Weight</label>
+                                    <div class="wt-input-wrap"><input type="number" id="wt-settings-target" value="70.0"><span>kg</span></div>
+                                </div>
+                                <div class="wt-input-row">
+                                    <label>Target Date</label>
+                                    <input type="date" id="wt-settings-date" value="2023-12-31">
+                                </div>
+                                <button class="wt-save-btn" id="wt-save-btn">Save Changes</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- RIGHT COLUMN -->
+                    <div class="wt-col-right">
+                        <div class="card wt-log-card">
+                            <div class="card-header" style="color: rgba(255,255,255,0.4);">LOG TODAY</div>
+                            <div class="wt-keypad" id="wt-keypad">
+                                <button class="wt-key">1</button><button class="wt-key">2</button><button class="wt-key">3</button>
+                                <button class="wt-key">4</button><button class="wt-key">5</button><button class="wt-key">6</button>
+                                <button class="wt-key">7</button><button class="wt-key">8</button><button class="wt-key">9</button>
+                                <button class="wt-key wt-key-action" id="wt-key-clear">C</button><button class="wt-key">0</button><button class="wt-key">.</button>
+                            </div>
+                            <button class="wt-update-btn" id="wt-update-btn">UPDATE WEIGHT</button>
                         </div>
                     </div>
                 </div>

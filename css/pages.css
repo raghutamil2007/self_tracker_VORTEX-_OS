@@ -420,3 +420,56 @@
 .goal-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 16px; height: 16px; border-radius: 50%; background: #4a90e2; cursor: pointer; }
 .goal-confirm-btn { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15); color: #fff; border-radius: 6px; padding: 8px; cursor: pointer;font-size: 12px; }
 .goal-confirm-btn:hover { background: rgba(255,255,255,0.1); }
+/* ===============================
+   PREMIUM WEIGHT TRACKER
+   =============================== */
+.wt-dashboard-grid {
+    display: grid;
+    grid-template-columns: 1.15fr 1.15fr 1fr;
+    gap: 20px;
+    align-items: stretch;
+    margin-top: 16px;
+}
+.wt-col-left, .wt-col-mid, .wt-col-right {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+.wt-overview-card { background: #131415; border-radius: 12px; padding: 24px; border: 1px solid rgba(255,255,255,0.04); }
+.wt-overview-big { font-size: 54px; font-weight: 300; margin: 16px 0 8px; color: #fff; }
+.wt-overview-diff { font-size: 14px; font-weight: 500; }
+
+.wt-trend-card { background: #131415; border-radius: 12px; padding: 24px; border: 1px solid rgba(255,255,255,0.04); flex: 1; min-height: 200px; }
+.wt-trend-chart-container { height: 180px; width: 100%; position: relative; margin-top: 16px; }
+
+.wt-progress-card { background: #131415; border-radius: 12px; padding: 24px; border: 1px solid rgba(255,255,255,0.04); flex: 1; position: relative; display: flex; flex-direction: column; }
+.wt-progress-header { display: flex; justify-content: space-between; align-items: flex-start; }
+.wt-options-btn { background: transparent; border: none; color: rgba(255,255,255,0.4); cursor: pointer; padding: 4px; border-radius: 4px; font-size: 18px; }
+.wt-options-btn:hover { color: #fff; }
+
+.wt-progress-ring-container { flex: 1; display: flex; align-items: center; justify-content: center; min-height: 220px; }
+.wt-ring { width: 150px; height: 150px; border-radius: 50%; background: conic-gradient(#59d195 var(--pct), rgba(255,255,255,0.03) 0); display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; margin-top: 20px; }
+.wt-ring::before { content: ''; position: absolute; width: 126px; height: 126px; background: #131415; border-radius: 50%; box-shadow: inset 0 0 20px rgba(0,0,0,0.5); }
+.wt-ring span { position: relative; font-size: 34px; font-weight: 300; color: #fff; z-index: 1; margin-top: 10px; }
+.wt-ring-sub { position: relative; font-size: 10px; letter-spacing: 1px; color: rgba(255,255,255,0.4); z-index: 1; text-transform: uppercase; }
+
+.wt-popover { position: absolute; top: 60px; left: 50%; transform: translateX(-50%); background: rgba(24, 25, 26, 0.96); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 20px; box-shadow: 0 16px 40px rgba(0,0,0,0.6); z-index: 200; width: 85%; display: flex; flex-direction: column; gap: 14px; }
+.wt-input-row { display: flex; flex-direction: column; gap: 6px; }
+.wt-input-row label { font-size: 11px; letter-spacing: 0.5px; color: rgba(255,255,255,0.5); }
+.wt-input-wrap { display: flex; align-items: center; background: rgba(0,0,0,0.25); border-radius: 8px; border: 1px solid rgba(255,255,255,0.04); padding: 0 12px; transition: border 0.2s; }
+.wt-input-wrap:focus-within { border-color: rgba(255,255,255,0.15); }
+.wt-input-wrap input { background: transparent; border: none; color: #fff; padding: 12px 0; flex: 1; font-size: 14px; font-family: 'Inter', inherit; outline: none; }
+.wt-input-wrap span { color: rgba(255,255,255,0.3); font-size: 12px; }
+.wt-input-row input[type="date"] { background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.04); color: #fff; padding: 12px; border-radius: 8px; font-size: 14px; outline: none; font-family: 'Inter', inherit; color-scheme: dark; transition: border 0.2s; }
+.wt-input-row input[type="date"]:focus { border-color: rgba(255,255,255,0.15); }
+.wt-save-btn { background: #51df85; border: none; color: #000; padding: 14px; border-radius: 8px; font-weight: 600; font-size: 13px; cursor: pointer; transition: all 0.2s; margin-top: 6px; }
+.wt-save-btn:hover { background: #5ff597; }
+
+.wt-log-card { background: #131415; border-radius: 12px; padding: 24px; border: 1px solid rgba(255,255,255,0.04); display: flex; flex-direction: column; gap: 20px; flex: 1; }
+.wt-keypad-display { font-size: 28px; font-weight: 300; color: #fff; text-align: center; min-height: 40px; padding-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.05); letter-spacing: 1px; }
+.wt-keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; flex: 1; min-height: 240px; }
+.wt-key { background: #1a1b1d; border: 1px solid rgba(255,255,255,0.02); color: #fff; border-radius: 12px; font-size: 24px; font-weight: 400; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.1s; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+.wt-key:active { background: #25272a; transform: scale(0.96); box-shadow: none; }
+.wt-key.wt-key-action { color: #8a8a8a; font-size: 18px; }
+.wt-update-btn { background: #fff; color: #000; padding: 16px; border: none; border-radius: 8px; font-size: 13px; font-weight: 700; width: 100%; cursor: pointer; transition: opacity 0.2s; letter-spacing: 0.5px; }
+.wt-update-btn:hover { opacity: 0.9; }

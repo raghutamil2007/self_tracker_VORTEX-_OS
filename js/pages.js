@@ -288,42 +288,101 @@ function initSleepLog() {
 /* ======== Weight Chart ======== */
 function initWeightChart() {
     const canvas = document.getElementById('weightTrendChart');
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: ['Jan','Feb','Mar W1','Mar W2','Mar W3'],
-            datasets: [{
-                label: 'Weight (kg)',
-                data: [82, 80.1, 77.5, 75.8, 74.2],
-                borderColor: '#ffffff',
-                backgroundColor: 'rgba(255,255,255,0.04)',
-                borderWidth: 1.5,
-                pointRadius: 3,
-                pointBackgroundColor: '#ffffff',
-                fill: true,
-                tension: 0.4
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: { legend: { display: false } },
-            scales: {
-                x: { ticks: { color: '#6b6b6b', font: { family: 'Inter', size: 10 } }, grid: { color: 'rgba(255,255,255,0.05)' } },
-                y: { ticks: { color: '#6b6b6b', font: { family: 'Inter', size: 10 } }, grid: { color: 'rgba(255,255,255,0.05)' }, min: 68, max: 85 }
+    if (canvas) {
+        const ctx = canvas.getContext('2d');
+        const gradient = ctx.createLinearGradient(0, 0, 0, 180);
+        gradient.addColorStop(0, 'rgba(89, 209, 149, 0.4)');
+        gradient.addColorStop(1, 'rgba(89, 209, 149, 0.0)');
+
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Jan','Feb','Mar W1','Mar W2','Mar W3'],
+                datasets: [{
+                    label: 'Weight',
+                    data: [82.0, 80.1, 77.5, 75.8, 74.0],
+                    borderColor: '#59d195',
+                    backgroundColor: gradient,
+                    borderWidth: 2,
+                    pointRadius: 4,
+                    pointBackgroundColor: '#fff',
+                    pointBorderColor: '#59d195',
+                    pointBorderWidth: 2,
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { display: false },
+                    y: { display: false, min: 68, max: 85 }
+                },
+                layout: { padding: { left: 10, right: 10, top: 10, bottom: 10 } }
             }
-        }
+        });
+    }
+
+    // Keypad Logic
+    let currentInput = "74.0";
+    const keypadDisplay = document.getElementById('wt-keypad-display');
+    const displayVal = document.getElementById('wt-display-val');
+
+    document.querySelectorAll('.wt-key').forEach(key => {
+        key.addEventListener('click', (e) => {
+            const val = e.target.textContent;
+            if (val === 'C') {
+                currentInput = "";
+            } else if (val === '.') {
+                if (!currentInput.includes('.')) currentInput += val;
+            } else {
+                if (currentInput === "0" && val !== "0") currentInput = val;
+                else if (currentInput === "74.0") currentInput = val; // clear initial dummy val
+                else if (currentInput.length < 5) currentInput += val;
+            }
+            if (keypadDisplay) keypadDisplay.textContent = currentInput || "0";
+        });
     });
 
-    const logBtn = document.getElementById('weight-log-btn');
-    if (logBtn) {
-        logBtn.addEventListener('click', () => {
-            const val = document.getElementById('weight-input').value;
-            if (!val) return;
-            alert(`Weight ${val}kg logged! (connect to a backend to persist this)`);
+    const updateBtn = document.getElementById('wt-update-btn');
+    if (updateBtn) {
+        updateBtn.addEventListener('click', () => {
+            if (currentInput && displayVal) {
+                displayVal.textContent = currentInput;
+                // mock adding to chart/etc
+                currentInput = "";
+                if (keypadDisplay) keypadDisplay.textContent = "Logged!";
+                setTimeout(() => {
+                    if (keypadDisplay) keypadDisplay.textContent = displayVal.textContent;
+                }, 2000);
+            }
         });
+    }
+
+    // Progress to Goal Popover
+    const optionsBtn = document.getElementById('wt-options-btn');
+    const popover = document.getElementById('wt-popover');
+    const saveBtn = document.getElementById('wt-save-btn');
+
+    if (optionsBtn && popover) {
+        optionsBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            popover.style.display = popover.style.display === 'flex' ? 'none' : 'flex';
+        });
+
+        document.addEventListener('click', (e) => {
+            if (popover.style.display === 'flex' && !popover.contains(e.target) && !optionsBtn.contains(e.target)) {
+                popover.style.display = 'none';
+            }
+        });
+
+        if (saveBtn) {
+            saveBtn.addEventListener('click', () => {
+                popover.style.display = 'none';
+            });
+        }
     }
 }
 
