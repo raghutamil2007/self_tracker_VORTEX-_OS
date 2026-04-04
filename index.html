@@ -773,15 +773,62 @@
                     <h1 class="title">HABITS</h1>
                     <p class="description">Daily habits streaks and completion tracking.</p>
                 </header>
-                <div class="habits-grid">
-                    <div class="card habit-card habit-done"><div class="habit-left"><div class="habit-name">Gym</div><div class="habit-streak"><i class="ph ph-flame-fill"></i> 12 day streak</div></div><div class="habit-right"><div class="habit-mini-dots" id="hd1"></div><div class="habit-pct">86%</div></div></div>
-                    <div class="card habit-card habit-done"><div class="habit-left"><div class="habit-name">No reels</div><div class="habit-streak"><i class="ph ph-flame-fill"></i> 7 day streak</div></div><div class="habit-right"><div class="habit-mini-dots" id="hd2"></div><div class="habit-pct">100%</div></div></div>
-                    <div class="card habit-card habit-done"><div class="habit-left"><div class="habit-name">Read 30 min</div><div class="habit-streak"><i class="ph ph-flame-fill"></i> 4 day streak</div></div><div class="habit-right"><div class="habit-mini-dots" id="hd3"></div><div class="habit-pct">72%</div></div></div>
-                    <div class="card habit-card habit-miss"><div class="habit-left"><div class="habit-name">Meditate</div><div class="habit-streak"><i class="ph ph-x"></i> 0 day streak</div></div><div class="habit-right"><div class="habit-mini-dots" id="hd4"></div><div class="habit-pct">43%</div></div></div>
-                    <div class="card habit-card habit-done"><div class="habit-left"><div class="habit-name">Cold shower</div><div class="habit-streak"><i class="ph ph-flame-fill"></i> 3 day streak</div></div><div class="habit-right"><div class="habit-mini-dots" id="hd5"></div><div class="habit-pct">57%</div></div></div>
-                    <div class="card habit-card habit-done"><div class="habit-left"><div class="habit-name">Drink 4L water</div><div class="habit-streak"><i class="ph ph-flame-fill"></i> 14 day streak</div></div><div class="habit-right"><div class="habit-mini-dots" id="hd6"></div><div class="habit-pct">93%</div></div></div>
-                    <div class="card habit-card habit-miss"><div class="habit-left"><div class="habit-name">Wake up 7am</div><div class="habit-streak"><i class="ph ph-x"></i> 0 day streak</div></div><div class="habit-right"><div class="habit-mini-dots" id="hd7"></div><div class="habit-pct">50%</div></div></div>
-                    <div class="card habit-card habit-done"><div class="habit-left"><div class="habit-name">Journal</div><div class="habit-streak"><i class="ph ph-flame-fill"></i> 5 day streak</div></div><div class="habit-right"><div class="habit-mini-dots" id="hd8"></div><div class="habit-pct">71%</div></div></div>
+                <div class="habits-view-container">
+                    <div class="habits-overall-card">
+                        <div class="overall-circular-progress">
+                            <span>85%</span>
+                        </div>
+                        <div class="overall-bars">
+                            <span class="overall-label">OVERALL WEEKLY PROGRESS</span>
+                            <div class="overall-bars-container" id="overall-weekly-bars"></div>
+                        </div>
+                        <div class="overall-text">
+                            <div class="days-fraction">5/7 Days</div>
+                            <div class="days-label">Completed this week</div>
+                        </div>
+                    </div>
+                    <div class="habits-grid">
+                        <div class="habit-card habit-done" style="--pct: 86%;">
+                            <div class="habit-header"><div class="habit-title-col"><h3 class="habit-name">Gym</h3><span class="habit-streak">12 Day Streak</span></div><i class="ph ph-flame-fill habit-icon"></i></div>
+                            <div class="habit-body"><div class="habit-chart" id="hc1"></div><div class="habit-monthly"><div class="habit-circular-progress"><div class="habit-pct-text"><span class="habit-pct-val">86%</span><span class="habit-pct-lbl">Monthly Goal</span></div></div></div></div>
+                            <button class="habit-log-btn">Log Today</button>
+                        </div>
+                        <div class="habit-card habit-done" style="--pct: 86%;">
+                            <div class="habit-header"><div class="habit-title-col"><h3 class="habit-name">No reels</h3><span class="habit-streak">7 Day Streak</span></div><i class="ph ph-flame-fill habit-icon"></i></div>
+                            <div class="habit-body"><div class="habit-chart" id="hc2"></div><div class="habit-monthly"><div class="habit-circular-progress"><div class="habit-pct-text"><span class="habit-pct-val">86%</span><span class="habit-pct-lbl">Monthly Goal</span></div></div></div></div>
+                            <button class="habit-log-btn">Log Today</button>
+                        </div>
+                        <div class="habit-card habit-done" style="--pct: 72%;">
+                            <div class="habit-header"><div class="habit-title-col"><h3 class="habit-name">Read 30 min</h3><span class="habit-streak">4 Day Streak</span></div><i class="ph ph-flame-fill habit-icon"></i></div>
+                            <div class="habit-body"><div class="habit-chart" id="hc3"></div><div class="habit-monthly"><div class="habit-circular-progress"><div class="habit-pct-text"><span class="habit-pct-val">72%</span><span class="habit-pct-lbl">Monthly Goal</span></div></div></div></div>
+                            <button class="habit-log-btn">Log Today</button>
+                        </div>
+                        <div class="habit-card habit-miss" style="--pct: 43%;">
+                            <div class="habit-header"><div class="habit-title-col"><h3 class="habit-name">Meditate</h3><span class="habit-streak">× 0 Day Streak</span></div><i class="ph ph-flame-fill habit-icon" style="color: #f25f5c;"></i></div>
+                            <div class="habit-body"><div class="habit-chart" id="hc4"></div><div class="habit-monthly"><div class="habit-circular-progress"><div class="habit-pct-text"><span class="habit-pct-val">43%</span><span class="habit-pct-lbl">Monthly Goal</span></div></div></div></div>
+                            <button class="habit-log-btn">Log Today</button>
+                        </div>
+                        <div class="habit-card habit-done" style="--pct: 57%;">
+                            <div class="habit-header"><div class="habit-title-col"><h3 class="habit-name">Cold shower</h3><span class="habit-streak">3 Day Streak</span></div><i class="ph ph-flame-fill habit-icon"></i></div>
+                            <div class="habit-body"><div class="habit-chart" id="hc5"></div><div class="habit-monthly"><div class="habit-circular-progress"><div class="habit-pct-text"><span class="habit-pct-val">57%</span><span class="habit-pct-lbl">Monthly Goal</span></div></div></div></div>
+                            <button class="habit-log-btn">Log Today</button>
+                        </div>
+                        <div class="habit-card habit-done" style="--pct: 93%;">
+                            <div class="habit-header"><div class="habit-title-col"><h3 class="habit-name">Drink 4L water</h3><span class="habit-streak">14 Day Streak</span></div><i class="ph ph-flame-fill habit-icon"></i></div>
+                            <div class="habit-body"><div class="habit-chart" id="hc6"></div><div class="habit-monthly"><div class="habit-circular-progress"><div class="habit-pct-text"><span class="habit-pct-val">93%</span><span class="habit-pct-lbl">Monthly Goal</span></div></div></div></div>
+                            <button class="habit-log-btn">Log Today</button>
+                        </div>
+                        <div class="habit-card habit-miss" style="--pct: 50%;">
+                            <div class="habit-header"><div class="habit-title-col"><h3 class="habit-name">Wake up 7am</h3><span class="habit-streak">× 0 Day Streak</span></div><i class="ph ph-flame-fill habit-icon" style="color: #f25f5c;"></i></div>
+                            <div class="habit-body"><div class="habit-chart" id="hc7"></div><div class="habit-monthly"><div class="habit-circular-progress"><div class="habit-pct-text"><span class="habit-pct-val">50%</span><span class="habit-pct-lbl">Monthly Goal</span></div></div></div></div>
+                            <button class="habit-log-btn">Log Today</button>
+                        </div>
+                        <div class="habit-card habit-done" style="--pct: 71%;">
+                            <div class="habit-header"><div class="habit-title-col"><h3 class="habit-name">Journal</h3><span class="habit-streak">5 Day Streak</span></div><i class="ph ph-flame-fill habit-icon"></i></div>
+                            <div class="habit-body"><div class="habit-chart" id="hc8"></div><div class="habit-monthly"><div class="habit-circular-progress"><div class="habit-pct-text"><span class="habit-pct-val">71%</span><span class="habit-pct-lbl">Monthly Goal</span></div></div></div></div>
+                            <button class="habit-log-btn">Log Today</button>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -821,37 +868,248 @@
 
             <!-- =============================== GOALS =============================== -->
             <div id="view-goals" class="view" style="display:none;">
-                <header class="view-header">
-                    <h1 class="title">GOALS</h1>
-                    <p class="description">Long-form targets aligned to your four engines.</p>
+                <header class="view-header goals-adv-header">
+                    <div>
+                        <h1 class="title">Advanced Goals Dashboard</h1>
+                        <p class="description">Long-term targets and short-term milestones aligned to your four engines.</p>
+                    </div>
+                    <div class="goals-header-actions">
+                        <button class="adv-add-goal-btn" id="adv-add-goal-btn"><i class="ph ph-plus"></i> Add New Goal</button>
+                        <div class="adv-add-dropdown" id="adv-add-dropdown" style="display:none;">
+                            <button>Long-term Goal</button>
+                            <button>Short-term Goal</button>
+                        </div>
+                    </div>
                 </header>
-                <div class="goals-categories">
-                    <div class="goal-category">
-                        <div class="goal-cat-label body-accent">BODY</div>
-                        <div class="goals-list">
-                            <div class="card goal-card"><div class="goal-header"><span class="goal-title">Reach 15% body fat</span><span class="goal-deadline">Jun 2026</span></div><div class="goal-progress-label"><span>Current: 19%</span><span>78%</span></div><div class="progress-bar"><div class="progress-fill" style="width:78%"></div></div></div>
-                            <div class="card goal-card"><div class="goal-header"><span class="goal-title">Deadlift 140kg</span><span class="goal-deadline">Aug 2026</span></div><div class="goal-progress-label"><span>Current: 110kg</span><span>55%</span></div><div class="progress-bar"><div class="progress-fill" style="width:55%"></div></div></div>
+
+                <div class="goals-adv-layout">
+                    <!-- LEFT COLUMN -->
+                    <div class="goals-adv-col">
+                        <h2 class="goals-adv-col-title">Long-term Goals</h2>
+                        <div class="goals-adv-grid-lt">
+                            <!-- LT CARD 1 -->
+                            <div class="goal-lt-card body-border">
+                                <div class="lt-header">
+                                    <span class="adv-tag body">BODY</span>
+                                    <span class="lt-date">Jun 2026</span>
+                                </div>
+                                <h3 class="lt-name">Reach 15% body fat</h3>
+                                <div class="lt-stats">
+                                    <span>Current: 18.5%</span>
+                                    <button class="lt-log-btn" data-val="18.5%">+ Log Today</button>
+                                    <span>Target: 15%</span>
+                                </div>
+                                <div class="lt-progress-row">
+                                    <span class="lt-lbl">Progress:</span>
+                                    <div class="lt-bar-wrap"><div class="lt-bar body-bg" style="width:78%"></div></div>
+                                    <span class="lt-val">78%</span>
+                                </div>
+                            </div>
+                            
+                            <!-- LT CARD 2 -->
+                            <div class="goal-lt-card body-border">
+                                <div class="lt-header">
+                                    <span class="adv-tag body">BODY</span>
+                                    <span class="lt-date">Aug 2026</span>
+                                </div>
+                                <h3 class="lt-name">Deadlift 140kg</h3>
+                                <div class="lt-stats">
+                                    <span>Current: 110kg</span>
+                                    <button class="lt-log-btn" data-val="110">+ Log Today</button>
+                                    <span>Target: 140kg</span>
+                                </div>
+                                <div class="lt-progress-row">
+                                    <span class="lt-lbl">Progress:</span>
+                                    <div class="lt-bar-wrap"><div class="lt-bar body-bg" style="width:69%"></div></div>
+                                    <span class="lt-val">69%</span>
+                                </div>
+                            </div>
+                            
+                            <!-- LT CARD 3 -->
+                            <div class="goal-lt-card mind-border">
+                                <div class="lt-header">
+                                    <span class="adv-tag mind">MIND</span>
+                                    <span class="lt-date">Dec 2028</span>
+                                </div>
+                                <h3 class="lt-name">Read 24 books in 2028</h3>
+                                <div class="lt-stats">
+                                    <span>Current: 5 read</span>
+                                    <button class="lt-log-btn" data-val="5">+ Log Today</button>
+                                    <span>Target: 24</span>
+                                </div>
+                                <div class="lt-progress-row">
+                                    <span class="lt-lbl">Progress:</span>
+                                    <div class="lt-bar-wrap"><div class="lt-bar mind-bg" style="width:21%"></div></div>
+                                    <span class="lt-val">21%</span>
+                                </div>
+                            </div>
+
+                            <!-- LT CARD 4 -->
+                            <div class="goal-lt-card mind-border">
+                                <div class="lt-header">
+                                    <span class="adv-tag mind">MIND</span>
+                                    <span class="lt-date">May 2026</span>
+                                </div>
+                                <h3 class="lt-name">No social media — 90 days</h3>
+                                <div class="lt-stats">
+                                    <span>Current: Day 17</span>
+                                    <button class="lt-log-btn" data-val="17">+ Log Today</button>
+                                    <span>Target: 90</span>
+                                </div>
+                                <div class="lt-progress-row">
+                                    <span class="lt-lbl">Progress:</span>
+                                    <div class="lt-bar-wrap"><div class="lt-bar mind-bg" style="width:18%"></div></div>
+                                    <span class="lt-val">18%</span>
+                                </div>
+                            </div>
+                            
+                            <!-- LT CARD 5 -->
+                            <div class="goal-lt-card money-border">
+                                <div class="lt-header">
+                                    <span class="adv-tag money">MONEY</span>
+                                    <span class="lt-date">Dec 2026</span>
+                                </div>
+                                <h3 class="lt-name">Save ₹1,00,000</h3>
+                                <div class="lt-stats">
+                                    <span>Current: ₹38,000 saved</span>
+                                    <button class="lt-log-btn" data-val="38000">+ Log Today</button>
+                                    <span>Target: ₹1,00,000</span>
+                                </div>
+                                <div class="lt-progress-row">
+                                    <span class="lt-lbl">Progress:</span>
+                                    <div class="lt-bar-wrap"><div class="lt-bar money-bg" style="width:38%"></div></div>
+                                    <span class="lt-val">38%</span>
+                                </div>
+                            </div>
+                            
+                            <!-- LT CARD 6 -->
+                            <div class="goal-lt-card general-border">
+                                <div class="lt-header">
+                                    <span class="adv-tag general">GENERAL</span>
+                                    <span class="lt-date">Apr 2026</span>
+                                </div>
+                                <h3 class="lt-name">30-day meditation challenge</h3>
+                                <div class="lt-stats">
+                                    <span>Current: Day 4</span>
+                                    <button class="lt-log-btn" data-val="4">+ Log Today</button>
+                                    <span>Target: 30</span>
+                                </div>
+                                <div class="lt-progress-row">
+                                    <span class="lt-lbl">Progress:</span>
+                                    <div class="lt-bar-wrap"><div class="lt-bar general-bg" style="width:13%"></div></div>
+                                    <span class="lt-val">13%</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div class="goal-category">
-                        <div class="goal-cat-label mind-accent">MIND</div>
-                        <div class="goals-list">
-                            <div class="card goal-card"><div class="goal-header"><span class="goal-title">Read 24 books in 2026</span><span class="goal-deadline">Dec 2026</span></div><div class="goal-progress-label"><span>5 read</span><span>21%</span></div><div class="progress-bar"><div class="progress-fill" style="width:21%"></div></div></div>
-                            <div class="card goal-card"><div class="goal-header"><span class="goal-title">No social media — 90 days</span><span class="goal-deadline">May 2026</span></div><div class="goal-progress-label"><span>Day 17</span><span>18%</span></div><div class="progress-bar"><div class="progress-fill" style="width:18%"></div></div></div>
+
+                    <!-- RIGHT COLUMN -->
+                    <div class="goals-adv-col">
+                        <h2 class="goals-adv-col-title">Short-term Goals</h2>
+                        <div class="goals-adv-grid-st">
+                            <!-- ST CARD 1 -->
+                            <div class="goal-st-card">
+                                <div class="st-header">
+                                    <h3 class="st-name">Finish React Project</h3>
+                                    <span class="adv-tag mind-text-only">MIND</span>
+                                    <div class="st-menu-wrap">
+                                        <button class="st-options-btn"><i class="ph ph-dots-three-vertical"></i></button>
+                                    </div>
+                                </div>
+                                <div class="st-ring-row">
+                                    <div class="st-ring mind-ring" style="--pct: 80%"><span>80%</span></div>
+                                </div>
+                                <button class="st-log-btn">Log Today</button>
+                            </div>
+
+                            <!-- ST CARD 2 -->
+                            <div class="goal-st-card">
+                                <div class="st-header">
+                                    <h3 class="st-name">Weekly Run (20km)</h3>
+                                    <span class="adv-tag body-text-only">BODY</span>
+                                    <div class="st-menu-wrap">
+                                        <button class="st-options-btn"><i class="ph ph-dots-three-vertical"></i></button>
+                                    </div>
+                                </div>
+                                <div class="st-ring-row">
+                                    <div class="st-ring body-ring" style="--pct: 75%"><span>15/20</span></div>
+                                </div>
+                                <button class="st-log-btn">Log Today</button>
+                            </div>
+
+                            <!-- ST CARD 3 -->
+                            <div class="goal-st-card">
+                                <div class="st-header">
+                                    <h3 class="st-name">Pay Bills</h3>
+                                    <span class="adv-tag money-text-only">MONEY</span>
+                                    <div class="st-menu-wrap">
+                                        <button class="st-options-btn"><i class="ph ph-dots-three-vertical"></i></button>
+                                    </div>
+                                </div>
+                                <div class="st-ring-row">
+                                    <div class="st-ring money-ring" style="--pct: 50%"><span>50%</span></div>
+                                </div>
+                                <button class="st-log-btn">Log Today</button>
+                            </div>
+
+                            <!-- ST CARD 4 -->
+                            <div class="goal-st-card">
+                                <div class="st-header">
+                                    <h3 class="st-name">Write Blog Post</h3>
+                                    <span class="adv-tag general-text-only">GENERAL</span>
+                                    <div class="st-menu-wrap">
+                                        <button class="st-options-btn"><i class="ph ph-dots-three-vertical"></i></button>
+                                    </div>
+                                </div>
+                                <div class="st-ring-row">
+                                    <div class="st-ring general-ring" style="--pct: 20%"><span>20%</span></div>
+                                </div>
+                                <button class="st-log-btn">Log Today</button>
+                            </div>
+
+                            <!-- ST CARD 5 -->
+                            <div class="goal-st-card">
+                                <div class="st-header">
+                                    <h3 class="st-name">Organize Desk</h3>
+                                    <span class="adv-tag general-text-only">GENERAL</span>
+                                    <div class="st-menu-wrap">
+                                        <button class="st-options-btn"><i class="ph ph-dots-three-vertical"></i></button>
+                                    </div>
+                                </div>
+                                <div class="st-ring-row">
+                                    <div class="st-ring general-ring" style="--pct: 0%"><span>0%</span></div>
+                                </div>
+                                <button class="st-log-btn">Log Today</button>
+                            </div>
+
+                            <!-- ST CARD 6 -->
+                            <div class="goal-st-card">
+                                <div class="st-header">
+                                    <h3 class="st-name">Review Finances</h3>
+                                    <span class="adv-tag money-text-only">MONEY</span>
+                                    <div class="st-menu-wrap">
+                                        <button class="st-options-btn"><i class="ph ph-dots-three-vertical"></i></button>
+                                    </div>
+                                </div>
+                                <div class="st-ring-row">
+                                    <div class="st-ring money-ring" style="--pct: 90%"><span>90%</span></div>
+                                </div>
+                                <button class="st-log-btn">Log Today</button>
+                            </div>
                         </div>
                     </div>
-                    <div class="goal-category">
-                        <div class="goal-cat-label money-accent">MONEY</div>
-                        <div class="goals-list">
-                            <div class="card goal-card"><div class="goal-header"><span class="goal-title">Save ₹1,00,000</span><span class="goal-deadline">Dec 2026</span></div><div class="goal-progress-label"><span>₹38,000 saved</span><span>38%</span></div><div class="progress-bar"><div class="progress-fill" style="width:38%"></div></div></div>
-                        </div>
-                    </div>
-                    <div class="goal-category">
-                        <div class="goal-cat-label general-accent">GENERAL</div>
-                        <div class="goals-list">
-                            <div class="card goal-card"><div class="goal-header"><span class="goal-title">30-day meditation challenge</span><span class="goal-deadline">Apr 2026</span></div><div class="goal-progress-label"><span>Day 4</span><span>13%</span></div><div class="progress-bar"><div class="progress-fill" style="width:13%"></div></div></div>
-                        </div>
-                    </div>
+                </div>
+
+                <!-- Modals / Popovers for Goals -->
+                <div id="goal-log-popup" class="goal-popover" style="display:none;">
+                    <div class="slider-val-display" id="goal-slider-val">18.5%</div>
+                    <input type="range" class="goal-slider" id="goal-slider" min="0" max="100" value="18.5" step="0.1">
+                    <button class="goal-confirm-btn" id="goal-slider-confirm">Confirm</button>
+                </div>
+
+                <div id="goal-edit-dropdown" class="adv-add-dropdown" style="display:none; position:absolute;">
+                    <button id="goal-edit-btn" class="edit-opt"><i class="ph ph-pencil-simple"></i> Edit</button>
+                    <button id="goal-delete-btn" class="delete-opt"><i class="ph ph-trash"></i> Delete</button>
                 </div>
             </div>
 

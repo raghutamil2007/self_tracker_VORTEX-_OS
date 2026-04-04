@@ -187,22 +187,40 @@ function initCommandCenter() {
 
 /* ======== Habits — Build Mini Dot History ======== */
 function initHabits() {
-    // Each habit gets 14 day dots: random green/red based on pct
+    // Overall weekly bars
+    const overallContainer = document.getElementById('overall-weekly-bars');
+    if (overallContainer) {
+        const overallLevels = [100, 70, 50, 90, 80, 0, 0];
+        const overallLabels = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
+        overallLevels.forEach((lvl, i) => {
+            const wrap = document.createElement('div');
+            wrap.className = 'overall-bar-wrapper';
+            wrap.innerHTML = `<div class="overall-bar"><div class="overall-bar-fill" style="height:${lvl}%"></div></div><span>${overallLabels[i]}</span>`;
+            overallContainer.appendChild(wrap);
+        });
+    }
+
+    // Individual Habit charts
     const habits = [
-        { id: 'hd1', pct: 86 }, { id: 'hd2', pct: 100 }, { id: 'hd3', pct: 72 }, { id: 'hd4', pct: 43 },
-        { id: 'hd5', pct: 57 }, { id: 'hd6', pct: 93 }, { id: 'hd7', pct: 50 }, { id: 'hd8', pct: 71 }
+        { id: 'hc1', pct: 86, daily: [40,60,86,100,50,0,86] },
+        { id: 'hc2', pct: 100, daily: [100,100,100,100,100,100,100] },
+        { id: 'hc3', pct: 72, daily: [80,60,50,60,80,72,20] },
+        { id: 'hc4', pct: 43, daily: [50,10,30,40,20,0,43] },
+        { id: 'hc5', pct: 57, daily: [100,100,100,0,0,0,57] },
+        { id: 'hc6', pct: 93, daily: [90,95,100,80,90,100,93] },
+        { id: 'hc7', pct: 50, daily: [100,10,0,0,0,100,50] },
+        { id: 'hc8', pct: 71, daily: [50,60,70,80,60,70,71] }
     ];
-    habits.forEach(({ id, pct }) => {
+    const habitLabels = ['1', 'T', '4', '5', '6', '7', '7'];
+    habits.forEach(({ id, pct, daily }) => {
         const container = document.getElementById(id);
         if (!container) return;
-        for (let i = 0; i < 14; i++) {
-            const dot = document.createElement('div');
-            dot.className = 'habit-dot';
-            const hit = Math.random() * 100 < pct;
-            const h = 8 + Math.random() * 18;
-            dot.style.height = h + 'px';
-            dot.style.background = hit ? '#59d195' : 'rgba(242,95,95,0.5)';
-            container.appendChild(dot);
+        for (let i = 0; i < 7; i++) {
+            const wrap = document.createElement('div');
+            wrap.className = 'habit-bar-wrap';
+            const h = daily[i] || (Math.random() * 80 + 20);
+            wrap.innerHTML = `<div class="habit-bar"><div class="habit-bar-fill" style="height:${h}%"></div></div><span>${habitLabels[i] || ''}</span>`;
+            container.appendChild(wrap);
         }
     });
 }
@@ -396,3 +414,101 @@ function initStandaloneFocusTimer() {
 
     render();
 }
+
+/* ======== Advanced Goals Dashboard Interactions ======== */
+function initGoalsAdvanced() {
+    // 1. Add Goal dropdown
+    const addGoalBtn = document.getElementById('adv-add-goal-btn');
+    const addDropdown = document.getElementById('adv-add-dropdown');
+    
+    if (addGoalBtn && addDropdown) {
+        addGoalBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            addDropdown.style.display = addDropdown.style.display === 'none' ? 'flex' : 'none';
+        });
+        document.addEventListener('click', (e) => {
+            if (!addGoalBtn.contains(e.target) && !addDropdown.contains(e.target)) {
+                addDropdown.style.display = 'none';
+            }
+        });
+    }
+
+    // 2. Long Term Log Popup
+    const ltLogBtns = document.querySelectorAll('.lt-log-btn');
+    const logPopup = document.getElementById('goal-log-popup');
+    const logSlider = document.getElementById('goal-slider');
+    const logSliderVal = document.getElementById('goal-slider-val');
+    const logConfirmBtn = document.getElementById('goal-slider-confirm');
+
+    if (logPopup && logSlider && logSliderVal) {
+        ltLogBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                // Close edit dropdown if open
+                const editDrop = document.getElementById('goal-edit-dropdown');
+                if (editDrop) editDrop.style.display = 'none';
+                
+                const val = btn.getAttribute('data-val');
+                logSliderVal.textContent = val;
+                
+                // Append popup to the button's parent
+                const wrap = btn.parentElement;
+                wrap.style.position = 'relative';
+                wrap.appendChild(logPopup);
+                logPopup.style.display = 'flex';
+                logPopup.style.top = 'calc(100% + 8px)';
+                logPopup.style.left = '50%';
+                logPopup.style.transform = 'translateX(-50%)';
+            });
+        });
+
+        // Hide when clicking outside
+        document.addEventListener('click', (e) => {
+            if (logPopup.style.display === 'flex' && !logPopup.contains(e.target) && !e.target.closest('.lt-log-btn')) {
+                logPopup.style.display = 'none';
+            }
+        });
+
+        // Slider input visually updates the text
+        logSlider.addEventListener('input', (e) => {
+            logSliderVal.textContent = e.target.value + (logSliderVal.textContent.includes('%') ? '%' : '');
+        });
+
+        if (logConfirmBtn) {
+            logConfirmBtn.addEventListener('click', () => {
+                logPopup.style.display = 'none';
+            });
+        }
+    }
+
+    // 3. Short Term Edit/Delete Dropdown
+    const stOptionsBtns = document.querySelectorAll('.st-options-btn');
+    const editDropdown = document.getElementById('goal-edit-dropdown');
+
+    if (editDropdown) {
+        stOptionsBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                // Close log popup if open
+                if (logPopup) logPopup.style.display = 'none';
+
+                const wrap = btn.closest('.st-menu-wrap');
+                wrap.appendChild(editDropdown);
+                editDropdown.style.display = 'flex';
+                editDropdown.style.top = '100%';
+                editDropdown.style.right = '0';
+                editDropdown.style.left = 'auto';
+            });
+        });
+
+        // Hide when clicking outside
+        document.addEventListener('click', (e) => {
+            if (editDropdown.style.display === 'flex' && !editDropdown.contains(e.target) && !e.target.closest('.st-options-btn')) {
+                editDropdown.style.display = 'none';
+            }
+        });
+    }
+}
+
+// Call on load
+initGoalsAdvanced();
