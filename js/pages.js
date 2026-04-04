@@ -17,6 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initSleepLog();
     initWeightChart();
     initStandaloneFocusTimer();
+    initHydration();
 });
 
 /* ======== Generic Calendar+Consistency for Money / General ======== */
@@ -601,3 +602,48 @@ function initGoalsAdvanced() {
 
 // Call on load
 initGoalsAdvanced();
+
+/* ======== Hydration Index ======== */
+function initHydration() {
+    let currentLiters = 2.0;
+    const maxLiters = 3.5;
+    const step = 0.5;
+    const maxSlots = Math.ceil(maxLiters / step);
+    
+    const valDisplay = document.getElementById('hydro-val');
+    const slotsContainer = document.getElementById('hydro-slots');
+    const addBtn = document.getElementById('hydro-add-btn');
+    
+    if(!valDisplay || !slotsContainer || !addBtn) return;
+    
+    const updateUI = () => {
+        valDisplay.innerHTML = `${currentLiters.toFixed(1)}<span class="hydro-unit">L</span>`;
+        let slotsHtml = '';
+        const filledSlots = Math.floor(currentLiters / step);
+        for (let i = 0; i < maxSlots; i++) {
+            if (i < filledSlots) {
+                slotsHtml += `<div class="hydro-slot filled"><i class="ph ph-drop"></i></div>`;
+            } else {
+                slotsHtml += `<div class="hydro-slot empty"><i class="ph ph-drop"></i></div>`;
+            }
+        }
+        slotsContainer.innerHTML = slotsHtml;
+        
+        if (currentLiters >= maxLiters) {
+            addBtn.innerHTML = '<i class="ph-bold ph-check"></i> TARGET REACHED';
+            addBtn.style.color = '#59d195';
+        } else {
+            addBtn.innerHTML = '+ ADD 500ML FLUID';
+            addBtn.style.color = '#fff';
+        }
+    };
+    
+    updateUI();
+    
+    addBtn.addEventListener('click', () => {
+        if (currentLiters + step <= maxLiters) {
+            currentLiters += step;
+            updateUI();
+        }
+    });
+}
