@@ -51,7 +51,10 @@ document.addEventListener('DOMContentLoaded', () => {
     initSleepTracker();
     initWeightChart();
     initStandaloneFocusTimer();
-    initHydration();
+    
+    // Initialize new premium modules
+    if (window.GoalsEngine) GoalsEngine.init();
+    if (window.NutritionEngine) NutritionEngine.init();
 });
 
 /* ======== Global Helpers ======== */
@@ -300,13 +303,42 @@ function initCommandCenter() {
         const name = input.value.trim();
         if (!name) return;
         const engine = engineSel ? engineSel.value : 'mind';
+        
+        // Command interpretation
+        const cmd = name.toLowerCase();
+        let feedback = name;
+
+        if (cmd.includes('drink water') || cmd === 'water' || cmd === 'hydrate') {
+            if (window.NutritionEngine) {
+                window.NutritionEngine.addHydration();
+                feedback = "Logged 500ml hydration via command.";
+            }
+        } else if (cmd.startsWith('eat ') || cmd.startsWith('log meal ')) {
+             // simplified meal logging via cmd: e.g. "eat Pizza 500"
+             const parts = name.split(' ');
+             if (parts.length >= 3) {
+                 const calories = parseInt(parts[parts.length - 1], 10);
+                 const mealName = parts.slice(1, parts.length - 1).join(' ');
+                 if (!isNaN(calories) && window.NutritionEngine) {
+                     window.NutritionEngine.data.meals.push({
+                         time: new Date().toTimeString().slice(0,5),
+                         name: mealName,
+                         cals: calories
+                     });
+                     window.NutritionEngine.saveData();
+                     window.NutritionEngine.render();
+                     feedback = `Logged meal: ${mealName} (${calories} kcal)`;
+                 }
+             }
+        }
+
         const now = new Date();
         const timeStr = now.toTimeString().slice(0, 5);
         const item = document.createElement('div');
         item.className = 'cmd-log-item';
         item.innerHTML = `<span class="cmd-log-time">${timeStr}</span>
                           <span class="cmd-log-engine ${engine}-tag">${engine.toUpperCase()}</span>
-                          <span class="cmd-log-text">${name}</span>`;
+                          <span class="cmd-log-text">${feedback}</span>`;
         log.insertBefore(item, log.firstChild);
         input.value = '';
     };
@@ -1022,107 +1054,3 @@ function initGoalsAdvanced() {
     loadGoalLogs();
 }
 
-/* ======== Hydration Index ======== */
-function initHydration() {
-    let currentLiters = 0.0;
-    let maxLiters = 3.5;
-    const step = 0.5;
-    
-    const valDisplay = document.getElementById('hydro-val');
-    const slotsContainer = document.getElementById('hydro-slots');
-    const addBtn = document.getElementById('hydro-add-btn');
-    const targetLabel = document.getElementById('hydro-target-label');
-    
-    // Popover Elements
-    const optionsBtn = document.getElementById('hydro-options-btn');
-    const popover = document.getElementById('hydro-popover');
-    const targetInput = document.getElementById('hydro-target-input');
-    const resetBtn = document.getElementById('hydro-reset-btn');
-    const saveBtn = document.getElementById('hydro-save-btn');
-    
-    if(!valDisplay || !slotsContainer || !addBtn) return;
-    
-    const updateUI = () => {
-        valDisplay.innerHTML = `${currentLiters.toFixed(1)}<span class="hydro-unit">L</span>`;
-        if (targetLabel) targetLabel.textContent = `TARGET: ${maxLiters.toFixed(1)} LITERS`;
-        
-        let slotsHtml = '';
-        const maxSlots = Math.ceil(maxLiters / step);
-        const filledSlots = Math.floor(currentLiters / step);
-        for (let i = 0; i < maxSlots; i++) {
-            if (i < filledSlots) {
-                slotsHtml += `<div class="hydro-slot filled"><i class="ph ph-drop"></i></div>`;
-            } else {
-                slotsHtml += `<div class="hydro-slot empty"><i class="ph ph-drop"></i></div>`;
-            }
-        }
-        slotsContainer.innerHTML = slotsHtml;
-        
-        if (currentLiters >= maxLiters) {
-            addBtn.innerHTML = '<i class="ph-bold ph-check"></i> TARGET REACHED';
-            addBtn.style.color = '#59d195';
-        } else {
-            addBtn.innerHTML = '+ ADD 500ML FLUID';
-            addBtn.style.color = '#fff';
-        }
-    };
-
-    const saveHydro = () => {
-        localStorage.setItem('hydration-data', JSON.stringify({ currentLiters, maxLiters }));
-    };
-
-    const loadHydro = () => {
-        const saved = localStorage.getItem('hydration-data');
-        if (saved) {
-            const data = JSON.parse(saved);
-            currentLiters = data.currentLiters || 0;
-            maxLiters = data.maxLiters || 3.5;
-        }
-    };
-
-    loadHydro();
-    updateUI();
-    
-    addBtn.addEventListener('click', () => {
-        if (currentLiters + step <= maxLiters) {
-            currentLiters += step;
-            updateUI();
-            saveHydro();
-        }
-    });
-
-    if (optionsBtn && popover) {
-        optionsBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            popover.style.display = popover.style.display === 'flex' ? 'none' : 'flex';
-        });
-
-        document.addEventListener('click', (e) => {
-            if (popover.style.display === 'flex' && !popover.contains(e.target) && !optionsBtn.contains(e.target)) {
-                popover.style.display = 'none';
-            }
-        });
-        
-        if (resetBtn) {
-            resetBtn.addEventListener('click', () => {
-                currentLiters = 0.0;
-                updateUI();
-                saveHydro();
-                popover.style.display = 'none';
-            });
-        }
-
-        if (saveBtn) {
-            saveBtn.addEventListener('click', () => {
-                const newMax = parseFloat(targetInput.value);
-                if (!isNaN(newMax) && newMax >= 0.5) {
-                    maxLiters = newMax;
-                    if (currentLiters > maxLiters) currentLiters = maxLiters;
-                    updateUI();
-                    saveHydro();
-                }
-                popover.style.display = 'none';
-            });
-        }
-    }
-}
