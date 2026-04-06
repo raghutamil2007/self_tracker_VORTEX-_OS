@@ -4,7 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TITAN OS - Performance Operating System</title>
+    <title>ARK OS - Performance Operating System</title>
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="assets/logo.png">
+    <link rel="apple-touch-icon" href="assets/logo.png">
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -18,14 +21,16 @@
     <link rel="stylesheet" href="css/pages.css">
     <link rel="stylesheet" href="css/money-planner.css">
     <link rel="stylesheet" href="css/weight-tracker.css">
+    <link rel="stylesheet" href="css/workouts.css">
+    <link rel="stylesheet" href="css/body-analytics.css">
 </head>
 <body>
     <div class="app-container">
         <!-- Sidebar Navigation -->
         <aside class="sidebar">
             <div class="sidebar-header">
-                <i class="ph ph-hexagon-fill logo-icon"></i>
-                <span class="logo-text">TITAN OS</span>
+                <img src="assets/logo.png" alt="TITAN OS" class="logo-img">
+                <span class="logo-text">ARK OS</span>
             </div>
 
             <nav class="sidebar-nav">
@@ -109,10 +114,13 @@
         <main class="main-content">
             <!-- Views will be injected or toggled here -->
             <div id="view-dashboard" class="view active">
-                <header class="view-header">
-                    <div class="subtitle">TITAN PROTOCOL</div>
-                    <h1 class="title">TITAN OS</h1>
-                    <p class="description">Your performance operating system — four engines, one view.</p>
+                <header class="view-header dashboard-header">
+                    <div class="header-content">
+                        <div class="subtitle">TITAN PROTOCOL</div>
+                        <h1 class="title">ARK OS</h1>
+                        <p class="description">Your performance operating system — four engines, one view.</p>
+                    </div>
+                    <img src="assets/logo.png" alt="ARK OS" class="header-logo">
                 </header>
 
                 <div class="dashboard-grid">
@@ -306,6 +314,7 @@
                 <div class="engine-tabs">
                     <button class="engine-tab active" data-tab="body-tab-engine">BODY ENGINE</button>
                     <button class="engine-tab" data-tab="body-tab-workouts">WORKOUTS</button>
+                    <button class="engine-tab" data-tab="body-tab-performance">PERFORMANCE</button>
                 </div>
 
                 <div id="body-tab-engine" class="engine-tab-content active">
@@ -412,11 +421,14 @@
                 </div>
 
                 <div id="body-tab-workouts" class="engine-tab-content" style="display:none;">
-                    <div class="dashboard-grid">
-                        <div class="card">
-                            <div class="card-header">WORKOUTS</div>
-                            <p style="padding: 24px; color: var(--text-muted); text-align: center;">Workout mapping module coming soon...</p>
-                        </div>
+                    <div class="workout-dashboard-placeholder">
+                        <p style="padding: 24px; color: var(--text-muted); text-align: center;">Initializing Workout Engine...</p>
+                    </div>
+                </div>
+
+                <div id="body-tab-performance" class="engine-tab-content" style="display:none;">
+                    <div class="performance-dashboard-placeholder">
+                        <p style="padding: 24px; color: var(--text-muted); text-align: center;">Initializing Performance Engine...</p>
                     </div>
                 </div>
             </div>
@@ -766,6 +778,17 @@
                     <p class="description">Rapid-fire task logging across all engines.</p>
                 </header>
                 <div class="command-center-layout">
+                    <div class="card" id="daily-win-card" style="margin-bottom: -4px;">
+                        <div class="card-header">DAILY WIN</div>
+                        <div class="command-input-row" id="daily-win-input-row">
+                            <input type="text" class="add-task-input" id="daily-win-input" placeholder="What's your biggest win today?">
+                            <button class="add-task-submit" id="daily-win-submit" style="background: #e0e6ed; color: #1a1e21; font-weight: 600;">LOG WIN</button>
+                        </div>
+                        <div id="daily-win-display" style="display: none; margin-top: 12px; font-size: 13px; font-weight: 500; padding: 0 4px;">
+                            <span style="color: #59d195;">✓ Today's Win: <em style="color: #fff; font-style: italic;" id="daily-win-text">""</em></span>
+                        </div>
+                    </div>
+                    
                     <div class="command-input-section card">
                         <div class="card-header">QUICK LOG</div>
                         <div class="command-input-row">
@@ -875,24 +898,43 @@
                     <div class="card journal-editor-card">
                         <div class="journal-editor-header">
                             <div class="journal-date-label" id="journal-today-date">Monday, 17 Mar 2026</div>
-                            <button class="add-task-submit" id="journal-save-btn">SAVE ENTRY</button>
                         </div>
                         <textarea class="journal-textarea" id="journal-textarea" placeholder="Start writing your thoughts for today...&#10;&#10;What did you accomplish? What are you grateful for? What challenged you?"></textarea>
+                        <div class="journal-editor-footer">
+                            <div class="journal-mood-selector" id="journal-mood-selector">
+                                <span class="journal-mood-label">MOOD:</span>
+                                <button class="journal-mood-btn" data-mood="🔥 High Energy">🔥 High Energy</button>
+                                <button class="journal-mood-btn" data-mood="🎯 Focused">🎯 Focused</button>
+                                <button class="journal-mood-btn" data-mood="🧘 Calm">🧘 Calm</button>
+                                <button class="journal-mood-btn" data-mood="🌧️ Low">🌧️ Low</button>
+                            </div>
+                            <button class="add-task-submit" id="journal-save-btn">SAVE ENTRY</button>
+                        </div>
                     </div>
                     <div class="journal-entries-panel">
                         <div class="card-header" style="margin-bottom: 16px;">PAST ENTRIES</div>
                         <div id="journal-entries-list">
-                            <div class="card journal-entry-card">
-                                <div class="journal-entry-date">16 Mar 2026</div>
-                                <p class="journal-entry-preview">Crushed the gym session today. Feeling strong. Need to work on consistency with meditation — skipped again. Tomorrow I start the streak over...</p>
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Journal Entry Modal -->
+                <div class="mp-modal-overlay" id="journal-modal-overlay" style="display:none; z-index:1000; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); align-items:center; justify-content:center;">
+                    <div class="mp-modal card journal-modal-card" style="width:100%; max-width:600px; max-height:85vh; background:var(--surface); display:flex; flex-direction:column;">
+                        <div class="mp-modal-header" style="justify-content:space-between; display:flex; border-bottom:1px solid rgba(255,255,255,0.06); padding-bottom:16px;">
+                            <div class="journal-modal-meta" style="display:flex; flex-direction:column; gap:4px;">
+                                <div class="journal-modal-date" id="journal-modal-date" style="font-size:11px; color:var(--text-secondary); letter-spacing:1px; text-transform:uppercase;"></div>
+                                <div class="journal-modal-mood" id="journal-modal-mood" style="font-size:13px; color:var(--text);"></div>
                             </div>
-                            <div class="card journal-entry-card">
-                                <div class="journal-entry-date">15 Mar 2026</div>
-                                <p class="journal-entry-preview">Rest day. Used the time to deep-read on stoicism. Marcus Aurelius — "You have power over your mind, not outside events..."</p>
-                            </div>
-                            <div class="card journal-entry-card">
-                                <div class="journal-entry-date">14 Mar 2026</div>
-                                <p class="journal-entry-preview">Bad day financially — impulse purchase. Logged it and accepted it. Tomorrow is a reset. The system holds even when I slip...</p>
+                            <button class="mp-modal-close" id="journal-modal-close" style="background:none; border:none; color:var(--text-secondary); cursor:pointer; font-size:18px;"><i class="ph ph-x"></i></button>
+                        </div>
+                        <div class="mp-modal-body" style="display:flex; flex-direction:column; gap:16px; padding-top:16px; flex:1; overflow:hidden;">
+                            <input type="hidden" id="journal-edit-id">
+                            <textarea class="journal-textarea" id="journal-modal-textarea" style="min-height: 250px; flex:1; margin-bottom: 0px;" placeholder="Entry text..."></textarea>
+                            <div class="sl-form-btns" style="margin-top: 8px;">
+                                <button class="add-task-submit" id="journal-modal-update-btn" style="flex:1; border-radius:8px; padding:12px;">UPDATE ENTRY</button>
+                                <button class="add-task-submit" id="journal-modal-delete-btn" style="flex:0.3; border-radius:8px; padding:12px; background:rgba(242, 95, 92, 0.1); color: #f25f5c;">DELETE</button>
                             </div>
                         </div>
                     </div>
@@ -1964,5 +2006,7 @@
     <script src="js/weight-tracker.js"></script>
     <script src="js/goals-engine.js"></script>
     <script src="js/nutrition-engine.js"></script>
+    <script src="js/workouts-engine.js"></script>
+    <script src="js/body-analytics.js"></script>
 </body>
 </html>

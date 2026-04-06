@@ -1,0 +1,188 @@
+/* ======================================================
+   TITAN OS — BODY-ANALYTICS.CSS
+   Performance Dashboard: Readiness, Heatmaps, and Metrics.
+   ====================================================== */
+
+:root {
+    --ready-high: #59d195;
+    --ready-mid: #f2a75f;
+    --ready-low: #f25f5c;
+    --ana-bg: rgba(255, 255, 255, 0.02);
+    --ana-border: rgba(255, 255, 255, 0.08);
+}
+
+.performance-dashboard {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    padding: 10px;
+}
+
+.ana-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+}
+
+.ana-card {
+    background: var(--ana-bg);
+    border: 1px solid var(--ana-border);
+    border-radius: 12px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* 1. Readiness Index */
+.readiness-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    height: 100%;
+}
+
+.readiness-gauge {
+    position: relative;
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    background: conic-gradient(var(--ready-color) var(--pct), rgba(255,255,255,0.05) 0);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.readiness-gauge::before {
+    content: '';
+    position: absolute;
+    width: 116px;
+    height: 116px;
+    background: #111; /* matches card dark bg */
+    border-radius: 50%;
+}
+
+.readiness-val {
+    position: relative;
+    font-size: 32px;
+    font-weight: 700;
+    color: #fff;
+    z-index: 1;
+}
+
+.readiness-status {
+    font-size: 11px;
+    letter-spacing: 2px;
+    font-weight: 700;
+    color: var(--ready-color);
+    text-transform: uppercase;
+}
+
+.readiness-desc {
+    font-size: 13px;
+    color: var(--text-muted);
+    text-align: center;
+    line-height: 1.5;
+}
+
+/* 2. Muscle Heatmap */
+.heatmap-container {
+    height: 240px;
+    width: 100%;
+    margin-top: 10px;
+}
+
+/* 3. Body Metrics Grid */
+.metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-top: 16px;
+}
+
+.metric-tile {
+    background: rgba(255,255,255,0.03);
+    border-radius: 8px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    border: 1px solid transparent;
+    transition: all 0.2s;
+}
+
+.metric-tile:hover {
+    background: rgba(255,255,255,0.05);
+    border-color: rgba(255,255,255,0.1);
+}
+
+.metric-label {
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    font-weight: 600;
+    color: #6b6b6b;
+    text-transform: uppercase;
+}
+
+.metric-val {
+    font-size: 20px;
+    font-weight: 600;
+    color: #fff;
+}
+
+.metric-unit {
+    font-size: 10px;
+    color: #444;
+    margin-left: 2px;
+}
+
+/* Log form for metrics */
+.metrics-log-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.ana-input {
+    flex: 1;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--ana-border);
+    border-radius: 6px;
+    padding: 10px 14px;
+    color: #fff;
+    font-family: inherit;
+    font-size: 13px;
+    outline: none;
+}
+
+.ana-select {
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--ana-border);
+    border-radius: 6px;
+    padding: 10px;
+    color: #fff;
+    font-size: 13px;
+}
+
+.ana-btn {
+    background: #fff;
+    color: #000;
+    border: none;
+    padding: 0 16px;
+    border-radius: 6px;
+    font-weight: 700;
+    font-size: 11px;
+    cursor: pointer;
+    text-transform: uppercase;
+}
+
+/* 4. Layout specific to Performance */
+.ana-full-width {
+    grid-column: span 2;
+}
+
+@media (max-width: 1000px) {
+    .ana-grid { grid-template-columns: 1fr; }
+    .ana-full-width { grid-column: span 1; }
+}

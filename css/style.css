@@ -68,9 +68,13 @@ h1, h2, h3, h4 {
     margin-bottom: 40px;
 }
 
-.logo-icon {
-    font-size: 24px;
-    color: var(--text-primary);
+.logo-img {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+    mix-blend-mode: screen; /* Revert to screen for dark theme */
+    filter: drop-shadow(0 0 10px rgba(0, 242, 255, 0.5));
+    border-radius: 50%;
 }
 
 .logo-text {
@@ -161,6 +165,35 @@ h1, h2, h3, h4 {
 .view-header .description {
     font-size: 14px;
     color: var(--text-secondary);
+}
+
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--card-border);
+    padding-bottom: 32px;
+}
+
+.header-logo {
+    width: 120px;
+    height: 120px;
+    object-fit: contain;
+    mix-blend-mode: screen;
+    filter: drop-shadow(0 0 25px rgba(0, 242, 255, 0.4));
+    border-radius: 50%;
+    animation: pulse-glow 4s infinite alternate;
+}
+
+@keyframes pulse-glow {
+    from {
+        filter: drop-shadow(0 0 15px rgba(0, 242, 255, 0.2));
+        transform: scale(1);
+    }
+    to {
+        filter: drop-shadow(0 0 30px rgba(0, 242, 255, 0.5));
+        transform: scale(1.02);
+    }
 }
 
 /* Cards */

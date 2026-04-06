@@ -1,0 +1,331 @@
+/* ======================================================
+   TITAN OS — WORKOUTS.CSS
+   Premium Aesthetics for the Functional Workout Tracker.
+   ====================================================== */
+
+:root {
+    --workout-accent: #59d195;
+    --workout-bg: rgba(255, 255, 255, 0.02);
+    --workout-border: rgba(255, 255, 255, 0.08);
+}
+
+.workout-dashboard {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    padding: 10px;
+}
+
+.workout-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.workout-main-title {
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: #fff;
+    margin: 0;
+}
+
+.workout-sub-title {
+    font-size: 12px;
+    color: var(--text-muted);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+/* Actions & Timer */
+.rest-timer-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--workout-border);
+    color: #fff;
+    padding: 12px 20px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.rest-timer-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.rest-timer-btn.timer-active {
+    background: rgba(89, 209, 149, 0.1);
+    border-color: var(--workout-accent);
+    color: var(--workout-accent);
+    box-shadow: 0 0 15px rgba(89, 209, 149, 0.1);
+}
+
+/* Grid Layout */
+.workout-grid-layout {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 24px;
+}
+
+.workout-main-panel {
+    background: var(--workout-bg);
+    border: 1px solid var(--workout-border);
+    border-radius: 12px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Input Row */
+.ex-input-row {
+    display: flex;
+    gap: 12px;
+}
+
+.ex-input-row input {
+    flex: 1;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--workout-border);
+    border-radius: 8px;
+    padding: 14px 18px;
+    color: #fff;
+    font-family: inherit;
+    outline: none;
+    transition: border 0.2s;
+}
+
+.ex-input-row input:focus {
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.ex-input-row button {
+    background: #fff;
+    color: #000;
+    border: none;
+    padding: 0 24px;
+    border-radius: 8px;
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: 1px;
+    transition: opacity 0.2s;
+}
+
+.ex-input-row button:hover {
+    opacity: 0.9;
+}
+
+/* Exercise Cards */
+.exercise-list-dynamic {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.exercise-log-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--workout-border);
+    border-radius: 10px;
+    padding: 20px;
+    transition: transform 0.2s;
+}
+
+.ex-log-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.ex-log-name {
+    font-size: 16px;
+    font-weight: 600;
+    color: #fff;
+    margin: 0;
+}
+
+.ex-remove-btn {
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.2);
+    cursor: pointer;
+    font-size: 18px;
+    transition: color 0.2s;
+}
+
+.ex-remove-btn:hover {
+    color: #f25f5c;
+}
+
+/* Set Rows */
+.ex-sets-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.set-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: rgba(255, 255, 255, 0.02);
+    padding: 8px 12px;
+    border-radius: 6px;
+}
+
+.set-idx {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--text-muted);
+    width: 20px;
+}
+
+.set-val {
+    flex: 1;
+    font-size: 14px;
+    color: #e0e0e0;
+}
+
+.remove-set-btn {
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.1);
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.remove-set-btn:hover {
+    color: #f25f5c;
+}
+
+/* Log Form Inline */
+.ex-log-form {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.set-input {
+    width: 70px;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--workout-border);
+    border-radius: 6px;
+    padding: 10px;
+    color: #fff;
+    text-align: center;
+    font-family: inherit;
+    outline: none;
+}
+
+.ex-log-form .x {
+    color: var(--text-muted);
+    font-size: 14px;
+}
+
+.log-set-btn {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid var(--workout-border);
+    color: #fff;
+    padding: 10px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.log-set-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.rest-suggest-btn {
+    background: transparent;
+    border: 1px solid var(--workout-border);
+    color: var(--text-muted);
+    width: 38px;
+    height: 38px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+/* Side Panel */
+.workout-side-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.pr-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.pr-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.pr-item:last-child {
+    border-bottom: none;
+}
+
+.pr-name {
+    font-size: 13px;
+    color: #8a8a8a;
+}
+
+.pr-v-group {
+    text-align: right;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.pr-val {
+    font-size: 14px;
+    font-weight: 600;
+    color: #fff;
+}
+
+.pr-date {
+    font-size: 9px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+}
+
+.volume-display {
+    font-size: 32px;
+    font-weight: 300;
+    color: #fff;
+    margin-top: 10px;
+}
+
+.workout-empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text-muted);
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+/* Responsive */
+@media (max-width: 1100px) {
+    .workout-grid-layout {
+        grid-template-columns: 1fr;
+    }
+}

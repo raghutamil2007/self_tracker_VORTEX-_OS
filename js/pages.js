@@ -34,10 +34,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (dYear) dYear.innerText = dGlobal.getFullYear();
     });
 
-    initEngineModule('mind',    [3,3,3,2,1,2,3,3,3,2,2,3,2,1,2,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]);
-    initEngineModule('body',    [1,1,2,2,3,3,2,1,3,2,1,3,1,2,1,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]);
-    initEngineModule('money',   [1,2,2,0,0,3,2,3,3,2,1,3,2,3,1,2,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0]);
-    initEngineModule('general', [0,1,0,0,0,2,2,1,3,2,0,1,2,1,0,1,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0]);
+    initEngineModule('mind');
+    initEngineModule('body');
+    initEngineModule('money');
+    initEngineModule('general');
+
     initCommandCenter();
     initHabits();
     initJournal();
@@ -51,24 +52,78 @@ document.addEventListener('DOMContentLoaded', () => {
     initSleepTracker();
     initWeightChart();
     initStandaloneFocusTimer();
+    initMindFocusTimer(); // Moved from app.js
     
     // Initialize new premium modules
     if (window.GoalsEngine) GoalsEngine.init();
     if (window.NutritionEngine) NutritionEngine.init();
+    if (window.WorkoutsEngine) WorkoutsEngine.init();
+    if (window.BodyAnalytics) BodyAnalytics.init();
 });
 
-/* ======== Global Helpers ======== */
+/* ======== Shared Engine Persistence Helpers ======== */
+const ENGINE_HISTORY_KEY = 'titan-engine-history-v3';
+
+function getLocalISODate() {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
+
+function getEngineHistory(engine) {
+    let saved = localStorage.getItem(ENGINE_HISTORY_KEY);
+    if (!saved) {
+        // Seed old demo data into history if completely empty
+        const demoData = {
+            'mind':    [3,3,3,2,1,2,3,3,3,2,2,3,2,1,2,3],
+            'body':    [1,1,2,2,3,3,2,1,3,2,1,3,1,2,1,2],
+            'money':   [1,2,2,0,0,3,2,3,3,2,1,3,2,3,1,2,3],
+            'general': [0,1,0,0,0,2,2,1,3,2,0,1,2,1,0,1,2]
+        };
+        let initialHistory = {};
+        for(const eng in demoData) {
+            initialHistory[eng] = {};
+            demoData[eng].forEach((lvl, idx) => {
+                const dayStr = String(idx + 1).padStart(2, '0');
+                initialHistory[eng][`2026-03-${dayStr}`] = lvl;
+            });
+        }
+        localStorage.setItem(ENGINE_HISTORY_KEY, JSON.stringify(initialHistory));
+        saved = localStorage.getItem(ENGINE_HISTORY_KEY);
+    }
+    const history = JSON.parse(saved);
+    return history[engine] || {};
+}
+
+function saveEngineScore(engine, level) {
+    const saved = localStorage.getItem(ENGINE_HISTORY_KEY);
+    const history = saved ? JSON.parse(saved) : {};
+    if (!history[engine]) history[engine] = {};
+    
+    const today = getLocalISODate();
+    history[engine][today] = level;
+    localStorage.setItem(ENGINE_HISTORY_KEY, JSON.stringify(history));
+}
+
 function getScoreClass(pct) {
+    if (pct === 0) return '';
     if (pct < 50) return 'missed';
     if (pct <= 90) return 'hit';
     return 'perfect';
 }
 
-/* ======== Generic Calendar+Consistency for Money / General ======== */
-function initEngineModule(engine, calData) {
+function getScoreLevel(pct) {
+    if (pct === 0) return 0;
+    if (pct < 50) return 1;
+    if (pct <= 90) return 2;
+    return 3;
+}
+
+/* ======== Generic Calendar+Consistency ======== */
+function initEngineModule(engine) {
     let d = new Date();
     let year = d.getFullYear(), month = d.getMonth() + 1;
     const TODAY = d.getDate();
+    const TODAY_ISO = d.toISOString().split('T')[0];
 
     // Reset tasks logic for a new day
     const lastLogged = localStorage.getItem(`${engine}-last-date`);
@@ -89,7 +144,10 @@ function initEngineModule(engine, calData) {
         const grid = document.getElementById(`${engine}-calendar-grid`);
         if (!grid) return;
         grid.innerHTML = '';
-        const data = calData;
+        
+        // Load persistent history
+        const history = getEngineHistory(engine);
+
         const days = new Date(year, month, 0).getDate();
         const first = new Date(year, month - 1, 1).getDay();
         for (let i = 0; i < first; i++) {
@@ -97,18 +155,23 @@ function initEngineModule(engine, calData) {
             e.style.aspectRatio = '1';
             grid.appendChild(e);
         }
-        for (let d = 1; d <= days; d++) {
+        for (let day = 1; day <= days; day++) {
             const cell = document.createElement('div');
             cell.className = 'cal-day';
-            cell.innerText = d;
-            if (d > TODAY) { cell.style.opacity = '0.1'; }
+            cell.innerText = day;
+            
+            const dateISO = `${year}-${String(month).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+            
+            if (day > TODAY && month === d.getMonth()+1 && year === d.getFullYear()) { 
+                cell.style.opacity = '0.1'; 
+            }
             else {
-                const lvl = data[d - 1] || 0;
+                let lvl = history[dateISO];
                 if (lvl === 1) cell.classList.add('missed');
                 else if (lvl === 2) cell.classList.add('hit');
                 else if (lvl === 3) cell.classList.add('perfect');
             }
-            if (d === TODAY) {
+            if (day === TODAY && month === d.getMonth()+1 && year === d.getFullYear()) {
                 cell.id = `${engine}-cal-day-today`;
                 cell.style.outline = '1.5px solid rgba(255,255,255,0.7)';
                 cell.style.outlineOffset = '2px';
@@ -177,10 +240,14 @@ function initEngineTasks(engine) {
         const todayCell = document.getElementById(`${engine}-cal-day-today`);
         if (todayCell) {
             todayCell.classList.remove('missed', 'hit', 'perfect');
-            todayCell.classList.add(getScoreClass(pct));
+            const cls = getScoreClass(pct);
+            if (cls) todayCell.classList.add(cls);
         }
 
-        // Save progress to localStorage
+        // Save progress to history persistence
+        saveEngineScore(engine, getScoreLevel(pct));
+
+        // Save progress to task list persistence
         saveTasks(engine);
     };
 
@@ -296,6 +363,46 @@ function initCommandCenter() {
     const input = document.getElementById('cmd-task-input');
     const engineSel = document.getElementById('cmd-engine-select');
     const log = document.getElementById('cmd-log');
+
+    // Daily Win Elements
+    const dwWinBtn = document.getElementById('daily-win-submit');
+    const dwInput = document.getElementById('daily-win-input');
+    const dwDisplay = document.getElementById('daily-win-display');
+    const dwText = document.getElementById('daily-win-text');
+    const dwInputRow = document.getElementById('daily-win-input-row');
+
+    if (dwWinBtn && dwInput && dwDisplay && dwText && dwInputRow) {
+        const todayStr = new Date().toDateString();
+        const savedWinKey = 'titan-daily-win';
+        let savedWinObj = null;
+        try {
+            savedWinObj = JSON.parse(localStorage.getItem(savedWinKey));
+        } catch(e) {}
+        
+        if (savedWinObj && savedWinObj.date === todayStr) {
+            dwInputRow.style.display = 'none';
+            dwDisplay.style.display = 'block';
+            dwText.innerText = `"${savedWinObj.win}"`;
+        }
+
+        dwWinBtn.addEventListener('click', () => {
+            const winText = dwInput.value.trim();
+            if(!winText) return;
+            
+            localStorage.setItem(savedWinKey, JSON.stringify({
+                date: new Date().toDateString(),
+                win: winText
+            }));
+            
+            dwInputRow.style.display = 'none';
+            dwDisplay.style.display = 'block';
+            dwText.innerText = `"${winText}"`;
+        });
+        
+        dwInput.addEventListener('keydown', e => {
+            if (e.key === 'Enter') dwWinBtn.click();
+        });
+    }
 
     if (!btn || !input || !log) return;
 
@@ -625,6 +732,20 @@ function initJournal() {
     const saveBtn = document.getElementById('journal-save-btn');
     const textarea = document.getElementById('journal-textarea');
     const list = document.getElementById('journal-entries-list');
+    
+    const moodBtns = document.querySelectorAll('.journal-mood-btn');
+    let selectedMood = '🔥 High Energy'; // Default
+
+    // Setup active states on mood buttons
+    moodBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            moodBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            selectedMood = btn.dataset.mood;
+        });
+    });
+    // Set default active
+    if (moodBtns.length > 0) moodBtns[0].classList.add('active');
 
     // Live date
     const dateEl = document.getElementById('journal-today-date');
@@ -635,45 +756,118 @@ function initJournal() {
 
     if (!saveBtn || !textarea || !list) return;
 
+    // Load structure from localStorage
+    let entries = [];
+    try {
+        const saved = localStorage.getItem('journal-entries');
+        if (saved) {
+            entries = JSON.parse(saved);
+        }
+    } catch(e) {}
+    
+    // Migrate old entries
+    entries = entries.map(e => {
+        if (!e.id) e.id = Date.now() + Math.floor(Math.random()*1000); 
+        if (!e.mood) e.mood = 'Neut';
+        return e;
+    });
+
+    const renderEntries = () => {
+        list.innerHTML = '';
+        entries.forEach(e => {
+            const card = document.createElement('div');
+            card.className = 'card journal-entry-card';
+            card.innerHTML = `
+                <div class="journal-entry-header">
+                    <div class="journal-entry-date">${e.date}</div>
+                    <div class="journal-entry-mood">${e.mood !== 'Neut' ? e.mood : ''}</div>
+                </div>
+                <p class="journal-entry-preview">${e.text}</p>`;
+            card.addEventListener('click', () => openJournalModal(e.id));
+            list.appendChild(card);
+        });
+        localStorage.setItem('journal-entries', JSON.stringify(entries));
+    };
+
     saveBtn.addEventListener('click', () => {
         const text = textarea.value.trim();
         if (!text) return;
         const d = new Date();
         const dateStr = d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
-        const card = document.createElement('div');
-        card.className = 'card journal-entry-card';
-        card.innerHTML = `<div class="journal-entry-date">${dateStr}</div>
-                          <p class="journal-entry-preview">${text.substring(0, 180)}${text.length > 180 ? '...' : ''}</p>`;
-        list.insertBefore(card, list.firstChild);
+        
+        const newEntry = {
+            id: Date.now(),
+            date: dateStr,
+            text: text,
+            mood: selectedMood
+        };
+        // Add to front
+        entries.unshift(newEntry);
         textarea.value = '';
-        saveJournal();
+        
+        // Reset Mood
+        moodBtns.forEach(b => b.classList.remove('active'));
+        if (moodBtns.length > 0) {
+            moodBtns[0].classList.add('active');
+            selectedMood = moodBtns[0].dataset.mood;
+        }
+
+        renderEntries();
     });
 
-    const saveJournal = () => {
-        const entries = [];
-        document.querySelectorAll('.journal-entry-card').forEach(card => {
-            entries.push({
-                date: card.querySelector('.journal-entry-date').innerText,
-                text: card.querySelector('.journal-entry-preview').innerText
-            });
-        });
-        localStorage.setItem('journal-entries', JSON.stringify(entries));
+    // Initial render
+    renderEntries();
+
+    // Modal Logic
+    const overlay = document.getElementById('journal-modal-overlay');
+    const modalClose = document.getElementById('journal-modal-close');
+    const modalDate = document.getElementById('journal-modal-date');
+    const modalMood = document.getElementById('journal-modal-mood');
+    const modalTextarea = document.getElementById('journal-modal-textarea');
+    const modalEditId = document.getElementById('journal-edit-id');
+    const updateBtn = document.getElementById('journal-modal-update-btn');
+    const deleteBtn = document.getElementById('journal-modal-delete-btn');
+
+    if (!overlay) return;
+
+    const openJournalModal = (id) => {
+        const entry = entries.find(e => e.id === id);
+        if (!entry) return;
+        
+        modalEditId.value = entry.id;
+        modalDate.innerText = entry.date;
+        modalMood.innerText = entry.mood === 'Neut' ? '' : entry.mood;
+        modalTextarea.value = entry.text;
+        
+        overlay.style.display = 'flex';
     };
 
-    const loadJournal = () => {
-        const saved = localStorage.getItem('journal-entries');
-        if (!saved) return;
-        const entries = JSON.parse(saved);
-        entries.forEach(e => {
-            const card = document.createElement('div');
-            card.className = 'card journal-entry-card';
-            card.innerHTML = `<div class="journal-entry-date">${e.date}</div>
-                              <p class="journal-entry-preview">${e.text}</p>`;
-            list.appendChild(card); // oldest first or just rebuild list
-        });
+    const closeJournalModal = () => {
+        overlay.style.display = 'none';
+        modalEditId.value = '';
     };
 
-    loadJournal();
+    modalClose.addEventListener('click', closeJournalModal);
+    overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) closeJournalModal();
+    });
+
+    updateBtn.addEventListener('click', () => {
+        const id = parseInt(modalEditId.value, 10);
+        const idx = entries.findIndex(e => e.id === id);
+        if (idx !== -1) {
+            entries[idx].text = modalTextarea.value;
+            renderEntries();
+            closeJournalModal();
+        }
+    });
+
+    deleteBtn.addEventListener('click', () => {
+        const id = parseInt(modalEditId.value, 10);
+        entries = entries.filter(e => e.id !== id);
+        renderEntries();
+        closeJournalModal();
+    });
 }
 
 /* ======== Sleep Log ======== */
@@ -908,6 +1102,135 @@ function initStandaloneFocusTimer() {
     }
 
     render();
+}
+
+/**
+ * Focus Timer for the MIND Engine (within engine tab)
+ * Moved from app.js to centralize logic.
+ */
+function initMindFocusTimer() {
+    let timerInterval = null;
+    let timerRunning = false;
+    let timerSeconds = 25 * 60;
+    let timerTotal = 25 * 60;
+    let sessionCount = 0;
+    let currentMode = 'FOCUS';
+
+    const timerDisplay = document.getElementById('focus-timer-display');
+    const timerModeLabel = document.getElementById('focus-timer-mode-label');
+    const playIcon = document.getElementById('focus-play-icon');
+
+    if (!timerDisplay) return;
+
+    function formatTime(s) {
+        const m = Math.floor(s / 60).toString().padStart(2, '0');
+        const sec = (s % 60).toString().padStart(2, '0');
+        return `${m}:${sec}`;
+    }
+
+    function renderTimer() {
+        timerDisplay.innerText = formatTime(timerSeconds);
+    }
+
+    function setTimerMode(seconds, label, btnId) {
+        clearInterval(timerInterval);
+        timerRunning = false;
+        timerSeconds = seconds;
+        timerTotal = seconds;
+        currentMode = label;
+        timerModeLabel.innerText = label;
+        timerDisplay.innerText = formatTime(timerSeconds);
+        timerDisplay.classList.remove('running');
+        if (playIcon) playIcon.className = 'ph ph-play';
+
+        document.querySelectorAll('#view-mind-engine .timer-mode-btn').forEach(b => b.classList.remove('active'));
+        const btn = document.getElementById(btnId);
+        if(btn) btn.classList.add('active');
+    }
+
+    const btnFocus = document.getElementById('btn-focus');
+    const btnShort = document.getElementById('btn-short');
+    const btnLong  = document.getElementById('btn-long');
+    if (btnFocus) btnFocus.addEventListener('click', () => setTimerMode(1500, 'FOCUS', 'btn-focus'));
+    if (btnShort) btnShort.addEventListener('click', () => setTimerMode(300, 'SHORT BREAK', 'btn-short'));
+    if (btnLong)  btnLong.addEventListener('click', () => setTimerMode(900, 'LONG BREAK', 'btn-long'));
+
+    const startBtn = document.getElementById('focus-timer-start');
+    if (startBtn) {
+        startBtn.addEventListener('click', () => {
+            if(timerRunning) {
+                clearInterval(timerInterval);
+                timerRunning = false;
+                timerDisplay.classList.remove('running');
+                if (playIcon) playIcon.className = 'ph ph-play';
+            } else {
+                timerRunning = true;
+                timerDisplay.classList.add('running');
+                if (playIcon) playIcon.className = 'ph ph-pause';
+                timerInterval = setInterval(() => {
+                    timerSeconds--;
+                    renderTimer();
+                    if(timerSeconds <= 0) {
+                        clearInterval(timerInterval);
+                        timerRunning = false;
+                        timerDisplay.classList.remove('running');
+                        if (playIcon) playIcon.className = 'ph ph-play';
+                        
+                        logFocusSession(currentMode, timerTotal);
+                        if(currentMode === 'FOCUS') {
+                            sessionCount = Math.min(sessionCount + 1, 4);
+                            updateSessionDots();
+                        }
+                        timerSeconds = timerTotal;
+                        renderTimer();
+                    }
+                }, 1000);
+            }
+        });
+    }
+
+    document.getElementById('focus-timer-reset').addEventListener('click', () => {
+        clearInterval(timerInterval);
+        timerRunning = false;
+        timerSeconds = timerTotal;
+        timerDisplay.classList.remove('running');
+        if (playIcon) playIcon.className = 'ph ph-play';
+        renderTimer();
+    });
+
+    document.getElementById('focus-timer-skip').addEventListener('click', () => {
+        clearInterval(timerInterval);
+        timerRunning = false;
+        timerSeconds = 0;
+        timerDisplay.classList.remove('running');
+        if (playIcon) playIcon.className = 'ph ph-play';
+        renderTimer();
+    });
+
+    function updateSessionDots() {
+        document.querySelectorAll('#session-dots .session-dot').forEach((dot, i) => {
+            dot.classList.toggle('filled', i < sessionCount);
+        });
+    }
+
+    function logFocusSession(mode, durationSecs) {
+        const log = document.getElementById('focus-log');
+        if(!log) return;
+        const now = new Date();
+        const timeStr = now.toTimeString().slice(0,5);
+        const mins = Math.floor(durationSecs / 60);
+        const modeLabel = mode === 'FOCUS' ? `Focus — ${mins} min` : `${mode.charAt(0) + mode.slice(1).toLowerCase()} — ${mins} min`;
+        const item = document.createElement('div');
+        item.className = 'focus-log-item';
+        item.innerHTML = `
+            <span class="log-time">${timeStr}</span>
+            <span class="log-label">${modeLabel}</span>
+            <span class="log-badge">DONE</span>
+        `;
+        log.insertBefore(item, log.firstChild);
+    }
+
+    renderTimer();
 }
 
 /* ======== Advanced Goals Dashboard Interactions ======== */
