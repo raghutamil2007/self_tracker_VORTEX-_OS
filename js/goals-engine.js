@@ -59,7 +59,10 @@ const GoalsEngine = {
             card.innerHTML = `
                 <div class="lt-header">
                     <span class="adv-tag ${goal.category}">${goal.category.toUpperCase()}</span>
-                    <span class="lt-date">${goal.deadline}</span>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <span class="lt-date">${goal.deadline}</span>
+                        <button class="st-options-btn" onclick="GoalsEngine.deleteLT('${goal.id}')"><i class="ph ph-trash"></i></button>
+                    </div>
                 </div>
                 <h3 class="lt-name">${goal.title}</h3>
                 <div class="lt-stats">
@@ -129,6 +132,14 @@ const GoalsEngine = {
     deleteST(id) {
         if (confirm("Delete this short-term goal?")) {
             this.goals.st = this.goals.st.filter(g => g.id !== id);
+            this.saveData();
+            this.render();
+        }
+    },
+    
+    deleteLT(id) {
+        if (confirm("Delete this long-term goal?")) {
+            this.goals.lt = this.goals.lt.filter(g => g.id !== id);
             this.saveData();
             this.render();
         }

@@ -72,19 +72,19 @@ function getLocalISODate() {
 function getEngineHistory(engine) {
     let saved = localStorage.getItem(ENGINE_HISTORY_KEY);
     if (!saved) {
-        // Seed old demo data into history if completely empty
+        // Seed old demo data into history if completely empty (convert levels to pct)
         const demoData = {
-            'mind':    [3,3,3,2,1,2,3,3,3,2,2,3,2,1,2,3],
-            'body':    [1,1,2,2,3,3,2,1,3,2,1,3,1,2,1,2],
-            'money':   [1,2,2,0,0,3,2,3,3,2,1,3,2,3,1,2,3],
-            'general': [0,1,0,0,0,2,2,1,3,2,0,1,2,1,0,1,2]
+            'mind':    [100,100,100,75,25,75,100,100,100,75,75,100,75,25,75,100],
+            'body':    [25,25,75,75,100,100,75,25,100,75,25,100,25,75,25,75],
+            'money':   [25,75,75,0,0,100,75,100,100,75,25,100,75,100,25,75,100],
+            'general': [0,25,0,0,0,75,75,25,100,75,0,25,75,25,0,25,75]
         };
         let initialHistory = {};
         for(const eng in demoData) {
             initialHistory[eng] = {};
-            demoData[eng].forEach((lvl, idx) => {
+            demoData[eng].forEach((pct, idx) => {
                 const dayStr = String(idx + 1).padStart(2, '0');
-                initialHistory[eng][`2026-03-${dayStr}`] = lvl;
+                initialHistory[eng][`2026-03-${dayStr}`] = pct;
             });
         }
         localStorage.setItem(ENGINE_HISTORY_KEY, JSON.stringify(initialHistory));
@@ -94,13 +94,13 @@ function getEngineHistory(engine) {
     return history[engine] || {};
 }
 
-function saveEngineScore(engine, level) {
+function saveEngineScore(engine, pct) {
     const saved = localStorage.getItem(ENGINE_HISTORY_KEY);
     const history = saved ? JSON.parse(saved) : {};
     if (!history[engine]) history[engine] = {};
     
     const today = getLocalISODate();
-    history[engine][today] = level;
+    history[engine][today] = pct;
     localStorage.setItem(ENGINE_HISTORY_KEY, JSON.stringify(history));
 }
 
@@ -166,10 +166,12 @@ function initEngineModule(engine) {
                 cell.style.opacity = '0.1'; 
             }
             else {
-                let lvl = history[dateISO];
-                if (lvl === 1) cell.classList.add('missed');
-                else if (lvl === 2) cell.classList.add('hit');
-                else if (lvl === 3) cell.classList.add('perfect');
+                let pct = history[dateISO];
+                if (pct !== undefined) {
+                    if (pct > 0 && pct < 50) cell.classList.add('missed');
+                    else if (pct >= 50 && pct <= 90) cell.classList.add('hit');
+                    else if (pct > 90) cell.classList.add('perfect');
+                }
             }
             if (day === TODAY && month === d.getMonth()+1 && year === d.getFullYear()) {
                 cell.id = `${engine}-cal-day-today`;
@@ -245,7 +247,7 @@ function initEngineTasks(engine) {
         }
 
         // Save progress to history persistence
-        saveEngineScore(engine, getScoreLevel(pct));
+        saveEngineScore(engine, pct);
 
         // Save progress to task list persistence
         saveTasks(engine);
@@ -278,14 +280,60 @@ function initEngineTasks(engine) {
         tasks.forEach(t => {
             const label = document.createElement('label');
             label.className = 'task-item';
-            label.innerHTML = `<input type="checkbox" ${t.checked ? 'checked' : ''}><span class="task-text">${t.text}</span><span class="task-tag">${t.tag}</span><div class="task-indiv-complete-btn">COMPLETE</div>`;
+            label.innerHTML = `<input type="checkbox" ${t.checked ? 'checked' : ''}><span class="task-text">${t.text}</span><span class="task-tag">${t.tag}</span><div class="task-edit-btn" title="Edit Task"><i class="ph ph-pencil-simple"></i></div><div class="task-delete-btn" title="Delete Task"><i class="ph ph-trash"></i></div><div class="task-indiv-complete-btn">COMPLETE</div>`;
             label.querySelector('input').addEventListener('change', recalc);
+            label.querySelector('.task-edit-btn').addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                beginEditTask(label, engine);
+            });
+            label.querySelector('.task-delete-btn').addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                if (confirm('Delete this task?')) {
+                    label.remove();
+                    recalc();
+                }
+            });
             if (t.isMain) mainList.appendChild(label);
             else secList.appendChild(label);
         });
     };
 
     document.querySelectorAll(`#${engine}-main-tasks .task-item, #${engine}-secondary-tasks .task-item`).forEach(item => {
+        if (!item.querySelector('.task-edit-btn')) {
+            const editBtn = document.createElement('div');
+            editBtn.className = 'task-edit-btn';
+            editBtn.innerHTML = '<i class="ph ph-pencil-simple"></i>';
+            editBtn.title = 'Edit Task';
+            const compBtn = item.querySelector('.task-indiv-complete-btn');
+            if (compBtn) item.insertBefore(editBtn, compBtn);
+            else item.appendChild(editBtn);
+
+            editBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                beginEditTask(item, engine);
+            });
+        }
+        if (!item.querySelector('.task-delete-btn')) {
+            const delBtn = document.createElement('div');
+            delBtn.className = 'task-delete-btn';
+            delBtn.innerHTML = '<i class="ph ph-trash"></i>';
+            delBtn.title = 'Delete Task';
+            const compBtn = item.querySelector('.task-indiv-complete-btn');
+            if (compBtn) item.insertBefore(delBtn, compBtn);
+            else item.appendChild(delBtn);
+
+            delBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                if (confirm('Delete this task?')) {
+                    item.remove();
+                    recalc();
+                }
+            });
+        }
         if (!item.querySelector('.task-indiv-complete-btn')) {
             const btn = document.createElement('div');
             btn.className = 'task-indiv-complete-btn';
@@ -293,6 +341,42 @@ function initEngineTasks(engine) {
             item.appendChild(btn);
         }
     });
+
+    const beginEditTask = (item, engine) => {
+        const textSpan = item.querySelector('.task-text');
+        if (!textSpan || item.classList.contains('editing')) return;
+
+        item.classList.add('editing');
+        const oldText = textSpan.innerText;
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.className = 'task-edit-input';
+        input.value = oldText;
+        
+        const originalDisplay = textSpan.style.display;
+        textSpan.style.display = 'none';
+        textSpan.insertAdjacentElement('afterend', input);
+        input.focus();
+        input.select();
+
+        const finishEdit = (save) => {
+            if (!item.classList.contains('editing')) return;
+            const newText = input.value.trim();
+            if (save && newText && newText !== oldText) {
+                textSpan.innerText = newText;
+                saveTasks(engine);
+            }
+            input.remove();
+            textSpan.style.display = originalDisplay;
+            item.classList.remove('editing');
+        };
+
+        input.addEventListener('keydown', e => {
+            if (e.key === 'Enter') finishEdit(true);
+            if (e.key === 'Escape') finishEdit(false);
+        });
+        input.addEventListener('blur', () => finishEdit(true));
+    };
 
     document.querySelectorAll(`#${engine}-main-tasks input, #${engine}-secondary-tasks input`).forEach(cb => {
         cb.addEventListener('change', recalc);
@@ -319,8 +403,21 @@ function initEngineTasks(engine) {
                 const list = document.getElementById(listId);
                 const label = document.createElement('label');
                 label.className = 'task-item';
-                label.innerHTML = `<input type="checkbox"><span class="task-text">${name}</span><span class="task-tag">${tag}</span><div class="task-indiv-complete-btn">COMPLETE</div>`;
+                label.innerHTML = `<input type="checkbox"><span class="task-text">${name}</span><span class="task-tag">${tag}</span><div class="task-edit-btn" title="Edit Task"><i class="ph ph-pencil-simple"></i></div><div class="task-delete-btn" title="Delete Task"><i class="ph ph-trash"></i></div><div class="task-indiv-complete-btn">COMPLETE</div>`;
                 label.querySelector('input').addEventListener('change', recalc);
+                label.querySelector('.task-edit-btn').addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    beginEditTask(label, engine);
+                });
+                label.querySelector('.task-delete-btn').addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (confirm('Delete this task?')) {
+                        label.remove();
+                        recalc();
+                    }
+                });
                 list.appendChild(label);
                 form.remove();
                 recalc();

@@ -10,7 +10,47 @@ const WorkoutsEngine = {
             exercises: []
         },
         prs: {}, // { "Bench Press": { weight: 100, date: "2026-03-15" } }
-        history: [] // [ { date: "2026-03-15", name: "Push Day", totalVolume: 4500 } ]
+        history: [], // [ { date: "2026-03-15", name: "Push Day", totalVolume: 4500 } ]
+        
+        // New: Track completion status for the specialized "Workouts" view
+        dailyCompletion: {} // { "2026-04-06": [true, true, false, ...] }
+    },
+
+    presets: {
+        'Push Day': [
+            { name: "Bench Press", sets: "4 × 8 @ 80kg" },
+            { name: "Incline DB Press", sets: "3 × 10 @ 28kg" },
+            { name: "Overhead Press", sets: "3 × 8 @ 50kg" },
+            { name: "Lateral Raises", sets: "3 × 15 @ 10kg" },
+            { name: "Tricep Pushdown", sets: "3 × 12 @ 35kg" }
+        ],
+        'Pull Day': [
+            { name: "Deadlift", sets: "3 × 5 @ 110kg" },
+            { name: "Pullups", sets: "3 × Max" },
+            { name: "Seated Rows", sets: "3 × 12 @ 55kg" },
+            { name: "Face Pulls", sets: "3 × 15 @ 20kg" },
+            { name: "Bicep Curls", sets: "3 × 12 @ 15kg" }
+        ],
+        'Legs Day': [
+            { name: "Squat", sets: "3 × 8 @ 100kg" },
+            { name: "Leg Press", sets: "3 × 12 @ 180kg" },
+            { name: "Leg Curls", sets: "3 × 15 @ 45kg" },
+            { name: "Calf Raises", sets: "4 × 20 @ 70kg" },
+            { name: "Plank", sets: "3 × 60s" }
+        ],
+        'Rest Day': [
+            { name: "Stretching & Mobility", sets: "20 min" },
+            { name: "Light Walk", sets: "30 min" },
+            { name: "Recovery Focus", sets: "-" }
+        ]
+    },
+
+    getWorkoutByDay(dayName) {
+        let p = this.data.presets || this.presets;
+        let pName = (this.data.schedule && this.data.schedule[dayName]) ? this.data.schedule[dayName] : 'Rest Day';
+        // Fallback in case preset mapping goes missing
+        if (!p[pName]) pName = 'Rest Day'; 
+        return { name: pName, exercises: p[pName] || [] };
     },
 
     storageKey: 'titan-workouts-v1',
@@ -29,6 +69,7 @@ const WorkoutsEngine = {
     init() {
         this.loadData();
         this.render();
+        this.renderWorkoutsView(); // New main view renderer
         this.initEventListeners();
         console.log("TITAN OS: Workouts Engine Initialized.");
     },
@@ -47,6 +88,22 @@ const WorkoutsEngine = {
             };
         }
         
+        if (!this.data.presets) {
+            this.data.presets = JSON.parse(JSON.stringify(this.presets));
+        }
+        
+        if (!this.data.schedule) {
+            this.data.schedule = {
+                'Monday': 'Push Day',
+                'Tuesday': 'Pull Day',
+                'Wednesday': 'Legs Day',
+                'Thursday': 'Push Day',
+                'Friday': 'Pull Day',
+                'Saturday': 'Legs Day',
+                'Sunday': 'Rest Day'
+            };
+        }
+
         // Reset current workout if it's a new day
         const today = new Date().toDateString();
         if (this.data.lastLoggedDate !== today) {
@@ -60,6 +117,7 @@ const WorkoutsEngine = {
     saveData() {
         this.data.lastLoggedDate = new Date().toDateString();
         localStorage.setItem(this.storageKey, JSON.stringify(this.data));
+        this.renderWorkoutsView(); // Update secondary view on save
     },
 
     getDayName() {
@@ -168,6 +226,181 @@ const WorkoutsEngine = {
         const restBtn = document.getElementById('workout-rest-timer-btn');
         if (restBtn) {
             restBtn.addEventListener('click', () => this.startRestTimer(60));
+        }
+
+        // --- New: Manual PR Modal Listeners ---
+        const addPrBtn = document.getElementById('add-pr-btn');
+        const prModalOverlay = document.getElementById('pr-modal-overlay');
+        const prModalClose = document.getElementById('pr-modal-close');
+        const prSaveBtn = document.getElementById('pr-save-entry');
+        
+        if (addPrBtn && prModalOverlay) {
+            addPrBtn.addEventListener('click', () => {
+                document.getElementById('pr-entry-name').value = '';
+                document.getElementById('pr-entry-weight').value = '';
+                prModalOverlay.style.display = 'flex';
+            });
+        }
+        
+        if (prModalClose) {
+            prModalClose.addEventListener('click', () => {
+                prModalOverlay.style.display = 'none';
+            });
+        }
+        
+        if (prSaveBtn) {
+            prSaveBtn.addEventListener('click', () => {
+                const name = document.getElementById('pr-entry-name').value.trim();
+                const weight = parseFloat(document.getElementById('pr-entry-weight').value);
+                
+                if (name && !isNaN(weight)) {
+                    // Update or create PR entry
+                    const dateStr = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+                    this.data.prs[name] = { weight: weight, date: dateStr };
+                    
+                    this.saveData();
+                    prModalOverlay.style.display = 'none';
+                } else {
+                    alert("Please enter a valid exercise name and weight.");
+                }
+            });
+        }
+        // --- End PR Listeners ---
+        
+        // --- Routine CRUD Modal Listeners ---
+        const routineModalOverlay = document.getElementById('routine-modal-overlay');
+        const routineModalClose = document.getElementById('routine-modal-close');
+        const routineSaveBtn = document.getElementById('routine-save-entry');
+        
+        if (routineModalClose) {
+            routineModalClose.addEventListener('click', () => {
+                routineModalOverlay.style.display = 'none';
+            });
+        }
+        
+        if (routineSaveBtn) {
+            routineSaveBtn.addEventListener('click', () => {
+                this.saveRoutineModal();
+            });
+        }
+        
+        // --- Schedule Modal Listeners ---
+        const editSchedBtn = document.getElementById('edit-schedule-btn');
+        const schedModalOverlay = document.getElementById('schedule-modal-overlay');
+        const schedModalClose = document.getElementById('schedule-modal-close');
+        const schedSaveBtn = document.getElementById('schedule-save-entry');
+        
+        if (editSchedBtn) {
+            editSchedBtn.addEventListener('click', () => this.openScheduleModal());
+        }
+        if (schedModalClose && schedModalOverlay) {
+            schedModalClose.addEventListener('click', () => schedModalOverlay.style.display = 'none');
+        }
+        if (schedSaveBtn) {
+            schedSaveBtn.addEventListener('click', () => this.saveScheduleModal());
+        }
+    },
+
+    openScheduleModal() {
+        const overlay = document.getElementById('schedule-modal-overlay');
+        if (!overlay) return;
+        
+        const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+        const presetKeys = Object.keys(this.data.presets);
+        
+        const container = document.getElementById('schedule-select-container');
+        if (container) {
+            container.innerHTML = days.map(day => `
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <label style="font-size:12px; color:var(--text-secondary); width:80px;">${day}</label>
+                    <select id="sched-select-${day}" class="add-task-input" style="flex:1; padding:8px; background:rgba(0,0,0,0.3); color:#fff; border:1px solid var(--workout-border); border-radius:6px; outline:none;">
+                        ${presetKeys.map(key => `<option value="${key}" ${this.data.schedule[day] === key ? 'selected' : ''}>${key}</option>`).join('')}
+                        ${!presetKeys.includes('Rest Day') ? `<option value="Rest Day" ${this.data.schedule[day] === 'Rest Day' ? 'selected' : ''}>Rest Day</option>` : ''}
+                    </select>
+                </div>
+            `).join('');
+        }
+        
+        overlay.style.display = 'flex';
+    },
+
+    saveScheduleModal() {
+        const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+        if (!this.data.schedule) this.data.schedule = {};
+        
+        days.forEach(day => {
+            const select = document.getElementById(`sched-select-${day}`);
+            if (select) {
+                this.data.schedule[day] = select.value;
+            }
+        });
+        
+        this.saveData();
+        document.getElementById('schedule-modal-overlay').style.display = 'none';
+        
+        // Force reset today's workout instance so it updates to the new schedule
+        const todayStr = new Date().toDateString();
+        if (this.data.dailyWorkouts && this.data.dailyWorkouts[todayStr]) {
+             delete this.data.dailyWorkouts[todayStr];
+        }
+        this.renderWorkoutsView();
+    },
+
+    openRoutineModal(dayName, index = null, event = null) {
+        if (event) event.stopPropagation(); // prevent tick
+        
+        const overlay = document.getElementById('routine-modal-overlay');
+        if (!overlay) return;
+        
+        const today = new Date().toDateString();
+        const workout = this.data.dailyWorkouts[today];
+        
+        this.currentRoutineEditDay = dayName;
+        this.currentRoutineEditDate = today;
+        this.currentRoutineEditIndex = index;
+        
+        const nameInput = document.getElementById('routine-entry-name');
+        const setsInput = document.getElementById('routine-entry-sets');
+        const titleEl = document.getElementById('routine-modal-title');
+        
+        if (index !== null) {
+            const ex = workout.exercises[index];
+            nameInput.value = ex.name;
+            setsInput.value = ex.sets;
+            titleEl.textContent = "EDIT EXERCISE";
+        } else {
+            nameInput.value = '';
+            setsInput.value = '';
+            titleEl.textContent = "ADD EXERCISE";
+        }
+        
+        overlay.style.display = 'flex';
+    },
+    
+    saveRoutineModal() {
+        const name = document.getElementById('routine-entry-name').value.trim();
+        const sets = document.getElementById('routine-entry-sets').value.trim();
+        
+        if (name && sets && this.currentRoutineEditDate) {
+            const todayWorkout = this.data.dailyWorkouts[this.currentRoutineEditDate];
+            
+            if (this.currentRoutineEditIndex !== null) {
+                todayWorkout.exercises[this.currentRoutineEditIndex] = { name, sets };
+            } else {
+                todayWorkout.exercises.push({ name, sets });
+                // Ensure completion tracking array is synced
+                if (this.data.dailyCompletion && this.data.dailyCompletion[this.currentRoutineEditDate]) {
+                    this.data.dailyCompletion[this.currentRoutineEditDate].push(false);
+                }
+            }
+            
+            this.saveData();
+            document.getElementById('routine-modal-overlay').style.display = 'none';
+            this.currentRoutineEditDay = null;
+            this.currentRoutineEditDate = null;
+            this.currentRoutineEditIndex = null;
+        } else {
+            alert("Please fill in both name and sets.");
         }
     },
 
@@ -296,6 +529,174 @@ const WorkoutsEngine = {
         this.data.currentWorkout.exercises[exIdx].sets.splice(sIdx, 1);
         this.saveData();
         this.render();
+    },
+
+    deletePR(name) {
+        if (confirm(`Are you sure you want to delete your PR for ${name}?`)) {
+            delete this.data.prs[name];
+            this.saveData();
+            // Automatically handled by saveData() re-rendering
+        }
+    },
+
+    deleteRoutineExercise(dayName, index, event) {
+        if (event) event.stopPropagation(); // prevent tick
+        const today = new Date().toDateString();
+        if (confirm("Delete this exercise from today's routine?")) {
+            if (this.data.dailyWorkouts && this.data.dailyWorkouts[today]) {
+                this.data.dailyWorkouts[today].exercises.splice(index, 1);
+                
+                // Keep completion array aligned
+                if (this.data.dailyCompletion && this.data.dailyCompletion[today]) {
+                    this.data.dailyCompletion[today].splice(index, 1);
+                }
+
+                this.saveData();
+            }
+        }
+    },
+
+    // New logic for the specialized WORKOUTS page
+    renderWorkoutsView() {
+        const today = new Date().toDateString();
+        const dayName = this.getDayName();
+        let baseWorkout = this.getWorkoutByDay(dayName);
+
+        // --- NEW: Initialize today's specific workout instance ---
+        if (!this.data.dailyWorkouts) this.data.dailyWorkouts = {};
+        if (!this.data.dailyWorkouts[today]) {
+            // Deep copy the preset for today
+            this.data.dailyWorkouts[today] = JSON.parse(JSON.stringify(baseWorkout));
+        }
+        
+        const workout = this.data.dailyWorkouts[today];
+
+        // 1. Update WORKOUTS page Header/Title
+        const titleEl = document.querySelector('#view-workouts .card:nth-child(2) .card-header');
+        if (titleEl) {
+            titleEl.textContent = `TODAY'S WORKOUT — ${workout.name.toUpperCase()}`;
+        }
+
+        // 2. Initialize completion for today if missing
+        if (!this.data.dailyCompletion) this.data.dailyCompletion = {};
+        if (!this.data.dailyCompletion[today]) {
+            this.data.dailyCompletion[today] = new Array(workout.exercises.length).fill(false);
+        }
+
+        // 3. Render exercise list for the main view
+        const listContainer = document.querySelector('#view-workouts .exercise-list');
+        if (listContainer) {
+            listContainer.innerHTML = workout.exercises.map((ex, idx) => {
+                const isDone = this.data.dailyCompletion[today][idx];
+                return `
+                    <div class="exercise-row ${isDone ? 'checked' : ''}" onclick="WorkoutsEngine.toggleExerciseCheck(${idx})">
+                        <div style="flex: 1;">
+                            <span class="exercise-name" style="display:block;">${ex.name}</span>
+                            <span class="exercise-sets" style="font-size: 11px; opacity: 0.7;">${ex.sets}</span>
+                        </div>
+                        <div style="display: flex; gap: 12px; align-items: center;">
+                            <span class="exercise-done" style="margin-right: 8px;">${isDone ? '✓' : '—'}</span>
+                            <button class="routine-action-btn" onclick="WorkoutsEngine.openRoutineModal('${dayName}', ${idx}, event)" title="Edit"><i class="ph ph-pencil-simple"></i></button>
+                            <button class="routine-action-btn" onclick="WorkoutsEngine.deleteRoutineExercise('${dayName}', ${idx}, event)" title="Delete"><i class="ph ph-trash"></i></button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            // Add the Add Exercise Button
+            listContainer.innerHTML += `
+                <button class="add-task-submit" style="width: 100%; margin-top: 10px; background: rgba(255,255,255,0.05); color: var(--text-muted); border: 1px dashed var(--workout-border);" onclick="WorkoutsEngine.openRoutineModal('${dayName}')">
+                    + ADD EXERCISE
+                </button>
+            `;
+        }
+
+        // 4. Render Personal Records for the main view
+        const prContainer = document.getElementById('workouts-page-prs');
+        if (prContainer) {
+            const prKeys = Object.keys(this.data.prs);
+            if (prKeys.length === 0) {
+                prContainer.innerHTML = `
+                    <div class="workout-empty-state" style="padding: 15px;">
+                        <p style="margin:0; font-size: 12px;">No PRs tracked yet.<br>Click '+' to log one manually.</p>
+                    </div>
+                `;
+            } else {
+                prContainer.innerHTML = prKeys.map(name => `
+                    <div class="exercise-row pr-list-item" style="cursor: default; display: flex; align-items: center;">
+                        <span class="exercise-name" style="flex: 1;">${name}</span>
+                        <div style="display: flex; gap: 16px; align-items: center;">
+                            <div style="display: flex; flex-direction: column; text-align: right; gap: 2px;">
+                                <span class="exercise-sets" style="color: #fff; font-weight: 600; line-height: 1;">${this.data.prs[name].weight}kg</span>
+                                <span class="pr-date" style="font-size: 10px; color: var(--text-muted); text-transform: uppercase;">${this.data.prs[name].date}</span>
+                            </div>
+                            <button class="pr-delete-btn" onclick="WorkoutsEngine.deletePR('${name}')" title="Delete PR"><i class="ph ph-trash"></i></button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        // 5. Update Weekly Row Status
+        this.updateWeeklyRow();
+    },
+
+    toggleExerciseCheck(idx) {
+        const today = new Date().toDateString();
+        if (!this.data.dailyCompletion[today]) return;
+        
+        this.data.dailyCompletion[today][idx] = !this.data.dailyCompletion[today][idx];
+        
+        // Save and re-render
+        this.saveData();
+        this.renderWorkoutsView();
+
+        // Optional: Update Body Engine score if all exercises are done
+        const allDone = this.data.dailyCompletion[today].every(c => c === true);
+        if (allDone) {
+            this.updateBodyEngineScore();
+        }
+    },
+
+    updateWeeklyRow() {
+        const weekDays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+        // HTML starts with Monday (idx 0), but getDay() returns 0 for Sunday.
+        // We shift: Monday becomes 0, Tuesday becomes 1 ... Sunday becomes 6.
+        let todayIdx = new Date().getDay() - 1; 
+        if (todayIdx === -1) todayIdx = 6; // Sunday fix
+
+        const container = document.querySelector('.workout-week-days');
+        if (!container) return;
+
+        const dayTiles = container.querySelectorAll('.workout-day');
+        dayTiles.forEach((tile, idx) => {
+            // weekDays mapping for getWorkoutByDay still uses Sunday=0 logic
+            // so we need the "real" index for the day name
+            let realDayIdx = idx + 1;
+            if (realDayIdx === 7) realDayIdx = 0;
+            const dayName = weekDays[realDayIdx];
+            
+            const workout = this.getWorkoutByDay(dayName);
+            
+            // Update the day's name and type label
+            const typeLabel = tile.querySelector('.wd-type');
+            if (typeLabel) typeLabel.textContent = workout.name.split(' ')[0].toUpperCase();
+
+            // Set classes: done, today, upcoming, rest
+            tile.classList.remove('done', 'today', 'upcoming', 'rest');
+            
+            if (workout.name === 'Rest Day') {
+                tile.classList.add('rest');
+            }
+
+            if (idx === todayIdx) {
+                tile.classList.add('today');
+            } else if (idx < todayIdx) {
+                if (workout.name !== 'Rest Day') tile.classList.add('done');
+            } else {
+                tile.classList.add('upcoming');
+            }
+        });
     }
 };
 

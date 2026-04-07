@@ -119,13 +119,13 @@ document.addEventListener('DOMContentLoaded', () => {
         // Analytics Engine Bar Chart
         const engineBarCtx = document.getElementById('analyticsEngineBarChart');
         if(engineBarCtx) {
-            new Chart(engineBarCtx, {
+            window.analyticsEngineChart = new Chart(engineBarCtx, {
                 type: 'bar',
                 data: {
                     labels: ['Body', 'Mind', 'Money', 'General'],
                     datasets: [{
-                        data: [82, 88, 55, 50],
-                        backgroundColor: '#e0e0e0',
+                        data: [0, 0, 0, 0],
+                        backgroundColor: ['#fff', '#fff', '#fff', '#fff'],
                         borderRadius: 4
                     }]
                 },
@@ -141,97 +141,233 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
-        // Analytics Weekly Discipline Bar Chart
-        const weeklyBarCtx = document.getElementById('analyticsWeeklyBarChart');
-        if(weeklyBarCtx) {
-            new Chart(weeklyBarCtx, {
-                type: 'bar',
-                data: {
-                    labels: ['2026-W11', '2026-W12'],
-                    datasets: [{
-                        data: [62, 84],
-                        backgroundColor: '#e0e0e0',
-                        borderRadius: 4,
-                        barPercentage: 0.5
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: {
-                        x: { grid: { display: false } },
-                        y: { min: 0, max: 100, ticks: { stepSize: 25 } }
-                    }
-                }
-            });
-        }
     }
 
     // 2.5 Generate Dynamic UI elements (Heatmap, Calendar, etc.)
+    const HISTORY_KEY = 'titan-engine-history-v3';
+
+    function getHistoryData() {
+        const saved = localStorage.getItem(HISTORY_KEY);
+        return saved ? JSON.parse(saved) : {};
+    }
+
     function initDynamicUI() {
-        // Heatmap Generation
-        const heatmapContainer = document.getElementById('consistencyHeatmap');
-        if(heatmapContainer) {
-            heatmapContainer.innerHTML = '';
-            // Generate some random heatmap data to match the image
-            for(let row = 0; row < 7; row++) {
-                const rowDiv = document.createElement('div');
-                rowDiv.className = 'heatmap-row';
-                for(let col = 0; col < 14; col++) {
-                    const cell = document.createElement('div');
-                    cell.className = 'heatmap-cell';
-                    // Random class for demo
-                    const rand = Math.random();
-                    if(rand > 0.8) cell.classList.add('level-3');
-                    else if(rand > 0.5) cell.classList.add('level-2');
-                    else if(rand > 0.3) cell.classList.add('level-1');
-                    else if(rand > 0.1) cell.classList.add('missed');
-                    rowDiv.appendChild(cell);
+        renderInteractiveHeatmap();
+        updateAnalyticsControls();
+        refreshAnalytics(7); // Initial 7D view
+    }
+
+    function renderInteractiveHeatmap() {
+        const container = document.getElementById('consistencyHeatmap');
+        const tooltip = document.getElementById('heatmap-tooltip');
+        if (!container) return;
+
+        container.innerHTML = '';
+        const history = getHistoryData();
+        const now = new Date();
+        
+        // 14 weeks = 98 days
+        const totalDays = 98;
+        const days = [];
+        
+        for (let i = totalDays - 1; i >= 0; i--) {
+            const d = new Date();
+            d.setDate(now.getDate() - i);
+            const dateStr = d.toISOString().split('T')[0];
+            
+            let hasData = false;
+            let dayData = { body: 0, mind: 0, money: 0, general: 0 };
+            ['body', 'mind', 'money', 'general'].forEach(eng => {
+                if (history[eng] && history[eng][dateStr] !== undefined) {
+                    dayData[eng] = history[eng][dateStr];
+                    hasData = true;
                 }
-                heatmapContainer.appendChild(rowDiv);
+            });
+
+            days.push({ date: dateStr, data: hasData ? dayData : null, label: d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) });
+        }
+
+        // Create 7 rows (days of week) x 14 cols
+        for (let r = 0; r < 7; r++) {
+            const rowDiv = document.createElement('div');
+            rowDiv.className = 'heatmap-row';
+            for (let c = 0; c < 14; c++) {
+                const dayIndex = c * 7 + r;
+                const dayObj = days[dayIndex];
+                const cell = document.createElement('div');
+                cell.className = 'heatmap-cell';
+                
+                if (dayObj.data) {
+                    const avg = (dayObj.data.body + dayObj.data.mind + dayObj.data.money + dayObj.data.general) / 4;
+                    if (avg >= 90) cell.classList.add('level-3');
+                    else if (avg >= 70) cell.classList.add('level-2');
+                    else if (avg >= 40) cell.classList.add('level-1');
+                    else cell.classList.add('missed');
+                }
+
+                cell.addEventListener('mouseenter', (e) => {
+                    const scoreText = dayObj.data ? ( (dayObj.data.body + dayObj.data.mind + dayObj.data.money + dayObj.data.general) / 4 ).toFixed(1) + '%' : 'No Data';
+                    tooltip.innerHTML = `<strong>${dayObj.label}</strong><br>Score: ${scoreText}`;
+                    tooltip.style.display = 'block';
+                    const rect = cell.getBoundingClientRect();
+                    tooltip.style.left = (rect.left + window.scrollX - 40) + 'px';
+                    tooltip.style.top = (rect.top + window.scrollY - 50) + 'px';
+                });
+
+                cell.addEventListener('mouseleave', () => {
+                    tooltip.style.display = 'none';
+                });
+
+                rowDiv.appendChild(cell);
+            }
+            container.appendChild(rowDiv);
+        }
+    }
+
+    function updateAnalyticsControls() {
+        const filters = document.querySelectorAll('.filter-btn');
+        filters.forEach(btn => {
+            btn.onclick = () => {
+                filters.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                const range = parseInt(btn.getAttribute('data-range'));
+                refreshAnalytics(range);
+            };
+        });
+    }
+
+    function refreshAnalytics(range) {
+        const history = getHistoryData();
+        const now = new Date();
+        const labels = [];
+        const trendData = [];
+        const engineSums = { body: 0, mind: 0, money: 0, general: 0, count: 0 };
+
+        for (let i = range - 1; i >= 0; i--) {
+            const d = new Date();
+            d.setDate(now.getDate() - i);
+            const dateStr = d.toISOString().split('T')[0];
+            
+            let hasData = false;
+            let dayData = { body: 0, mind: 0, money: 0, general: 0 };
+            ['body', 'mind', 'money', 'general'].forEach(eng => {
+                if (history[eng] && history[eng][dateStr] !== undefined) {
+                    dayData[eng] = history[eng][dateStr];
+                    hasData = true;
+                }
+            });
+            
+            labels.push(d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
+            
+            if (hasData) {
+                const avg = (dayData.body + dayData.mind + dayData.money + dayData.general) / 4;
+                trendData.push(avg);
+                engineSums.body += dayData.body;
+                engineSums.mind += dayData.mind;
+                engineSums.money += dayData.money;
+                engineSums.general += dayData.general;
+                engineSums.count++;
+            } else {
+                trendData.push(0);
             }
         }
 
-        // Body Engine Calendar Generation (March 2026 placeholder)
-        const calendarGrid = document.querySelector('.calendar-grid');
-        if(calendarGrid) {
-            calendarGrid.innerHTML = '';
-            for(let i=1; i<=31; i++) {
-                const dayDiv = document.createElement('div');
-                dayDiv.className = 'cal-day';
-                dayDiv.innerText = i;
-                
-                // Add some example classes based on date
-                if(i < 3) dayDiv.classList.add('missed');
-                else if(i >= 3 && i <= 4) dayDiv.classList.add('hit');
-                else if(i >= 5 && i <= 7) dayDiv.classList.add('perfect');
-                else if(i > 7 && i <= 14 && Math.random() > 0.3) dayDiv.classList.add('perfect');
-                else if(i > 7 && i <= 17) dayDiv.classList.add('hit');
-                
-                // Select 17th
-                if(i === 17) dayDiv.style.border = '1px solid white';
-                
-                if(i > 17) dayDiv.style.opacity = '0.1'; // Future dates
-
-                calendarGrid.appendChild(dayDiv);
-            }
+        // Update Trend Chart
+        if (trendChart) {
+            trendChart.data.labels = labels;
+            trendChart.data.datasets[0].data = trendData;
+            trendChart.update();
+            document.getElementById('trend-range-display').innerText = `(${range} Days)`;
         }
 
-        // Tiny consistent bars
-        const tinyBars = document.getElementById('consistencyTinyBars');
-        if(tinyBars) {
-            tinyBars.innerHTML = '';
-            for(let i=0; i<17; i++) {
-                const bar = document.createElement('div');
-                bar.className = 'tiny-bar';
-                const rand = Math.random();
-                bar.style.height = (20 + Math.random() * 40) + 'px';
-                if(rand > 0.7) bar.classList.add('high');
-                else if(rand < 0.2) bar.classList.add('low');
-                tinyBars.appendChild(bar);
+        // Update Bar Chart
+        if (window.analyticsEngineChart) {
+            let avgData;
+            if (engineSums.count > 0) {
+                avgData = [
+                    engineSums.body / engineSums.count,
+                    engineSums.mind / engineSums.count,
+                    engineSums.money / engineSums.count,
+                    engineSums.general / engineSums.count
+                ];
+            } else {
+                // Fallback to today's scores if no history
+                avgData = [
+                    titanData.currentScores.body,
+                    titanData.currentScores.mind,
+                    titanData.currentScores.money,
+                    titanData.currentScores.general
+                ];
             }
+            
+            // Set some distinct colors for the engines based on typical TITAN OS palette or just distinct whites
+            window.analyticsEngineChart.data.datasets[0].backgroundColor = [
+                'rgba(242, 95, 92, 0.8)',   // Body (Red-ish)
+                'rgba(89, 209, 149, 0.8)',  // Mind (Green-ish)
+                'rgba(255, 209, 102, 0.8)', // Money (Yellow-ish)
+                'rgba(140, 140, 140, 0.8)'  // General (Grey-ish)
+            ];
+            window.analyticsEngineChart.data.datasets[0].data = avgData;
+            window.analyticsEngineChart.update();
         }
+
+        renderInsights(engineSums, range);
+    }
+
+    function renderInsights(sums, range) {
+        const list = document.getElementById('analytics-insights-list');
+        if (!list) return;
+
+        let activeSums = sums;
+        let isFallback = false;
+
+        if (sums.count === 0) {
+            // Fallback to today's data so we show something
+            activeSums = {
+                count: 1,
+                body: titanData.currentScores.body,
+                mind: titanData.currentScores.mind,
+                money: titanData.currentScores.money,
+                general: titanData.currentScores.general
+            };
+            isFallback = true;
+        }
+
+        const averages = [
+            { name: 'Body', val: activeSums.body / activeSums.count },
+            { name: 'Mind', val: activeSums.mind / activeSums.count },
+            { name: 'Money', val: activeSums.money / activeSums.count },
+            { name: 'General', val: activeSums.general / activeSums.count }
+        ];
+
+        averages.sort((a, b) => b.val - a.val);
+        const top = averages[0];
+        const bottom = averages[3];
+
+        let html = `
+            <div class="insight-item">
+                <i class="ph ph-trend-up"></i>
+                <div class="insight-text">
+                    <strong>Strongest Link:</strong> ${top.name} is your top performing engine at ${top.val.toFixed(1)}%. Keep it up!
+                </div>
+            </div>
+            <div class="insight-item">
+                <i class="ph ph-warning"></i>
+                <div class="insight-text">
+                    <strong>Growth Opportunity:</strong> ${bottom.name} needs more attention (${bottom.val.toFixed(1)}%).
+                </div>
+            </div>
+            <div class="insight-item">
+                <i class="ph ph-calendar-check"></i>
+                <div class="insight-text">
+                    ${isFallback 
+                        ? `<strong>Notice:</strong> No historical data found. Analyzing today's scores instead. Start logging tasks to build history!`
+                        : `<strong>Consistency:</strong> You logged data for ${sums.count} out of the last ${range} days.`
+                    }
+                </div>
+            </div>
+        `;
+        list.innerHTML = html;
     }
 
     // 3. Render UI from titanData
